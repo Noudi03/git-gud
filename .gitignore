@@ -36,3 +36,5 @@ build/
 mvnw
 mvnw.cmd
 /src/main/resources/firebase-service-account.json
+/.mvn/
+/src/test/
