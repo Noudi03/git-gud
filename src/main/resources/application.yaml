@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: git-gud
+
+firebase:
+  service-account: classpath:firebase-service-account.json
