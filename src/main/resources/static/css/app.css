@@ -26,3 +26,111 @@ a:hover {
 h1 {
     margin-bottom: 1.5rem;
 }
+
+/* Tutorial sidebar */
+
+.tutorial-sidebar {
+    padding: 1.5rem 1rem;
+    min-height: 100vh;
+    background-color: #f1f1f1;
+}
+
+.tutorial-sidebar h5 {
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+}
+
+.tutorial-chapter {
+    margin-bottom: 1.5rem;
+}
+
+.tutorial-chapter h6 {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.tutorial-chapter a {
+    display: block;
+    padding: 0.4rem 0.75rem;
+    color: #333;
+    text-decoration: none;
+}
+
+.tutorial-chapter a.active {
+    background-color: #04aa6d;
+    color: white;
+    font-weight: 600;
+}
+
+.tutorial-chapter a:hover {
+    background-color: #ddd;
+}
+
+/* =========================
+   Navbar
+   ========================= */
+
+.app-navbar {
+    display: flex;
+    align-items: center;
+    height: 60px;
+    padding: 0 1.5rem;
+
+    background-color: #282a35;
+    color: white;
+}
+
+/* Logo */
+
+.navbar-brand a {
+    color: white;
+    font-size: 1.4rem;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+/* Main navigation */
+
+.navbar-links {
+    display: flex;
+    height: 100%;
+    margin-left: 2rem;
+}
+
+.navbar-links a {
+    display: flex;
+    align-items: center;
+
+    padding: 0 1rem;
+
+    color: white;
+    text-decoration: none;
+}
+
+.navbar-links a:hover {
+    background-color: #3a3d4a;
+}
+
+.navbar-links a.active {
+    background-color: #04aa6d;
+}
+
+/* Account section */
+
+.navbar-account {
+    margin-left: auto;
+}
+
+.navbar-account a {
+    display: block;
+
+    padding: 0.5rem 1rem;
+
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+}
+
+.navbar-account a:hover {
+    background-color: #3a3d4a;
+}

@@ -8,11 +8,26 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class ViewController {
 
     @GetMapping("/")
+    public String index() {
+        return "redirect:/home";
+    }
+
+    @GetMapping("/home")
     public String home(Model model) {
 
-        model.addAttribute("name", "Elenji");
+        model.addAttribute("name", "User");
 
-        return "index";
+        return "home";
+    }
+
+    @GetMapping("/tutorials")
+    public String tutorials() {
+        return "tutorials";
+    }
+
+    @GetMapping("/statistics")
+    public String statistics() {
+        return "statistics";
     }
 
     @GetMapping("/login")
