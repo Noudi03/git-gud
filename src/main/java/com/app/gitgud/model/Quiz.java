@@ -7,7 +7,7 @@ public class Quiz {
     private String chapterId;
     private String sectionId;
     private String type;
-    private List<Question> questions;
+    private List<String> questionIds;
 
     public Quiz(){}
 
@@ -16,7 +16,7 @@ public class Quiz {
         this.chapterId = chapterId;
         this.sectionId = sectionId;
         this.type = type;
-        this.questions = questions;
+        this.questionIds = questionIds;
     }
 
     public String getId() {
@@ -51,11 +51,11 @@ public class Quiz {
         this.type = type;
     }
 
-    public List<Question> getQuestions() {
-        return questions;
+    public List<String> getQuestionIds() {
+        return questionIds;
     }
 
-    public void setQuestions(List<Question> questions) {
-        this.questions = questions;
+    public void setQuestionIds(List<String> questions) {
+        this.questionIds = questionIds;
     }
 }
