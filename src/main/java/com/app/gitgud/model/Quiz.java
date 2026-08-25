@@ -11,7 +11,7 @@ public class Quiz {
 
     public Quiz(){}
 
-    public Quiz(String id, String chapterId, String sectionId, String type, List<Question> questions) {
+    public Quiz(String id, String chapterId, String sectionId, String type, List<String> questions) {
         this.id = id;
         this.chapterId = chapterId;
         this.sectionId = sectionId;
@@ -55,7 +55,7 @@ public class Quiz {
         return questionIds;
     }
 
-    public void setQuestionIds(List<String> questions) {
+    public void setQuestionIds(List<String> questionIds) {
         this.questionIds = questionIds;
     }
 }
