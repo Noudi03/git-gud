@@ -4,6 +4,8 @@ import java.util.Map;
 
 public class Question {
     private String id;
+    private String chapterId;
+    private String sectionId;
     private String text;
     private Map<String, String> options;
     private String correctAnswer;
@@ -11,8 +13,10 @@ public class Question {
 
     public Question() {}
 
-    public Question(String id, String text, Map<String, String> options, String correctAnswer, String hint){
+    public Question(String id, String chapterId, String sectionId, String text, Map<String, String> options, String correctAnswer, String hint){
         this.id = id;
+        this.chapterId = chapterId;
+        this.sectionId = sectionId;
         this.text = text;
         this.options = options;
         this.correctAnswer= correctAnswer;
@@ -57,5 +61,21 @@ public class Question {
 
     public void setHint(String hint) {
         this.hint = hint;
+    }
+
+    public String getChapterId() {
+        return chapterId;
+    }
+
+    public void setChapterId(String chapterId) {
+        this.chapterId = chapterId;
+    }
+
+    public String getSectionId() {
+        return sectionId;
+    }
+
+    public void setSectionId(String sectionId) {
+        this.sectionId = sectionId;
     }
 }
