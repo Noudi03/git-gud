@@ -5,13 +5,37 @@
     </div>
 
     <div class="navbar-links">
+
         <a href="/home">Home</a>
-        <a href="/tutorials">Tutorials</a>
-        <a href="/statistics">Statistics</a>
+
+        <a
+                th:if="${session.username != null}"
+                href="/tutorials">
+            Tutorials
+        </a>
+
+        <a
+                th:if="${session.username != null}"
+                href="/statistics">
+            Statistics
+        </a>
+
     </div>
 
     <div class="navbar-account">
-        <a href="/login">Login</a>
+
+        <a
+                th:if="${session.username == null}"
+                href="/login">
+            Login
+        </a>
+
+        <a
+                th:if="${session.username != null}"
+                href="/logout">
+            Logout
+        </a>
+
     </div>
 
 </nav>
