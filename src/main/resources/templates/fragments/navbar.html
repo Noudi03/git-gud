@@ -9,13 +9,13 @@
         <a href="/home">Home</a>
 
         <a
-                th:if="${session.username != null}"
+                th:if="${session.uid != null}"
                 href="/tutorials">
             Tutorials
         </a>
 
         <a
-                th:if="${session.username != null}"
+                th:if="${session.uid != null}"
                 href="/statistics">
             Statistics
         </a>
@@ -25,16 +25,19 @@
     <div class="navbar-account">
 
         <a
-                th:if="${session.username == null}"
-                href="/login">
+                th:if="${session.uid == null}"
+                href="/login"
+                class="navbar-account-button">
             Login
         </a>
 
-        <a
-                th:if="${session.username != null}"
-                href="/logout">
+        <button
+                th:if="${session.uid != null}"
+                type="button"
+                id="logout-button"
+                class="navbar-account-button">
             Logout
-        </a>
+        </button>
 
     </div>
 

@@ -1,9 +1,9 @@
 package com.app.gitgud.controller;
 
+import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class ViewController {
@@ -16,17 +16,19 @@ public class ViewController {
     @GetMapping("/home")
     public String home(HttpSession session, Model model) {
 
-        if (session.getAttribute("username") == null) {
+        if (!isLoggedIn(session)) {
             return "redirect:/login";
         }
 
-        String username = (String) session.getAttribute("username");
+        model.addAttribute(
+                "email",
+                session.getAttribute("email")
+        );
 
-        if (username == null) {
-            return "redirect:/login";
-        }
-
-        model.addAttribute("username", username);
+        model.addAttribute(
+                "username",
+                "mr.user"
+        );
 
         return "home";
     }
@@ -34,7 +36,7 @@ public class ViewController {
     @GetMapping("/tutorials")
     public String tutorials(HttpSession session) {
 
-        if (session.getAttribute("username") == null) {
+        if (!isLoggedIn(session)) {
             return "redirect:/login";
         }
 
@@ -44,31 +46,24 @@ public class ViewController {
     @GetMapping("/statistics")
     public String statistics(HttpSession session) {
 
-        if (session.getAttribute("username") == null) {
+        if (!isLoggedIn(session)) {
             return "redirect:/login";
         }
 
         return "statistics";
     }
 
+    @GetMapping("/register")
+    public String register() {
+        return "register";
+    }
+
     @GetMapping("/login")
-    public String login(HttpSession session) {
+    public String login() {
         return "login";
     }
 
-    @GetMapping("/test-login")
-    public String testLogin(HttpSession session) {
-
-        session.setAttribute("username", "Elenji");
-
-        return "redirect:/home";
-    }
-
-    @GetMapping("/logout")
-    public String logout(HttpSession session) {
-
-        session.invalidate();
-
-        return "redirect:/home";
+    private boolean isLoggedIn(HttpSession session) {
+        return session.getAttribute("uid") != null;
     }
 }
