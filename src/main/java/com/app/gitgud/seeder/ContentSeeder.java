@@ -49,8 +49,27 @@ public class ContentSeeder implements CommandLineRunner {
     private void seedSections(Firestore db) throws Exception {
 
         // ch 1
-        Section s1 = new Section("section1_1", "chapter1", "What is git?", "Placeholder", 1);
-        Section s2 = new Section("section1_2", "chapter1", "First commands", "Placeholder", 2);
+        Section s1 = new Section(
+                "section1_1",
+                "chapter1",
+                "What is git?",
+                "Placeholder",
+                1,
+                null,
+                false,
+                "Placeholder advanced content"
+        );
+
+        Section s2 = new Section(
+                "section1_2",
+                "chapter1",
+                "First commands",
+                "Placeholder",
+                2,
+                "section1_1",
+                false,
+                "Placeholder advanced content"
+        );
 
         for (Section s : List.of(s1, s2)) {
             CollectionReference chapters =  db.collection("chapters");
@@ -67,7 +86,7 @@ public class ContentSeeder implements CommandLineRunner {
         List<String> sectionIds = List.of("section1_1", "section1_2");
         for (String sectionId : sectionIds) {
             String questionId = "q" + sectionId + "_1";
-            Question q = new Question(questionId, "chapter1", sectionId, "placeholder question for " + sectionId, placeholderOptions(), "a", "Placeholder hint");
+            Question q = new Question(questionId, "chapter1", sectionId, "placeholder question for " + sectionId, placeholderOptions(), "a", "hard", "Placeholder hint 1", "Placeholder hint 2");
             DocumentReference questionDoc = db.collection("questions").document(q.getId());
             questionDoc.set(q).get();
         }

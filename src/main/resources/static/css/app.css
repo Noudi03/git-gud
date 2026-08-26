@@ -1,11 +1,30 @@
 :root {
     --primary-color: #2563eb;
+
     --background-color: #f8fafc;
+    --surface-color: #f1f1f1;
+
     --text-color: #1e293b;
+    --muted-text-color: #64748b;
+
+    --navbar-color: #282a35;
+    --navbar-hover-color: #3a3d4a;
+
+    --active-color: #04aa6d;
+
+    --border-radius: 4px;
 }
 
+
+/* =========================
+   Base
+   ========================= */
+
 body {
+    margin: 0;
+
     font-family: Arial, sans-serif;
+
     background-color: var(--background-color);
     color: var(--text-color);
 }
@@ -16,6 +35,7 @@ main {
 }
 
 a {
+    color: var(--primary-color);
     text-decoration: none;
 }
 
@@ -27,12 +47,16 @@ h1 {
     margin-bottom: 1.5rem;
 }
 
-/* Tutorial sidebar */
+
+/* =========================
+   Tutorial Sidebar
+   ========================= */
 
 .tutorial-sidebar {
-    padding: 1.5rem 1rem;
     min-height: 100vh;
-    background-color: #f1f1f1;
+    padding: 1.5rem 1rem;
+
+    background-color: var(--surface-color);
 }
 
 .tutorial-sidebar h5 {
@@ -45,26 +69,31 @@ h1 {
 }
 
 .tutorial-chapter h6 {
-    font-weight: 600;
     margin-bottom: 0.5rem;
+    font-weight: 600;
 }
 
 .tutorial-chapter a {
     display: block;
+
     padding: 0.4rem 0.75rem;
+
     color: #333;
     text-decoration: none;
-}
 
-.tutorial-chapter a.active {
-    background-color: #04aa6d;
-    color: white;
-    font-weight: 600;
+    border-radius: var(--border-radius);
 }
 
 .tutorial-chapter a:hover {
     background-color: #ddd;
 }
+
+.tutorial-chapter a.active {
+    background-color: var(--active-color);
+    color: white;
+    font-weight: 600;
+}
+
 
 /* =========================
    Navbar
@@ -73,26 +102,33 @@ h1 {
 .app-navbar {
     display: flex;
     align-items: center;
+
     height: 60px;
     padding: 0 1.5rem;
 
-    background-color: #282a35;
+    background-color: var(--navbar-color);
     color: white;
 }
 
-/* Logo */
+
+/* Brand */
 
 .navbar-brand a {
     color: white;
+
     font-size: 1.4rem;
     font-weight: 600;
+
     text-decoration: none;
 }
+
 
 /* Main navigation */
 
 .navbar-links {
     display: flex;
+    align-items: stretch;
+
     height: 100%;
     margin-left: 2rem;
 }
@@ -108,29 +144,47 @@ h1 {
 }
 
 .navbar-links a:hover {
-    background-color: #3a3d4a;
+    background-color: var(--navbar-hover-color);
 }
 
 .navbar-links a.active {
-    background-color: #04aa6d;
+    background-color: var(--active-color);
 }
+
 
 /* Account section */
 
 .navbar-account {
+    display: flex;
+    align-items: center;
+
     margin-left: auto;
 }
 
-.navbar-account a {
-    display: block;
+
+/* Login + Logout */
+
+.navbar-account-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 
     padding: 0.5rem 1rem;
 
     color: white;
+
+    background-color: transparent;
+
+    border: none;
+    border-radius: var(--border-radius);
+
+    font: inherit;
     text-decoration: none;
-    border-radius: 4px;
+
+    cursor: pointer;
 }
 
-.navbar-account a:hover {
-    background-color: #3a3d4a;
+.navbar-account-button:hover {
+    background-color: var(--navbar-hover-color);
+    text-decoration: none;
 }
