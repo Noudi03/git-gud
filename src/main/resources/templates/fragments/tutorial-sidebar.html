@@ -2,24 +2,24 @@
 
     <h5>Tutorials</h5>
 
-    <div class="tutorial-chapter">
-        <h6>Java Basics</h6>
+    <div
+            th:each="chapter : ${chapters}"
+            class="tutorial-chapter">
 
-        <a href="/tutorials/introduction">Introduction</a>
-        <a href="/tutorials/variables">Variables</a>
-        <a href="/tutorials/variables" class="active">
-            Variables
+        <h6 th:text="${chapter.title}">
+            Chapter title
+        </h6>
+
+        <a
+                th:each="section : ${sectionsByChapter[chapter.id]}"
+                th:text="${section.title}"
+                th:href="@{/tutorials/{chapterId}/{sectionId}(
+                    chapterId=${chapter.id},
+                    sectionId=${section.id}
+                )}">
+            Section title
         </a>
-        <a href="/tutorials/data-types">Data Types</a>
-        <a href="/tutorials/operators">Operators</a>
-    </div>
 
-    <div class="tutorial-chapter">
-        <h6>Object-Oriented Programming</h6>
-
-        <a href="/tutorials/classes">Classes</a>
-        <a href="/tutorials/objects">Objects</a>
-        <a href="/tutorials/inheritance">Inheritance</a>
     </div>
 
 </aside>

@@ -18,6 +18,31 @@
 
         <!-- Main content -->
         <main class="col-md-9 col-lg-10 p-4">
+
+            <article th:if="${section != null}">
+
+                <h1 th:text="${section.title}">
+                    Section title
+                </h1>
+
+                <div th:text="${section.content}">
+                    Section content
+                </div>
+
+                <div th:text="${section.advancedContent}">
+                    Advanced content
+                </div>
+
+            </article>
+
+            <article th:if="${section == null}">
+
+                <h1>Welcome to the tutorials</h1>
+
+                <p>Select a section from the sidebar to begin.</p>
+
+            </article>
+
         </main>
 
     </div>

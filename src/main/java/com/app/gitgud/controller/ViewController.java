@@ -16,10 +16,6 @@ public class ViewController {
     @GetMapping("/home")
     public String home(HttpSession session, Model model) {
 
-        if (!isLoggedIn(session)) {
-            return "redirect:/login";
-        }
-
         model.addAttribute(
                 "email",
                 session.getAttribute("email")
@@ -33,23 +29,8 @@ public class ViewController {
         return "home";
     }
 
-    @GetMapping("/tutorials")
-    public String tutorials(HttpSession session) {
-
-        if (!isLoggedIn(session)) {
-            return "redirect:/login";
-        }
-
-        return "tutorials";
-    }
-
     @GetMapping("/statistics")
-    public String statistics(HttpSession session) {
-
-        if (!isLoggedIn(session)) {
-            return "redirect:/login";
-        }
-
+    public String statistics() {
         return "statistics";
     }
 
@@ -61,9 +42,5 @@ public class ViewController {
     @GetMapping("/login")
     public String login() {
         return "login";
-    }
-
-    private boolean isLoggedIn(HttpSession session) {
-        return session.getAttribute("uid") != null;
     }
 }
