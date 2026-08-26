@@ -9,18 +9,22 @@ public class Question {
     private String text;
     private Map<String, String> options;
     private String correctAnswer;
-    private String hint;
+    private String difficulty;
+    private String hint1;
+    private String hint2;
 
     public Question() {}
 
-    public Question(String id, String chapterId, String sectionId, String text, Map<String, String> options, String correctAnswer, String hint){
+    public Question(String id, String chapterId, String sectionId, String text, Map<String, String> options, String correctAnswer, String difficulty, String hint1, String hint2) {
         this.id = id;
         this.chapterId = chapterId;
         this.sectionId = sectionId;
         this.text = text;
         this.options = options;
-        this.correctAnswer= correctAnswer;
-        this.hint =hint;
+        this.correctAnswer = correctAnswer;
+        this.difficulty = difficulty;
+        this.hint1 = hint1;
+        this.hint2 = hint2;
     }
 
     public String getId() {
@@ -55,14 +59,6 @@ public class Question {
         this.correctAnswer = correctAnswer;
     }
 
-    public String getHint() {
-        return hint;
-    }
-
-    public void setHint(String hint) {
-        this.hint = hint;
-    }
-
     public String getChapterId() {
         return chapterId;
     }
@@ -77,5 +73,29 @@ public class Question {
 
     public void setSectionId(String sectionId) {
         this.sectionId = sectionId;
+    }
+
+    public String getDifficulty() {
+        return difficulty;
+    }
+
+    public void setDifficulty(String difficulty) {
+        this.difficulty = difficulty;
+    }
+
+    public void setHint1(String hint1) {
+        this.hint1 = hint1;
+    }
+
+    public String getHint1() {
+        return hint1;
+    }
+
+    public String getHint2() {
+        return hint2;
+    }
+
+    public void setHint2(String hint2) {
+        this.hint2 = hint2;
     }
 }

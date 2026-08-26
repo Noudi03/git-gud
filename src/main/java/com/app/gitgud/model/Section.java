@@ -6,15 +6,21 @@ public class Section {
     private String title;
     private String content;
     private int order;
+    private String prerequisiteId;
+    private boolean locked;
+    private String advancedContent;
 
     public Section() {}
 
-    public Section(String id, String chapterId, String title, String content, int order) {
+    public Section(String id, String chapterId, String title, String content, int order, String prerequisiteId, boolean locked, String advancedContent) {
         this.id = id;
         this.chapterId = chapterId;
         this.title = title;
         this.content = content;
         this.order = order;
+        this.prerequisiteId = prerequisiteId;
+        this.locked = locked;
+        this.advancedContent = advancedContent;
     }
 
     public String getId() {
@@ -55,5 +61,29 @@ public class Section {
 
     public void setOrder(int order) {
         this.order = order;
+    }
+
+    public String getPrerequisiteId() {
+        return prerequisiteId;
+    }
+
+    public void setPrerequisiteId(String prerequisiteId) {
+        this.prerequisiteId = prerequisiteId;
+    }
+
+    public boolean isLocked() {
+        return locked;
+    }
+
+    public void setLocked(boolean locked) {
+        this.locked = locked;
+    }
+
+    public String getAdvancedContent() {
+        return advancedContent;
+    }
+
+    public void setAdvancedContent(String advancedContent) {
+        this.advancedContent = advancedContent;
     }
 }
