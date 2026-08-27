@@ -1,106 +1,174 @@
 package com.app.gitgud.seeder;
 
-import com.app.gitgud.model.Chapter;
 import com.app.gitgud.model.Question;
 import com.app.gitgud.model.Quiz;
 import com.app.gitgud.model.Section;
+import com.app.gitgud.seeder.data.chapter1.Chapter1Data;
 import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.Firestore;
 import com.google.firebase.cloud.FirestoreClient;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-import javax.swing.text.Document;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 public class ContentSeeder implements CommandLineRunner {
 
+    @Value("${app.seeder.enabled:false}")
+    private boolean enabled;
+
+    @Value("${app.seeder.reset:false}")
+    private boolean reset;
+
     @Override
     public void run(String... args) throws Exception {
-        Firestore db = FirestoreClient.getFirestore();
-
-        if (!db.collection("chapters").get().get().isEmpty()){
-            System.out.println("DB already seeded");
+        if (!enabled) {
+            System.out.println("Seeder disabled.");
             return;
         }
 
-        seedChapters(db);
-        seedSections(db);
-        seedQuestions(db);
-        seedQuizzes(db);
+        Firestore db = FirestoreClient.getFirestore();
 
-    }
-
-    private void seedChapters(Firestore db) throws Exception  {
-        Chapter chapter1 = new Chapter("chapter1", "Intro to git", 1);
-        Chapter chapter2 = new Chapter("chapter2", "Chapter 2 title", 2);
-        Chapter chapter3 = new Chapter("chapter3", "Chapter 3 title", 3);
-
-        db.collection("chapters").document(chapter1.getId()).set(chapter1).get();
-        db.collection("chapters").document(chapter2.getId()).set(chapter2).get();
-        db.collection("chapters").document(chapter3.getId()).set(chapter3).get();
-
-    }
-
-    private void seedSections(Firestore db) throws Exception {
-
-        // ch 1
-        Section s1 = new Section("section1_1", "chapter1", "What is git?", "Placeholder", 1);
-        Section s2 = new Section("section1_2", "chapter1", "First commands", "Placeholder", 2);
-
-        for (Section s : List.of(s1, s2)) {
-            CollectionReference chapters =  db.collection("chapters");
-            DocumentReference chapterDoc = chapters.document(s.getChapterId());
-            CollectionReference sections  = chapterDoc.collection("sections");
-            DocumentReference sectionDoc = sections.document(s.getId());
-            sectionDoc.set(s).get();
+        if (reset) {
+            System.out.println("Resetting database...");
+            deleteCollection(db.collection("chapters"));
+            deleteCollection(db.collection("quizzes"));
+            System.out.println("Database cleared.");
+        } else if (!db.collection("chapters").get().get().isEmpty()) {
+            System.out.println("DB already seeded, skipping.");
+            return;
         }
 
-    }
+        List<ChapterData> chapters = Arrays.asList(
+                new Chapter1Data()
+                // new Chapter2Data(),
+                // new Chapter3Data()
+        );
 
-
-    private void seedQuestions(Firestore db) throws Exception {
-        List<String> sectionIds = List.of("section1_1", "section1_2");
-        for (String sectionId : sectionIds) {
-            String questionId = "q" + sectionId + "_1";
-            Question q = new Question(questionId, "chapter1", sectionId, "placeholder question for " + sectionId, placeholderOptions(), "a", "Placeholder hint");
-            DocumentReference questionDoc = db.collection("questions").document(q.getId());
-            questionDoc.set(q).get();
+        for (ChapterData data : chapters) {
+            seedChapter(db, data);
+            System.out.println("Seeded chapter: " + data.getChapter().getTitle());
         }
 
+        System.out.println("Seeding completed.");
     }
 
-    private Map<String, String> placeholderOptions() {
-        Map<String, String> options = new HashMap<>();
-        options.put("a", "Option A");
-        options.put("b", "option B");
-        options.put("c", "Option C");
-        options.put("d", "Option D");
-        return options;
-    }
-private void seedQuizzes(Firestore db) throws Exception {
-        List <String> sectionIds = List.of("section1_1", "section1_2");
-        for (String sectionId: sectionIds) {
-            String questionId = "q_" + sectionId + "_1";
-            Quiz quiz = new Quiz("quiz_" + sectionId, "chapter1", sectionId, "mini", List.of(questionId));
+    private void seedChapter(Firestore db, ChapterData data) throws Exception {
+        // Save chapter document
+        DocumentReference chapterRef = db.collection("chapters").document(data.getChapter().getId());
+        chapterRef.set(data.getChapter()).get();
 
-            DocumentReference quizDoc   = db.collection("quizzes").document(quiz.getId());
-            quizDoc.set(quiz).get();
+        Map<String, List<Question>> allQuestions = data.getQuestions();
+
+        for (Section section : data.getSections()) {
+            // Save section document
+            chapterRef.collection("sections")
+                    .document(section.getId())
+                    .set(section)
+                    .get();
+
+            List<Question> questions = allQuestions.getOrDefault(section.getId(), List.of());
+
+            //Save questions as subcollection under section
+            for (Question q : questions) {
+                chapterRef.collection("sections")
+                        .document(section.getId())
+                        .collection("questions")
+                        .document(q.getId())
+                        .set(q)
+                        .get();
+            }
+
+            //create mini quiz for this section
+            if (!questions.isEmpty()) {
+                List<String> questionIds = questions.stream()
+                        .map(Question::getId)
+                        .collect(Collectors.toList());
+
+                Quiz miniQuiz = new Quiz();
+                miniQuiz.setId("quiz-" + section.getId());
+                miniQuiz.setChapterId(data.getChapter().getId());
+                miniQuiz.setSectionId(section.getId());
+                miniQuiz.setType("mini");
+                miniQuiz.setQuestionIds(questionIds);
+
+                db.collection("quizzes")
+                        .document(miniQuiz.getId())
+                        .set(miniQuiz)
+                        .get();
+            }
         }
 
-        Quiz finalQuiz = new Quiz("quiz_chapter1_final", "chapter1", null,
-                "final", List.of("q_section1_1_1", "q_section1_2_1"));
+        // create tge final quiz for the chapter
+        // takes the first question from each section
+        // TODO: replace with skill based generation of questions
+        List<String> finalQuestionIds = data.getSections().stream()
+                .map(section -> {
+                    List<Question> qs = allQuestions.getOrDefault(section.getId(), List.of());
+                    return qs.isEmpty() ? null : qs.get(0).getId();
+                })
+                .filter(id -> id != null)
+                .collect(Collectors.toList());
 
-        DocumentReference finalQuizDoc = db.collection("quizzes").document(finalQuiz.getId());
-        finalQuizDoc.set(finalQuiz).get();
+        Quiz finalQuiz = new Quiz();
+        finalQuiz.setId("quiz-" + data.getChapter().getId() +  "-final");
+        finalQuiz.setChapterId(data.getChapter().getId());
+        finalQuiz.setSectionId(null);
+        finalQuiz.setType("final");
+        finalQuiz.setQuestionIds(finalQuestionIds);
 
-        Quiz reviewQuiz = new Quiz("quiz_review", null, null, "review", List.of());
-        DocumentReference reviewQuizDoc = db.collection("quizzes").document(reviewQuiz.getId());
-        reviewQuizDoc.set(reviewQuiz).get();
-}
+        db.collection("quizzes")
+                .document(finalQuiz.getId())
+                .set(finalQuiz)
+                .get();
+    }
 
+    // Review quiz, called after all chapters are seeded
+    // Cross-chapter: takes one question from each chapter's first section
+
+    private void seedReviewQuiz(Firestore db, List<ChapterData> chapters) throws Exception {
+        List<String> reviewQuestionIds = chapters.stream()
+                .map(data -> {
+                    List<Question> qs = data.getQuestions()
+                            .getOrDefault(data.getSections().get(0).getId(), List.of());
+                    return qs.isEmpty() ? null : qs.get(0).getId();
+                })
+                .filter(id -> id != null)
+                .collect(Collectors.toList());
+
+        Quiz reviewQuiz = new Quiz();
+        reviewQuiz.setId("quiz-review");
+        reviewQuiz.setChapterId(null);
+        reviewQuiz.setSectionId(null);
+        reviewQuiz.setType("review");
+        reviewQuiz.setQuestionIds(reviewQuestionIds);
+
+        db.collection("quizzes")
+                .document(reviewQuiz.getId())
+                .set(reviewQuiz)
+                .get();
+
+        System.out.println("Seeded review quiz.");
+    }
+
+    // deletes documents in a collection, including subcollections
+
+    private void deleteCollection(CollectionReference colRef) throws Exception {
+        for (var doc : colRef.get().get().getDocuments()) {
+            deleteDocumentRecursively(doc.getReference());
+        }
+    }
+    // deletes documents and all of the subcollections, must delete the subcollections first and then the document
+    private void deleteDocumentRecursively(DocumentReference docRef) throws Exception {
+        for (CollectionReference col : docRef.listCollections()) {
+            deleteCollection(col);
+        }
+        docRef.delete().get();
+    }
 }
