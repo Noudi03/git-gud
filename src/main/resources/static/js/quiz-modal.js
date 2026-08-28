@@ -2,7 +2,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const modal = document.getElementById("quiz-modal");
     const closeButton = document.getElementById("quiz-close-button");
-    const overlay = modal?.querySelector(".quiz-modal-overlay");
     const startButtons = document.querySelectorAll(".quiz-start-button");
 
     if (!modal) {
@@ -41,8 +40,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     closeButton?.addEventListener("click", closeQuiz);
-
-    overlay?.addEventListener("click", closeQuiz);
 
     document.addEventListener("keydown", event => {
 

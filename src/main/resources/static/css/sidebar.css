@@ -1,0 +1,74 @@
+.tutorial-sidebar {
+    min-height: calc(100vh - var(--navbar-height));
+
+    padding: 1.5rem 1rem;
+
+    background-color: var(--color-surface);
+    border-right: 1px solid var(--color-border);
+}
+
+
+/* Sidebar heading */
+
+.tutorial-sidebar h5 {
+    margin: 0 0 1.25rem;
+
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+
+    color: var(--color-text-muted);
+}
+
+
+/* Groups */
+
+.tutorial-chapter {
+    margin-bottom: 1.5rem;
+}
+
+.tutorial-chapter h6 {
+    margin: 0 0 0.4rem;
+
+    padding: 0 0.75rem;
+
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+
+/* Links */
+
+.tutorial-chapter a {
+    display: block;
+
+    padding: 0.45rem 0.75rem;
+
+    color: var(--color-text-muted);
+
+    border-radius: var(--radius-sm);
+
+    text-decoration: none;
+
+    transition:
+            background-color 0.15s ease,
+            color 0.15s ease;
+}
+
+.tutorial-chapter a:hover {
+    background-color: var(--color-surface-muted);
+    color: var(--color-text);
+    text-decoration: none;
+}
+
+.tutorial-chapter a.active {
+    background-color: var(--color-success);
+    color: white;
+
+    font-weight: 600;
+}
+
+.tutorial-chapter a.active:hover {
+    background-color: var(--color-success-hover);
+}

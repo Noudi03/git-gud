@@ -1,0 +1,91 @@
+.app-navbar {
+    display: flex;
+    align-items: center;
+
+    min-height: var(--navbar-height);
+    padding: 0 1.5rem;
+
+    background-color: var(--color-dark);
+    color: white;
+}
+
+
+/* Brand */
+
+.navbar-brand a {
+    color: white;
+
+    font-size: 1.4rem;
+    font-weight: 600;
+
+    text-decoration: none;
+}
+
+.navbar-brand a:hover {
+    color: white;
+    text-decoration: none;
+}
+
+
+/* Main navigation */
+
+.navbar-links {
+    display: flex;
+    align-items: stretch;
+
+    height: var(--navbar-height);
+    margin-left: 2rem;
+}
+
+.navbar-links a {
+    display: flex;
+    align-items: center;
+
+    padding: 0 1rem;
+
+    color: white;
+    text-decoration: none;
+
+    transition: background-color 0.15s ease;
+}
+
+.navbar-links a:hover {
+    background-color: var(--color-dark-hover);
+    text-decoration: none;
+}
+
+.navbar-links a.active {
+    background-color: var(--color-success);
+}
+
+
+/* Account */
+
+.navbar-account {
+    display: flex;
+    align-items: center;
+
+    margin-left: auto;
+}
+
+.navbar-account-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0.5rem 1rem;
+
+    color: white;
+    background-color: transparent;
+
+    border: none;
+    border-radius: var(--radius-sm);
+
+    cursor: pointer;
+
+    transition: background-color 0.15s ease;
+}
+
+.navbar-account-button:hover {
+    background-color: var(--color-dark-hover);
+}

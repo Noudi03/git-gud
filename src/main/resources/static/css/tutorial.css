@@ -1,0 +1,32 @@
+.tutorial-content {
+    max-width: 900px;
+}
+
+.tutorial-content article {
+    padding: 2rem;
+
+    background-color: var(--color-surface);
+
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+
+    box-shadow: var(--shadow-sm);
+}
+
+.tutorial-content article h1 {
+    margin-top: 0;
+}
+
+.tutorial-advanced-content {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+
+    border-top: 1px solid var(--color-border);
+}
+
+.tutorial-quizzes {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+
+    border-top: 1px solid var(--color-border);
+}
