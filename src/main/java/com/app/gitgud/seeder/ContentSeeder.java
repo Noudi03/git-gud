@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/*
 @Component
 public class ContentSeeder implements CommandLineRunner {
 
@@ -123,3 +124,4 @@ private void seedQuizzes(Firestore db) throws Exception {
 }
 
 }
+*/

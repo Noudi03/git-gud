@@ -32,22 +32,23 @@ public class TutorialController {
     public String section(
             @PathVariable String chapterId,
             @PathVariable String sectionId,
-            Model model) throws Exception {
+            Model model
+    ) throws Exception {
 
         addTutorialNavigation(model);
 
-        Chapter chapter = tutorialService.getChapters()
-                .stream()
-                .filter(c -> c.getId().equals(chapterId))
-                .findFirst()
-                .orElse(null);
+        Chapter chapter =
+                tutorialService.getTutorialChapter(chapterId);
 
         if (chapter == null) {
             return "redirect:/tutorials";
         }
 
         Section section =
-                tutorialService.getSection(chapterId, sectionId);
+                tutorialService.getTutorialSection(
+                        chapterId,
+                        sectionId
+                );
 
         if (section == null) {
             return "redirect:/tutorials";
@@ -59,13 +60,14 @@ public class TutorialController {
         return "tutorials";
     }
 
-    private void addTutorialNavigation(Model model) throws Exception {
+    private void addTutorialNavigation(Model model)
+            throws Exception {
 
         List<Chapter> chapters =
-                tutorialService.getChapters();
+                tutorialService.getTutorialChapters();
 
         Map<String, List<Section>> sectionsByChapter =
-                tutorialService.getSectionsByChapter(chapters);
+                tutorialService.getTutorialNavigation(chapters);
 
         model.addAttribute("chapters", chapters);
         model.addAttribute(

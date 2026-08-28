@@ -1,22 +1,25 @@
 package com.app.gitgud.model;
 
-import java.util.List;
-
 public class Quiz {
+
     private String id;
-    private String chapterId;
-    private String sectionId;
-    private String type;
-    private List<String> questionIds;
+    private String title;
+    private QuizType type;
+    private int order;
 
-    public Quiz(){}
+    public Quiz() {
+    }
 
-    public Quiz(String id, String chapterId, String sectionId, String type, List<String> questions) {
+    public Quiz(
+            String id,
+            String title,
+            QuizType type,
+            int order
+    ) {
         this.id = id;
-        this.chapterId = chapterId;
-        this.sectionId = sectionId;
+        this.title = title;
         this.type = type;
-        this.questionIds = questionIds;
+        this.order = order;
     }
 
     public String getId() {
@@ -27,35 +30,27 @@ public class Quiz {
         this.id = id;
     }
 
-    public String getChapterId() {
-        return chapterId;
+    public String getTitle() {
+        return title;
     }
 
-    public void setChapterId(String chapterId) {
-        this.chapterId = chapterId;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    public String getSectionId() {
-        return sectionId;
-    }
-
-    public void setSectionId(String sectionId) {
-        this.sectionId = sectionId;
-    }
-
-    public String getType() {
+    public QuizType getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(QuizType type) {
         this.type = type;
     }
 
-    public List<String> getQuestionIds() {
-        return questionIds;
+    public int getOrder() {
+        return order;
     }
 
-    public void setQuestionIds(List<String> questionIds) {
-        this.questionIds = questionIds;
+    public void setOrder(int order) {
+        this.order = order;
     }
 }
