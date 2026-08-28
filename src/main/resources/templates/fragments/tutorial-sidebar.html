@@ -16,7 +16,8 @@
                 th:href="@{/tutorials/{chapterId}/{sectionId}(
                     chapterId=${chapter.id},
                     sectionId=${section.id}
-                )}">
+                )}"
+                th:classappend="${currentSectionId == section.id} ? ' active' : ''">
             Section title
         </a>
 

@@ -71,6 +71,8 @@ public class TutorialController {
         model.addAttribute("section", section);
         model.addAttribute("quizzes", quizzes);
 
+        model.addAttribute("currentSectionId", section.getId());
+
         return "tutorials";
     }
 
