@@ -29,8 +29,27 @@
                     Section content
                 </div>
 
-                <div th:text="${section.advancedContent}">
+                <div th:if="${section.advancedContent != null}"
+                     th:text="${section.advancedContent}">
                     Advanced content
+                </div>
+
+                <div th:if="${quizzes != null and !quizzes.isEmpty()}">
+
+                    <h2>Quizzes</h2>
+
+                    <div th:each="quiz : ${quizzes}">
+
+                        <button
+                                type="button"
+                                class="quiz-start-button"
+                                th:attr="data-quiz-id=${quiz.id}"
+                                th:text="${quiz.title}">
+                            Start Quiz
+                        </button>
+
+                    </div>
+
                 </div>
 
             </article>
@@ -47,6 +66,8 @@
 
     </div>
 </div>
+
+<div th:replace="~{fragments/quiz-modal :: quiz-modal}"></div>
 
 <div th:replace="~{fragments/scripts :: scripts}"></div>
 

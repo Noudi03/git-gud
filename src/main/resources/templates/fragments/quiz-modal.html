@@ -1,0 +1,32 @@
+<div th:fragment="quiz-modal"
+     id="quiz-modal"
+     class="quiz-modal"
+     hidden>
+
+    <div class="quiz-modal-overlay"></div>
+
+    <div
+            class="quiz-modal-content"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="quiz-modal-title">
+
+        <button
+                type="button"
+                id="quiz-close-button"
+                class="quiz-close-button"
+                aria-label="Exit quiz">
+            &times;
+        </button>
+
+        <h2 id="quiz-modal-title">
+            Quiz
+        </h2>
+
+        <div id="quiz-modal-body">
+            <!-- Quiz content will go here -->
+        </div>
+
+    </div>
+
+</div>

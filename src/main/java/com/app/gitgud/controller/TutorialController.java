@@ -1,7 +1,9 @@
 package com.app.gitgud.controller;
 
 import com.app.gitgud.model.Chapter;
+import com.app.gitgud.model.Quiz;
 import com.app.gitgud.model.Section;
+import com.app.gitgud.service.QuizService;
 import com.app.gitgud.service.TutorialService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,9 +17,14 @@ import java.util.Map;
 public class TutorialController {
 
     private final TutorialService tutorialService;
+    private final QuizService quizService;
 
-    public TutorialController(TutorialService tutorialService) {
+    public TutorialController(
+            TutorialService tutorialService,
+            QuizService quizService
+    ) {
         this.tutorialService = tutorialService;
+        this.quizService = quizService;
     }
 
     @GetMapping("/tutorials")
@@ -54,8 +61,15 @@ public class TutorialController {
             return "redirect:/tutorials";
         }
 
+        List<Quiz> quizzes =
+                quizService.getSectionQuizzes(
+                        chapterId,
+                        sectionId
+                );
+
         model.addAttribute("chapter", chapter);
         model.addAttribute("section", section);
+        model.addAttribute("quizzes", quizzes);
 
         return "tutorials";
     }

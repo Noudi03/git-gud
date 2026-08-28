@@ -1,10 +1,14 @@
 package com.app.gitgud.service;
 
 import com.app.gitgud.model.Quiz;
+import com.app.gitgud.model.QuizType;
+import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.QuerySnapshot;
 import com.google.firebase.cloud.FirestoreClient;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -21,15 +25,17 @@ public class QuizService {
             String sectionId
     ) throws Exception {
 
-        return db.collection("chapters")
-                .document(chapterId)
-                .collection("sections")
-                .document(sectionId)
-                .collection("quizzes")
-                .orderBy("order")
-                .get()
-                .get()
-                .toObjects(Quiz.class);
+        QuerySnapshot snapshot =
+                db.collection("chapters")
+                        .document(chapterId)
+                        .collection("sections")
+                        .document(sectionId)
+                        .collection("quizzes")
+                        .orderBy("order")
+                        .get()
+                        .get();
+
+        return convertQuizzes(snapshot);
     }
 
     public Quiz getSectionQuiz(
@@ -38,28 +44,32 @@ public class QuizService {
             String quizId
     ) throws Exception {
 
-        return db.collection("chapters")
-                .document(chapterId)
-                .collection("sections")
-                .document(sectionId)
-                .collection("quizzes")
-                .document(quizId)
-                .get()
-                .get()
-                .toObject(Quiz.class);
+        DocumentSnapshot document =
+                db.collection("chapters")
+                        .document(chapterId)
+                        .collection("sections")
+                        .document(sectionId)
+                        .collection("quizzes")
+                        .document(quizId)
+                        .get()
+                        .get();
+
+        return convertQuiz(document);
     }
 
     public List<Quiz> getChapterQuizzes(
             String chapterId
     ) throws Exception {
 
-        return db.collection("chapters")
-                .document(chapterId)
-                .collection("quizzes")
-                .orderBy("order")
-                .get()
-                .get()
-                .toObjects(Quiz.class);
+        QuerySnapshot snapshot =
+                db.collection("chapters")
+                        .document(chapterId)
+                        .collection("quizzes")
+                        .orderBy("order")
+                        .get()
+                        .get();
+
+        return convertQuizzes(snapshot);
     }
 
     public Quiz getChapterQuiz(
@@ -67,32 +77,91 @@ public class QuizService {
             String quizId
     ) throws Exception {
 
-        return db.collection("chapters")
-                .document(chapterId)
-                .collection("quizzes")
-                .document(quizId)
-                .get()
-                .get()
-                .toObject(Quiz.class);
+        DocumentSnapshot document =
+                db.collection("chapters")
+                        .document(chapterId)
+                        .collection("quizzes")
+                        .document(quizId)
+                        .get()
+                        .get();
+
+        return convertQuiz(document);
     }
 
     public List<Quiz> getGlobalQuizzes() throws Exception {
 
-        return db.collection("quizzes")
-                .orderBy("order")
-                .get()
-                .get()
-                .toObjects(Quiz.class);
+        QuerySnapshot snapshot =
+                db.collection("quizzes")
+                        .orderBy("order")
+                        .get()
+                        .get();
+
+        return convertQuizzes(snapshot);
     }
 
     public Quiz getGlobalQuiz(
             String quizId
     ) throws Exception {
 
-        return db.collection("quizzes")
-                .document(quizId)
-                .get()
-                .get()
-                .toObject(Quiz.class);
+        DocumentSnapshot document =
+                db.collection("quizzes")
+                        .document(quizId)
+                        .get()
+                        .get();
+
+        return convertQuiz(document);
+    }
+
+    private List<Quiz> convertQuizzes(
+            QuerySnapshot snapshot
+    ) {
+
+        List<Quiz> quizzes = new ArrayList<>();
+
+        for (DocumentSnapshot document : snapshot.getDocuments()) {
+
+            Quiz quiz = convertQuiz(document);
+
+            if (quiz != null) {
+                quizzes.add(quiz);
+            }
+        }
+
+        return quizzes;
+    }
+
+    private Quiz convertQuiz(
+            DocumentSnapshot document
+    ) {
+
+        if (!document.exists()) {
+            return null;
+        }
+
+        String id = document.getId();
+
+        String title =
+                document.getString("title");
+
+        String typeValue =
+                document.getString("type");
+
+        QuizType type =
+                QuizType.fromValue(typeValue);
+
+        Long orderValue =
+                document.getLong("order");
+
+        int order =
+                orderValue != null
+                        ? orderValue.intValue()
+                        : 0;
+
+        return new Quiz(
+                id,
+                title,
+                type,
+                order
+        );
     }
 }
