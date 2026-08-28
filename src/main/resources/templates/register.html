@@ -64,7 +64,7 @@
 
             <p class="mt-3">
                 Already have an account?
-                <a href="/login">Log in</a>
+                <a th:href="@{/login}">Log in</a>
             </p>
 
         </div>
@@ -75,7 +75,7 @@
 
 <div th:replace="~{fragments/scripts :: scripts}"></div>
 
-<script type="module" src="/js/register.js"></script>
+<script type="module" th:src="@{/js/register.js}"></script>
 
 </body>
 </html>

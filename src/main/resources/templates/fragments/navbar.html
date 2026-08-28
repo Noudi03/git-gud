@@ -1,22 +1,22 @@
 <nav th:fragment="navbar" class="app-navbar">
 
     <div class="navbar-brand">
-        <a href="/">G-G-</a>
+        <a th:href="@{/}">G-G-</a>
     </div>
 
     <div class="navbar-links">
 
-        <a href="/home">Home</a>
+        <a th:href="@{/home}">Home</a>
 
         <a
                 th:if="${session.uid != null}"
-                href="/tutorials">
+                th:href="@{/tutorials}">
             Tutorials
         </a>
 
         <a
                 th:if="${session.uid != null}"
-                href="/statistics">
+                th:href="@{/statistics}">
             Statistics
         </a>
 
@@ -26,7 +26,7 @@
 
         <a
                 th:if="${session.uid == null}"
-                href="/login"
+                th:href="@{/login}"
                 class="navbar-account-button">
             Login
         </a>
