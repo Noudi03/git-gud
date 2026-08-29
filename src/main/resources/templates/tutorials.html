@@ -40,19 +40,21 @@
 
                     <div th:each="quiz : ${quizzes}">
 
-                        <button
-                                type="button"
+                        <a
                                 class="quiz-start-button"
-
-                                th:attr="
-                                    data-quiz-id=${quiz.id},
-                                    data-chapter-id=${chapter.id},
-                                    data-section-id=${section.id}
-                                "
-
+                                th:href="@{/tutorials/chapters/{chapterId}/sections/{sectionId}/quizzes/{quizId}(
+                                    chapterId=${chapter.id},
+                                    sectionId=${section.id},
+                                    quizId=${quiz.id}
+                                )}"
+                                th:attr="data-quiz-url=@{/api/quizzes/sections/{chapterId}/{sectionId}/{quizId}(
+                                    chapterId=${chapter.id},
+                                    sectionId=${section.id},
+                                    quizId=${quiz.id}
+                                )}"
                                 th:text="${quiz.title}">
                             Start Quiz
-                        </button>
+                        </a>
 
                     </div>
 

@@ -88,16 +88,18 @@ document.addEventListener(
             new QuizSession(elements);
 
 
-        async function openQuiz(button) {
+        async function openQuiz(link) {
 
             try {
 
-                await session.load(button);
+                await session.load(
+                    link.dataset.quizUrl
+                );
 
                 session.start();
 
-                modal.dataset.quizId =
-                    button.dataset.quizId;
+                modal.dataset.quizUrl =
+                    link.dataset.quizUrl;
 
                 modal.hidden = false;
 
@@ -123,15 +125,20 @@ document.addEventListener(
                 "quiz-modal-open"
             );
 
-            delete modal.dataset.quizId;
+            delete modal.dataset.quizUrl;
         }
 
 
-        startButtons.forEach(button => {
+        startButtons.forEach(link => {
 
-            button.addEventListener(
+            link.addEventListener(
                 "click",
-                () => openQuiz(button)
+                event => {
+
+                    event.preventDefault();
+
+                    openQuiz(link);
+                }
             );
 
         });
@@ -173,6 +180,7 @@ document.addEventListener(
                 ) {
                     closeQuiz();
                 }
+
             }
         );
 

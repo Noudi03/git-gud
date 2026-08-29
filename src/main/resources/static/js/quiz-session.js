@@ -17,92 +17,27 @@ export class QuizSession {
         // Questions skipped during this session.
         this.skippedQuestions = [];
 
-        // Questions that have already been answered.
+        // Questions already answered during this session.
         this.answeredQuestions = new Set();
     }
 
 
-    async load(button) {
+    async load(quizUrl) {
 
-        const quizType =
-            button.dataset.quizType;
-
-        const quizId =
-            button.dataset.quizId;
-
-        const chapterId =
-            button.dataset.chapterId;
-
-        const sectionId =
-            button.dataset.sectionId;
-
-
-        if (!quizType || !quizId) {
+        if (!quizUrl) {
             throw new Error(
-                "Missing quiz information."
+                "Missing quiz URL."
             );
         }
 
-
-        let url;
-
-
-        switch (quizType) {
-
-            case "section":
-
-                if (!chapterId || !sectionId) {
-                    throw new Error(
-                        "Section quiz is missing chapter or section information."
-                    );
-                }
-
-                url =
-                    `/api/quizzes/sections/${chapterId}/${sectionId}/${quizId}`;
-
-                break;
-
-
-            case "chapter":
-
-                if (!chapterId) {
-                    throw new Error(
-                        "Chapter quiz is missing chapter information."
-                    );
-                }
-
-                url =
-                    `/api/quizzes/chapters/${chapterId}/${quizId}`;
-
-                break;
-
-
-            case "global":
-
-                url =
-                    `/api/quizzes/${quizId}`;
-
-                break;
-
-
-            default:
-
-                throw new Error(
-                    `Unknown quiz type: ${quizType}`
-                );
-        }
-
-
         const response =
-            await fetch(url);
-
+            await fetch(quizUrl);
 
         if (!response.ok) {
             throw new Error(
                 `Failed to load quiz (${response.status})`
             );
         }
-
 
         this.quizData =
             await response.json();
@@ -132,7 +67,6 @@ export class QuizSession {
             this.quizData.quiz.title;
 
         if (
-            !this.quizData.questions ||
             this.quizData.questions.length === 0
         ) {
 
@@ -159,7 +93,11 @@ export class QuizSession {
             this.currentQuestionIndex,
             this.quizData.questions.length,
             this.elements,
-            answer => this.answer(question, answer)
+            answer =>
+                this.answer(
+                    question,
+                    answer
+                )
         );
     }
 
@@ -173,7 +111,9 @@ export class QuizSession {
         );
 
         // Mark this question as answered.
-        this.answeredQuestions.add(question.id);
+        this.answeredQuestions.add(
+            question.id
+        );
 
         // If this question was previously skipped,
         // remove it from the skipped queue.
@@ -209,8 +149,8 @@ export class QuizSession {
             return;
         }
 
-        // No unanswered original questions remain.
-        // If there are skipped questions, show them.
+        // All original questions have been
+        // answered or skipped.
         if (this.skippedQuestions.length > 0) {
 
             const skippedQuestion =
@@ -235,7 +175,7 @@ export class QuizSession {
             ];
 
         // Add the question to the skipped queue
-        // if it isn't already there.
+        // if it is not already there.
         const alreadySkipped =
             this.skippedQuestions.some(
                 skippedQuestion =>
@@ -243,10 +183,13 @@ export class QuizSession {
             );
 
         if (!alreadySkipped) {
-            this.skippedQuestions.push(question);
+
+            this.skippedQuestions.push(
+                question
+            );
         }
 
-        // Move to the next unanswered question.
+        // Find the next unanswered question.
         const nextQuestionIndex =
             this.findNextUnansweredQuestionIndex();
 
@@ -260,8 +203,8 @@ export class QuizSession {
             return;
         }
 
-        // No new unanswered questions remain.
-        // Start going through the skipped questions.
+        // No unanswered questions remain.
+        // Go back through skipped questions.
         if (this.skippedQuestions.length > 0) {
 
             const skippedQuestion =
@@ -285,7 +228,11 @@ export class QuizSession {
             this.getQuestionNumber(question),
             this.quizData.questions.length,
             this.elements,
-            answer => this.answer(question, answer)
+            answer =>
+                this.answer(
+                    question,
+                    answer
+                )
         );
     }
 
@@ -301,15 +248,18 @@ export class QuizSession {
             const question =
                 this.quizData.questions[i];
 
-            if (
-                !this.answeredQuestions.has(
+            const answered =
+                this.answeredQuestions.has(
                     question.id
-                ) &&
-                !this.skippedQuestions.some(
+                );
+
+            const skipped =
+                this.skippedQuestions.some(
                     skippedQuestion =>
                         skippedQuestion.id === question.id
-                )
-            ) {
+                );
+
+            if (!answered && !skipped) {
                 return i;
             }
         }
@@ -327,8 +277,8 @@ export class QuizSession {
             );
 
         return index !== -1
-            ? index
-            : 0;
+            ? index + 1
+            : 1;
     }
 
 
