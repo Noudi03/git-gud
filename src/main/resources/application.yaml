@@ -4,3 +4,8 @@ spring:
 
 firebase:
   service-account: classpath:firebase-service-account.json
+
+app:
+  seeder:
+    enabled: false
+    reset: false
