@@ -6,6 +6,7 @@ public class Quiz {
     private String title;
     private QuizType type;
     private int order;
+    private QuizContext context;
 
     public Quiz() {
     }
@@ -14,12 +15,14 @@ public class Quiz {
             String id,
             String title,
             QuizType type,
-            int order
+            int order,
+            QuizContext context
     ) {
         this.id = id;
         this.title = title;
         this.type = type;
         this.order = order;
+        this.context = context;
     }
 
     public String getId() {
@@ -52,5 +55,13 @@ public class Quiz {
 
     public void setOrder(int order) {
         this.order = order;
+    }
+
+    public QuizContext getContext() {
+        return context;
+    }
+
+    public void setContext(QuizContext context) {
+        this.context = context;
     }
 }

@@ -43,7 +43,13 @@
                         <button
                                 type="button"
                                 class="quiz-start-button"
-                                th:attr="data-quiz-id=${quiz.id}"
+
+                                th:attr="
+                                    data-quiz-id=${quiz.id},
+                                    data-chapter-id=${chapter.id},
+                                    data-section-id=${section.id}
+                                "
+
                                 th:text="${quiz.title}">
                             Start Quiz
                         </button>

@@ -1,7 +1,10 @@
 package com.app.gitgud.service;
 
+import com.app.gitgud.model.ChapterQuizContext;
 import com.app.gitgud.model.Quiz;
+import com.app.gitgud.model.QuizContext;
 import com.app.gitgud.model.QuizType;
+import com.app.gitgud.model.SectionQuizContext;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QuerySnapshot;
@@ -35,7 +38,13 @@ public class QuizService {
                         .get()
                         .get();
 
-        return convertQuizzes(snapshot);
+        QuizContext context =
+                new SectionQuizContext(
+                        chapterId,
+                        sectionId
+                );
+
+        return convertQuizzes(snapshot, context);
     }
 
     public Quiz getSectionQuiz(
@@ -54,7 +63,13 @@ public class QuizService {
                         .get()
                         .get();
 
-        return convertQuiz(document);
+        QuizContext context =
+                new SectionQuizContext(
+                        chapterId,
+                        sectionId
+                );
+
+        return convertQuiz(document, context);
     }
 
     public List<Quiz> getChapterQuizzes(
@@ -69,7 +84,10 @@ public class QuizService {
                         .get()
                         .get();
 
-        return convertQuizzes(snapshot);
+        QuizContext context =
+                new ChapterQuizContext(chapterId);
+
+        return convertQuizzes(snapshot, context);
     }
 
     public Quiz getChapterQuiz(
@@ -85,7 +103,10 @@ public class QuizService {
                         .get()
                         .get();
 
-        return convertQuiz(document);
+        QuizContext context =
+                new ChapterQuizContext(chapterId);
+
+        return convertQuiz(document, context);
     }
 
     public List<Quiz> getGlobalQuizzes() throws Exception {
@@ -96,7 +117,7 @@ public class QuizService {
                         .get()
                         .get();
 
-        return convertQuizzes(snapshot);
+        return convertQuizzes(snapshot, null);
     }
 
     public Quiz getGlobalQuiz(
@@ -109,18 +130,20 @@ public class QuizService {
                         .get()
                         .get();
 
-        return convertQuiz(document);
+        return convertQuiz(document, null);
     }
 
     private List<Quiz> convertQuizzes(
-            QuerySnapshot snapshot
+            QuerySnapshot snapshot,
+            QuizContext context
     ) {
 
         List<Quiz> quizzes = new ArrayList<>();
 
         for (DocumentSnapshot document : snapshot.getDocuments()) {
 
-            Quiz quiz = convertQuiz(document);
+            Quiz quiz =
+                    convertQuiz(document, context);
 
             if (quiz != null) {
                 quizzes.add(quiz);
@@ -131,14 +154,16 @@ public class QuizService {
     }
 
     private Quiz convertQuiz(
-            DocumentSnapshot document
+            DocumentSnapshot document,
+            QuizContext context
     ) {
 
         if (!document.exists()) {
             return null;
         }
 
-        String id = document.getId();
+        String id =
+                document.getId();
 
         String title =
                 document.getString("title");
@@ -161,7 +186,8 @@ public class QuizService {
                 id,
                 title,
                 type,
-                order
+                order,
+                context
         );
     }
 }
