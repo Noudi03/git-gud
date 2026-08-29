@@ -19,12 +19,50 @@
             &times;
         </button>
 
-        <h2 id="quiz-modal-title">
-            Quiz
-        </h2>
+        <div class="quiz-header">
+
+            <h2 id="quiz-modal-title">
+                Quiz
+            </h2>
+
+            <span id="quiz-progress"
+                  class="quiz-progress">
+        </span>
+
+        </div>
 
         <div id="quiz-modal-body">
-            <!-- Quiz content will go here -->
+
+            <h3 id="quiz-question"></h3>
+
+            <div id="quiz-options"
+                 class="quiz-options">
+            </div>
+
+            <div id="quiz-feedback"
+                 class="quiz-feedback"
+                 hidden>
+            </div>
+
+        </div>
+
+        <div class="quiz-actions">
+
+            <button
+                    type="button"
+                    id="quiz-skip-button"
+                    class="quiz-button quiz-button-secondary">
+                Skip for now
+            </button>
+
+            <button
+                    type="button"
+                    id="quiz-next-button"
+                    class="quiz-button quiz-button-primary"
+                    hidden>
+                Next
+            </button>
+
         </div>
 
     </div>

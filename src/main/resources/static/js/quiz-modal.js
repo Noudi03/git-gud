@@ -1,180 +1,180 @@
-document.addEventListener("DOMContentLoaded", () => {
-
-    const modal =
-        document.getElementById("quiz-modal");
-
-    const closeButton =
-        document.getElementById("quiz-close-button");
-
-    const modalContent =
-        modal?.querySelector(".quiz-modal-content");
-
-    const modalTitle =
-        document.getElementById("quiz-modal-title");
-
-    const modalBody =
-        document.getElementById("quiz-modal-body");
-
-    const startButtons =
-        document.querySelectorAll(".quiz-start-button");
+import { QuizSession } from "./quiz-session.js";
 
 
-    if (!modal || !modalTitle || !modalBody) {
-        return;
-    }
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+        const modal =
+            document.getElementById("quiz-modal");
+
+        const closeButton =
+            document.getElementById(
+                "quiz-close-button"
+            );
+
+        const modalContent =
+            modal?.querySelector(
+                ".quiz-modal-content"
+            );
+
+        const modalTitle =
+            document.getElementById(
+                "quiz-modal-title"
+            );
+
+        const progress =
+            document.getElementById(
+                "quiz-progress"
+            );
+
+        const questionText =
+            document.getElementById(
+                "quiz-question"
+            );
+
+        const optionsContainer =
+            document.getElementById(
+                "quiz-options"
+            );
+
+        const feedback =
+            document.getElementById(
+                "quiz-feedback"
+            );
+
+        const skipButton =
+            document.getElementById(
+                "quiz-skip-button"
+            );
+
+        const nextButton =
+            document.getElementById(
+                "quiz-next-button"
+            );
+
+        const startButtons =
+            document.querySelectorAll(
+                ".quiz-start-button"
+            );
 
 
-    async function openQuiz(button) {
-
-        const quizId = button.dataset.quizId;
-        const chapterId = button.dataset.chapterId;
-        const sectionId = button.dataset.sectionId;
-
-        if (!quizId || !chapterId || !sectionId) {
-            console.error("Missing quiz information.");
+        if (
+            !modal ||
+            !modalTitle ||
+            !progress ||
+            !questionText ||
+            !optionsContainer ||
+            !feedback ||
+            !skipButton ||
+            !nextButton
+        ) {
             return;
         }
 
-        try {
 
-            const response = await fetch(
-                `/api/quizzes/sections/${chapterId}/${sectionId}/${quizId}`
-            );
+        const elements = {
+            modalTitle,
+            progress,
+            questionText,
+            optionsContainer,
+            feedback,
+            skipButton,
+            nextButton
+        };
 
-            if (!response.ok) {
-                console.error(
-                    "Failed to load quiz:",
-                    response.status
+
+        const session =
+            new QuizSession(elements);
+
+
+        async function openQuiz(button) {
+
+            try {
+
+                await session.load(button);
+
+                session.start();
+
+                modal.dataset.quizId =
+                    button.dataset.quizId;
+
+                modal.hidden = false;
+
+                document.body.classList.add(
+                    "quiz-modal-open"
                 );
 
-                return;
+            } catch (error) {
+
+                console.error(
+                    "Could not load quiz:",
+                    error
+                );
             }
-
-            const quizData = await response.json();
-
-            console.log("Quiz data:", quizData);
+        }
 
 
-            /*
-             * Display quiz title
-             */
+        function closeQuiz() {
 
-            modalTitle.textContent =
-                quizData.quiz.title;
+            modal.hidden = true;
 
-
-            /*
-             * Display first question
-             */
-
-            if (
-                !quizData.questions ||
-                quizData.questions.length === 0
-            ) {
-                modalBody.textContent =
-                    "This quiz has no questions.";
-
-            } else {
-
-                const question =
-                    quizData.questions[0];
-
-                modalBody.textContent =
-                    question.text;
-            }
-
-
-            /*
-             * Store quiz ID
-             */
-
-            modal.dataset.quizId = quizId;
-
-
-            /*
-             * Open modal
-             */
-
-            modal.hidden = false;
-
-            document.body.classList.add(
+            document.body.classList.remove(
                 "quiz-modal-open"
             );
 
-        } catch (error) {
-
-            console.error(
-                "Could not load quiz:",
-                error
-            );
+            delete modal.dataset.quizId;
         }
-    }
 
 
-    function closeQuiz() {
+        startButtons.forEach(button => {
 
-        modal.hidden = true;
+            button.addEventListener(
+                "click",
+                () => openQuiz(button)
+            );
 
-        document.body.classList.remove(
-            "quiz-modal-open"
-        );
-
-        delete modal.dataset.quizId;
-    }
-
-
-    /*
-     * Start buttons
-     */
-
-    startButtons.forEach(button => {
-
-        button.addEventListener("click", () => {
-            openQuiz(button);
         });
 
-    });
+
+        closeButton.addEventListener(
+            "click",
+            closeQuiz
+        );
 
 
-    /*
-     * Close button
-     */
-
-    closeButton?.addEventListener(
-        "click",
-        closeQuiz
-    );
-
-
-    /*
-     * Prevent clicks inside modal
-     * from closing it.
-     */
-
-    modalContent?.addEventListener(
-        "click",
-        event => {
-            event.stopPropagation();
-        }
-    );
-
-
-    /*
-     * Escape closes the modal.
-     */
-
-    document.addEventListener(
-        "keydown",
-        event => {
-
-            if (
-                event.key === "Escape" &&
-                !modal.hidden
-            ) {
-                closeQuiz();
+        modalContent?.addEventListener(
+            "click",
+            event => {
+                event.stopPropagation();
             }
+        );
 
-        }
-    );
 
-});
+        skipButton.addEventListener(
+            "click",
+            () => session.skip()
+        );
+
+
+        nextButton.addEventListener(
+            "click",
+            () => session.next()
+        );
+
+
+        document.addEventListener(
+            "keydown",
+            event => {
+
+                if (
+                    event.key === "Escape" &&
+                    !modal.hidden
+                ) {
+                    closeQuiz();
+                }
+            }
+        );
+
+    }
+);

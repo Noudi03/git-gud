@@ -1,3 +1,7 @@
+/* =========================
+   Quiz Modal
+   ========================= */
+
 .quiz-modal {
     position: fixed;
     inset: 0;
@@ -8,6 +12,14 @@
     justify-content: center;
 
     padding: 1rem;
+}
+
+/*
+ * Explicitly hide the modal when the hidden
+ * attribute is present.
+ */
+.quiz-modal[hidden] {
+    display: none;
 }
 
 .quiz-modal-overlay {
@@ -36,7 +48,32 @@
 }
 
 
-/* Close button */
+/* =========================
+   Quiz Header
+   ========================= */
+
+.quiz-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+
+    margin-bottom: 1.5rem;
+    padding-right: 2rem;
+}
+
+.quiz-header h2 {
+    margin: 0;
+}
+
+.quiz-progress {
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+}
+
+
+/* =========================
+   Close Button
+   ========================= */
 
 .quiz-close-button {
     position: absolute;
@@ -74,7 +111,156 @@
 }
 
 
-/* Prevent background scrolling */
+/* =========================
+   Question
+   ========================= */
+
+#quiz-question {
+    margin-bottom: 1.5rem;
+
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+
+/* =========================
+   Answer Options
+   ========================= */
+
+.quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.quiz-option {
+    width: 100%;
+
+    padding: 0.85rem 1rem;
+
+    text-align: left;
+
+    background-color: var(--color-surface);
+    color: var(--color-text);
+
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+
+    cursor: pointer;
+
+    transition:
+            background-color 0.15s ease,
+            border-color 0.15s ease,
+            transform 0.1s ease;
+}
+
+.quiz-option:hover:not(:disabled) {
+    background-color: var(--color-surface-muted);
+    border-color: var(--color-primary);
+
+    transform: translateY(-1px);
+}
+
+.quiz-option:disabled {
+    cursor: default;
+}
+
+
+/* =========================
+   Answer States
+   ========================= */
+
+.quiz-option.correct {
+    background-color: var(--color-success);
+    border-color: var(--color-success);
+    color: white;
+}
+
+.quiz-option.incorrect {
+    background-color: var(--color-danger);
+    border-color: var(--color-danger);
+    color: white;
+}
+
+
+/* =========================
+   Feedback
+   ========================= */
+
+.quiz-feedback {
+    margin-top: 1rem;
+    padding: 0.75rem 1rem;
+
+    border-radius: var(--radius-sm);
+
+    font-weight: 600;
+}
+
+.quiz-feedback-correct {
+    background-color: var(--color-success-light);
+    color: var(--color-success);
+}
+
+.quiz-feedback-incorrect {
+    background-color: var(--color-danger-light);
+    color: var(--color-danger);
+}
+
+
+/* =========================
+   Actions
+   ========================= */
+
+.quiz-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-top: 2rem;
+}
+
+.quiz-button {
+    padding: 0.6rem 1rem;
+
+    border: none;
+    border-radius: var(--radius-sm);
+
+    font: inherit;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+            background-color 0.15s ease,
+            color 0.15s ease;
+}
+
+.quiz-button-primary {
+    background-color: var(--color-primary);
+    color: white;
+}
+
+.quiz-button-primary:hover {
+    background-color: var(--color-primary-hover);
+}
+
+.quiz-button-secondary {
+    background-color: transparent;
+    color: var(--color-text-muted);
+
+    border: 1px solid var(--color-border);
+}
+
+.quiz-button-secondary:hover {
+    background-color: var(--color-surface-muted);
+    color: var(--color-text);
+}
+
+
+/* =========================
+   Background Scrolling
+   ========================= */
 
 .quiz-modal-open {
     overflow: hidden;

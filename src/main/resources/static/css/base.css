@@ -6,6 +6,11 @@
 
     --color-success: #04aa6d;
     --color-success-hover: #038a58;
+    --color-success-light: #e6f7f0;
+
+    --color-danger: #dc2626;
+    --color-danger-hover: #b91c1c;
+    --color-danger-light: #fef2f2;
 
     --color-background: #f8fafc;
     --color-surface: #ffffff;
