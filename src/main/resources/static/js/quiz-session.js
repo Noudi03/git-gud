@@ -223,9 +223,15 @@ export class QuizSession {
 
     showQuestion(question) {
 
+        const questionIndex =
+            this.quizData.questions.findIndex(
+                originalQuestion =>
+                    originalQuestion.id === question.id
+            );
+
         renderQuestion(
             question,
-            this.getQuestionNumber(question),
+            questionIndex,
             this.quizData.questions.length,
             this.elements,
             answer =>
@@ -265,20 +271,6 @@ export class QuizSession {
         }
 
         return -1;
-    }
-
-
-    getQuestionNumber(question) {
-
-        const index =
-            this.quizData.questions.findIndex(
-                originalQuestion =>
-                    originalQuestion.id === question.id
-            );
-
-        return index !== -1
-            ? index + 1
-            : 1;
     }
 
 
