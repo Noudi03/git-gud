@@ -13,6 +13,12 @@ export class QuizSession {
 
         this.quizData = null;
         this.currentQuestionIndex = 0;
+
+        // Questions skipped during this session.
+        this.skippedQuestions = [];
+
+        // Questions that have already been answered.
+        this.answeredQuestions = new Set();
     }
 
 
@@ -47,6 +53,9 @@ export class QuizSession {
             await response.json();
 
         this.currentQuestionIndex = 0;
+
+        this.skippedQuestions = [];
+        this.answeredQuestions = new Set();
 
         return this.quizData;
     }
@@ -108,54 +117,172 @@ export class QuizSession {
             this.elements
         );
 
+        // Mark this question as answered.
+        this.answeredQuestions.add(question.id);
+
+        // If this question was previously skipped,
+        // remove it from the skipped queue.
+        this.skippedQuestions =
+            this.skippedQuestions.filter(
+                skippedQuestion =>
+                    skippedQuestion.id !== question.id
+            );
+
         const {
             nextButton
         } = this.elements;
 
-        if (
-            this.currentQuestionIndex ===
-            this.quizData.questions.length - 1
-        ) {
-            nextButton.textContent = "Finish";
-        } else {
-            nextButton.textContent = "Next";
-        }
+        nextButton.textContent =
+            this.hasQuestionsRemaining()
+                ? "Next"
+                : "Finish";
     }
 
 
     next() {
 
-        if (
-            this.currentQuestionIndex <
-            this.quizData.questions.length - 1
-        ) {
+        const nextQuestionIndex =
+            this.findNextUnansweredQuestionIndex();
 
-            this.currentQuestionIndex++;
+        if (nextQuestionIndex !== -1) {
+
+            this.currentQuestionIndex =
+                nextQuestionIndex;
 
             this.showCurrentQuestion();
 
-        } else {
-
-            this.finish();
+            return;
         }
+
+        // No unanswered original questions remain.
+        // If there are skipped questions, show them.
+        if (this.skippedQuestions.length > 0) {
+
+            const skippedQuestion =
+                this.skippedQuestions.shift();
+
+            this.showQuestion(
+                skippedQuestion
+            );
+
+            return;
+        }
+
+        this.finish();
     }
 
 
     skip() {
 
-        if (
-            this.currentQuestionIndex <
-            this.quizData.questions.length - 1
-        ) {
+        const question =
+            this.quizData.questions[
+                this.currentQuestionIndex
+            ];
 
-            this.currentQuestionIndex++;
+        // Add the question to the skipped queue
+        // if it isn't already there.
+        const alreadySkipped =
+            this.skippedQuestions.some(
+                skippedQuestion =>
+                    skippedQuestion.id === question.id
+            );
+
+        if (!alreadySkipped) {
+            this.skippedQuestions.push(question);
+        }
+
+        // Move to the next unanswered question.
+        const nextQuestionIndex =
+            this.findNextUnansweredQuestionIndex();
+
+        if (nextQuestionIndex !== -1) {
+
+            this.currentQuestionIndex =
+                nextQuestionIndex;
 
             this.showCurrentQuestion();
 
-        } else {
-
-            this.finish();
+            return;
         }
+
+        // No new unanswered questions remain.
+        // Start going through the skipped questions.
+        if (this.skippedQuestions.length > 0) {
+
+            const skippedQuestion =
+                this.skippedQuestions.shift();
+
+            this.showQuestion(
+                skippedQuestion
+            );
+
+            return;
+        }
+
+        this.finish();
+    }
+
+
+    showQuestion(question) {
+
+        renderQuestion(
+            question,
+            this.getQuestionNumber(question),
+            this.quizData.questions.length,
+            this.elements,
+            answer => this.answer(question, answer)
+        );
+    }
+
+
+    findNextUnansweredQuestionIndex() {
+
+        for (
+            let i = 0;
+            i < this.quizData.questions.length;
+            i++
+        ) {
+
+            const question =
+                this.quizData.questions[i];
+
+            if (
+                !this.answeredQuestions.has(
+                    question.id
+                ) &&
+                !this.skippedQuestions.some(
+                    skippedQuestion =>
+                        skippedQuestion.id === question.id
+                )
+            ) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+
+    getQuestionNumber(question) {
+
+        const index =
+            this.quizData.questions.findIndex(
+                originalQuestion =>
+                    originalQuestion.id === question.id
+            );
+
+        return index !== -1
+            ? index
+            : 0;
+    }
+
+
+    hasQuestionsRemaining() {
+
+        return (
+            this.findNextUnansweredQuestionIndex() !== -1 ||
+            this.skippedQuestions.length > 0
+        );
     }
 
 
