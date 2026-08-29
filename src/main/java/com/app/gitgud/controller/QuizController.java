@@ -25,6 +25,11 @@ public class QuizController {
         this.questionService = questionService;
     }
 
+
+    /*
+     * Section quiz
+     */
+
     @GetMapping(
             "/api/quizzes/sections/{chapterId}/{sectionId}/{quizId}"
     )
@@ -34,14 +39,83 @@ public class QuizController {
             @PathVariable String quizId
     ) throws Exception {
 
-        Quiz quiz = quizService.getSectionQuiz(
-                chapterId,
-                sectionId,
-                quizId
-        );
+        Quiz quiz =
+                quizService.getSectionQuiz(
+                        chapterId,
+                        sectionId,
+                        quizId
+                );
 
         if (quiz == null) {
-            throw new IllegalArgumentException("Quiz not found");
+            throw new IllegalArgumentException(
+                    "Quiz not found"
+            );
+        }
+
+        List<Question> questions =
+                questionService.getQuizQuestions(quiz);
+
+        return new QuizData(
+                quiz,
+                questions
+        );
+    }
+
+
+    /*
+     * Chapter quiz
+     */
+
+    @GetMapping(
+            "/api/quizzes/chapters/{chapterId}/{quizId}"
+    )
+    public QuizData getChapterQuiz(
+            @PathVariable String chapterId,
+            @PathVariable String quizId
+    ) throws Exception {
+
+        Quiz quiz =
+                quizService.getChapterQuiz(
+                        chapterId,
+                        quizId
+                );
+
+        if (quiz == null) {
+            throw new IllegalArgumentException(
+                    "Quiz not found"
+            );
+        }
+
+        List<Question> questions =
+                questionService.getQuizQuestions(quiz);
+
+        return new QuizData(
+                quiz,
+                questions
+        );
+    }
+
+
+    /*
+     * Global quiz
+     */
+
+    @GetMapping(
+            "/api/quizzes/{quizId}"
+    )
+    public QuizData getGlobalQuiz(
+            @PathVariable String quizId
+    ) throws Exception {
+
+        Quiz quiz =
+                quizService.getGlobalQuiz(
+                        quizId
+                );
+
+        if (quiz == null) {
+            throw new IllegalArgumentException(
+                    "Quiz not found"
+            );
         }
 
         List<Question> questions =

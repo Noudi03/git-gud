@@ -24,6 +24,9 @@ export class QuizSession {
 
     async load(button) {
 
+        const quizType =
+            button.dataset.quizType;
+
         const quizId =
             button.dataset.quizId;
 
@@ -33,21 +36,73 @@ export class QuizSession {
         const sectionId =
             button.dataset.sectionId;
 
-        if (!quizId || !chapterId || !sectionId) {
+
+        if (!quizType || !quizId) {
             throw new Error(
                 "Missing quiz information."
             );
         }
 
-        const response = await fetch(
-            `/api/quizzes/sections/${chapterId}/${sectionId}/${quizId}`
-        );
+
+        let url;
+
+
+        switch (quizType) {
+
+            case "section":
+
+                if (!chapterId || !sectionId) {
+                    throw new Error(
+                        "Section quiz is missing chapter or section information."
+                    );
+                }
+
+                url =
+                    `/api/quizzes/sections/${chapterId}/${sectionId}/${quizId}`;
+
+                break;
+
+
+            case "chapter":
+
+                if (!chapterId) {
+                    throw new Error(
+                        "Chapter quiz is missing chapter information."
+                    );
+                }
+
+                url =
+                    `/api/quizzes/chapters/${chapterId}/${quizId}`;
+
+                break;
+
+
+            case "global":
+
+                url =
+                    `/api/quizzes/${quizId}`;
+
+                break;
+
+
+            default:
+
+                throw new Error(
+                    `Unknown quiz type: ${quizType}`
+                );
+        }
+
+
+        const response =
+            await fetch(url);
+
 
         if (!response.ok) {
             throw new Error(
                 `Failed to load quiz (${response.status})`
             );
         }
+
 
         this.quizData =
             await response.json();
