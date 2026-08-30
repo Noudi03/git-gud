@@ -2,6 +2,7 @@ package com.app.gitgud.seeder;
 
 import com.app.gitgud.model.Question;
 import com.app.gitgud.model.Quiz;
+import com.app.gitgud.model.QuizType;
 import com.app.gitgud.model.Section;
 import com.app.gitgud.seeder.data.chapter1.Chapter1Data;
 import com.google.cloud.firestore.CollectionReference;
@@ -15,7 +16,7 @@ import org.springframework.stereotype.Component;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.Objects;
 
 @Component
 public class ContentSeeder implements CommandLineRunner {
@@ -55,104 +56,109 @@ public class ContentSeeder implements CommandLineRunner {
             seedChapter(db, data);
             System.out.println("Seeded chapter: " + data.getChapter().getTitle());
         }
-
+        seedReviewQuiz(db, chapters);
         System.out.println("Seeding completed.");
     }
 
+    // quizes are stored as subcollections within their parent section or parent chapter (except of global quizes)
+    // questions are stored as a subcolletion (under their quiz)
     private void seedChapter(Firestore db, ChapterData data) throws Exception {
-        // Save chapter document
+
         DocumentReference chapterRef = db.collection("chapters").document(data.getChapter().getId());
         chapterRef.set(data.getChapter()).get();
 
         Map<String, List<Question>> allQuestions = data.getQuestions();
 
         for (Section section : data.getSections()) {
-            // Save section document
-            chapterRef.collection("sections")
-                    .document(section.getId())
-                    .set(section)
-                    .get();
+
+            DocumentReference sectionRef = chapterRef.collection("sections").document(section.getId());
+            sectionRef.set(section).get();
 
             List<Question> questions = allQuestions.getOrDefault(section.getId(), List.of());
 
-            //Save questions as subcollection under section
-            for (Question q : questions) {
-                chapterRef.collection("sections")
-                        .document(section.getId())
-                        .collection("questions")
-                        .document(q.getId())
-                        .set(q)
-                        .get();
-            }
-
-            //create mini quiz for this section
+            // section level practice quiz
             if (!questions.isEmpty()) {
-                List<String> questionIds = questions.stream()
-                        .map(Question::getId)
-                        .collect(Collectors.toList());
+                String quizId = "quiz-practice";
 
-                Quiz miniQuiz = new Quiz();
-                miniQuiz.setId("quiz-" + section.getId());
-                miniQuiz.setChapterId(data.getChapter().getId());
-                miniQuiz.setSectionId(section.getId());
-                miniQuiz.setType("mini");
-                miniQuiz.setQuestionIds(questionIds);
+                Quiz practiceQuiz = new Quiz();
+                practiceQuiz.setId(quizId);
+                practiceQuiz.setTitle("Practice Quiz");
+                practiceQuiz.setType(QuizType.PRACTICE);
+                practiceQuiz.setOrder(1);
 
-                db.collection("quizzes")
-                        .document(miniQuiz.getId())
-                        .set(miniQuiz)
-                        .get();
+                sectionRef.collection("quizzes").document(quizId).set(practiceQuiz).get();
+
+                for (Question q : questions) {
+                    sectionRef.collection("quizzes")
+                            .document(quizId)
+                            .collection("questions")
+                            .document(q.getId())
+                            .set(q)
+                            .get();
+                }
             }
         }
-
-        // create tge final quiz for the chapter
-        // takes the first question from each section
-        // TODO: replace with skill based generation of questions
-        List<String> finalQuestionIds = data.getSections().stream()
+        // todo: make it skill based
+        // Chapter-level final quiz: one question per section
+        List<Question> finalQuestions = data.getSections().stream()
                 .map(section -> {
                     List<Question> qs = allQuestions.getOrDefault(section.getId(), List.of());
-                    return qs.isEmpty() ? null : qs.get(0).getId();
+                    return qs.isEmpty() ? null : qs.getFirst();
                 })
-                .filter(id -> id != null)
-                .collect(Collectors.toList());
+                .filter(Objects::nonNull)
+                .toList();
+
+        String finalQuizId = "quiz-" + data.getChapter().getId() + "-final";
 
         Quiz finalQuiz = new Quiz();
-        finalQuiz.setId("quiz-" + data.getChapter().getId() +  "-final");
-        finalQuiz.setChapterId(data.getChapter().getId());
-        finalQuiz.setSectionId(null);
-        finalQuiz.setType("final");
-        finalQuiz.setQuestionIds(finalQuestionIds);
 
-        db.collection("quizzes")
-                .document(finalQuiz.getId())
-                .set(finalQuiz)
-                .get();
+        finalQuiz.setId(finalQuizId);
+        finalQuiz.setTitle("Final Quiz");
+        finalQuiz.setType(QuizType.FINAL);
+        finalQuiz.setOrder(1);
+
+        chapterRef.collection("quizzes").document(finalQuizId).set(finalQuiz).get();
+
+        for (Question q : finalQuestions) {
+            chapterRef.collection("quizzes")
+                    .document(finalQuizId)
+                    .collection("questions")
+                    .document(q.getId())
+                    .set(q)
+                    .get();
+        }
     }
-
-    // Review quiz, called after all chapters are seeded
-    // Cross-chapter: takes one question from each chapter's first section
-
+    // todo: make it skill based
+    // global review quiz. One question per chapter
     private void seedReviewQuiz(Firestore db, List<ChapterData> chapters) throws Exception {
-        List<String> reviewQuestionIds = chapters.stream()
+
+        List<Question> reviewQuestions = chapters.stream()
                 .map(data -> {
                     List<Question> qs = data.getQuestions()
-                            .getOrDefault(data.getSections().get(0).getId(), List.of());
-                    return qs.isEmpty() ? null : qs.get(0).getId();
+                            .getOrDefault(data.getSections().getFirst().getId(), List.of()); // id of the first section of the chapter
+                    return qs.isEmpty() ? null : qs.getFirst();
                 })
-                .filter(id -> id != null)
-                .collect(Collectors.toList());
+                .filter(Objects::nonNull)
+                .toList();
+
+        String reviewQuizId = "quiz-review";
 
         Quiz reviewQuiz = new Quiz();
-        reviewQuiz.setId("quiz-review");
-        reviewQuiz.setChapterId(null);
-        reviewQuiz.setSectionId(null);
-        reviewQuiz.setType("review");
-        reviewQuiz.setQuestionIds(reviewQuestionIds);
+        reviewQuiz.setId(reviewQuizId);
+        reviewQuiz.setTitle("Review Quiz");
+        reviewQuiz.setType(QuizType.REVIEW);
+        reviewQuiz.setOrder(1);
 
-        db.collection("quizzes")
-                .document(reviewQuiz.getId())
-                .set(reviewQuiz)
-                .get();
+        db.collection("quizzes").document(reviewQuizId).set(reviewQuiz).get();
+
+        for (Question q : reviewQuestions) {
+            db.collection("quizzes")
+                    .document(reviewQuizId)
+                    .collection("questions")
+                    .document(q.getId())
+                    .set(q)
+                    .get();
+        }
 
         System.out.println("Seeded review quiz.");
     }

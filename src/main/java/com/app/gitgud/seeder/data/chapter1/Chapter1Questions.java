@@ -1,6 +1,7 @@
 package com.app.gitgud.seeder.data.chapter1;
 
 import com.app.gitgud.model.Question;
+import com.app.gitgud.model.QuestionDifficulty;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -31,7 +32,7 @@ public class Chapter1Questions {
     private static List<Question> section11() {
         return Arrays.asList(
 
-                build("q1", "chapter-1", "section-1-1",
+                build("q1",
                         "What is git mainly used for?",
                         opts("Managing databases", "Storing files",
                                 "Tracking changes in files over time", "Backing up a project"),
@@ -40,7 +41,7 @@ public class Chapter1Questions {
                         "Git was created by developers for developers. Think which one of the answers is the most common problem they face day to day."
                 ),
 
-                build("q2", "chapter-1", "section-1-1",
+                build("q2",
                         "What happens if you break your code and you use git?",
                         opts("You lose everything",
                                 "You can go back to a previous saved version",
@@ -51,7 +52,7 @@ public class Chapter1Questions {
                         "Git stores snapshots of your project at different points in time."
                 ),
 
-                build("q3", "chapter-1", "section-1-1",
+                build("q3",
                         "What makes git distributed?",
                         opts("It works online",
                                 "It distributes files across multiple hard drives",
@@ -71,7 +72,7 @@ public class Chapter1Questions {
     private static List<Question> section12() {
         return Arrays.asList(
 
-                build("q1", "chapter-1", "section-1-2",
+                build("q1",
                         "Why do you need to add your name and email to git?",
                         opts("So you can sign up and use Github",
                                 "To be able to run git",
@@ -81,7 +82,7 @@ public class Chapter1Questions {
                         "Think about what git does every time you save your work.",
                         "If multiple people work on the same project, how do you know who made each change?"
                 ),
-                build("q2", "chapter-1", "section-1-2",
+                build("q2",
                         "Why how do you set your name in git?",
                         opts("git config --name \"Name\"",
                                 "git name --config \"Name\"",
@@ -92,7 +93,7 @@ public class Chapter1Questions {
                         "It is a user configuration"
                 ),
 
-                build("q3", "chapter-1", "section-1-2",
+                build("q3",
                         "Which configuration level overrides the global settings for a single project?",
                         opts("--system", "--local", "--global", "--project"),
                         "B", "advanced",
@@ -109,7 +110,7 @@ public class Chapter1Questions {
     private static List<Question> section13() {
         return Arrays.asList(
 
-                build("q1", "chapter-1", "section-1-3",
+                build("q1",
                         "Which folder is created after running the command `git init`?",
                         opts(".github", ".gitconfig", "refs", ".git"),
                         "D", "beginner",
@@ -117,7 +118,7 @@ public class Chapter1Questions {
                         "The folder name is related to the tool itself."
                 ),
 
-                build("q2", "chapter-1", "section-1-3",
+                build("q2",
                         "What happens after deleting the .git folder?",
                         opts("Git stops tracking the project and your files get deleted",
                                 "Git stops tracking the project and your files remain",
@@ -128,7 +129,7 @@ public class Chapter1Questions {
                         "Think of .git as the memory of git. Your files are separate from that memory."
                 ),
 
-                build("q3", "chapter-1", "section-1-3",
+                build("q3",
                         "Which file inside the .git directory points to your current branch?",
                         opts("HEAD", "refs", "objects", "config"),
                         "A", "advanced",
@@ -145,7 +146,7 @@ public class Chapter1Questions {
     private static List<Question> section14() {
         return Arrays.asList(
 
-                build("q1", "chapter-1", "section-1-4",
+                build("q1",
                         "What does `git add` do?",
                         opts("Upload files to github", "Save your files permanently",
                                 "Move files to the staging area", "Commit files"),
@@ -154,7 +155,7 @@ public class Chapter1Questions {
                         "git add prepares files, but does not save them permanently."
                 ),
 
-                build("q2", "chapter-1", "section-1-4",
+                build("q2",
                         "Which command stages all changed files at once?",
                         opts("git stage --all", "git add --all", "git add .", "git stage all"),
                         "C", "intermediate",
@@ -162,7 +163,7 @@ public class Chapter1Questions {
                         "You want to add everything in the current folder."
                 ),
 
-                build("q3", "chapter-1", "section-1-4",
+                build("q3",
                         "You run `git add file1`, then edit `file1`, then run `git commit`. What gets saved?",
                         opts("The latest version of the file",
                                 "Both versions",
@@ -173,7 +174,7 @@ public class Chapter1Questions {
                         "git add takes a picture of the file at that exact moment. Changes after that are not in the snapshot."
                 ),
 
-                build("q4", "chapter-1", "section-1-4",
+                build("q4",
                         "Which flag allows you to stage specific parts of a file?",
                         opts("git add --section", "git add -p", "git add --chunk", "git add --select"),
                         "B", "advanced",
@@ -190,7 +191,7 @@ public class Chapter1Questions {
     private static List<Question> section15() {
         return Arrays.asList(
 
-                build("q1", "chapter-1", "section-1-5",
+                build("q1",
                         "What does `git commit` do?",
                         opts("Uploads your files to github",
                                 "Stages all changed files",
@@ -201,7 +202,7 @@ public class Chapter1Questions {
                         "You want to permanently save your current staged changes."
                 ),
 
-                build("q2", "chapter-1", "section-1-5",
+                build("q2",
                         "Which of the following is the most correct commit message?",
                         opts("Fixed login bug", "Fixes", "Fix login bug", "Fix stuff"),
                         "C", "intermediate",
@@ -209,7 +210,7 @@ public class Chapter1Questions {
                         "A good commit message is short, specific and uses imperative mood (e.g. 'Fix', not 'Fixed')."
                 ),
 
-                build("q3", "chapter-1", "section-1-5",
+                build("q3",
                         "What does `git commit --amend` do?",
                         opts("Edits the most recent commit",
                                 "Merges the last 2 commits",
@@ -220,7 +221,7 @@ public class Chapter1Questions {
                         "It only affects the most recent commit, not older ones."
                 ),
 
-                build("q4", "chapter-1", "section-1-5",
+                build("q4",
                         "What unique identifier does git assign to every commit?",
                         opts("A timestamp", "A random sequential number",
                                 "An md5 hash", "A sha-1 hash"),
@@ -238,7 +239,7 @@ public class Chapter1Questions {
     private static List<Question> section16() {
         return Arrays.asList(
 
-                build("q1", "chapter-1", "section-1-6",
+                build("q1",
                         "What does `git log` do?",
                         opts("Shows the current status of your files",
                                 "Shows the differences between two files",
@@ -249,7 +250,7 @@ public class Chapter1Questions {
                         "It shows you the past, not the current state of files."
                 ),
 
-                build("q2", "chapter-1", "section-1-6",
+                build("q2",
                         "What does `git log --oneline` do differently compared to `git log`?",
                         opts("Shows only the last commit in 1 line",
                                 "Shows each commit compressed into one line",
@@ -260,7 +261,7 @@ public class Chapter1Questions {
                         "It shows the same information as git log, just more compact."
                 ),
 
-                build("q3", "chapter-1", "section-1-6",
+                build("q3",
                         "What does `git diff` show when run without any arguments?",
                         opts("Changes between 2 branches",
                                 "Changes not yet staged",
@@ -271,7 +272,7 @@ public class Chapter1Questions {
                         "'diff' shows the difference between your working directory and the staging area."
                 ),
 
-                build("q4", "chapter-1", "section-1-6",
+                build("q4",
                         "In `git diff` output, what does a line starting with `+` mean?",
                         opts("A line that was added", "A line that was deleted",
                                 "A line that was modified", "An unchanged line"),
@@ -280,7 +281,7 @@ public class Chapter1Questions {
                         "Red lines were removed, green lines were added. Which symbol matches the green lines?"
                 ),
 
-                build("q5", "chapter-1", "section-1-6",
+                build("q5",
                         "Which command shows a visual graph of all branches in the terminal?",
                         opts("git log --oneline --graph --all",
                                 "git log --tree",
@@ -300,7 +301,7 @@ public class Chapter1Questions {
     private static List<Question> section17() {
         return Arrays.asList(
 
-                build("q1", "chapter-1", "section-1-7",
+                build("q1",
                         "What does `.gitignore` do?",
                         opts("Deletes files from the project",
                                 "Tells git which files not to track",
@@ -311,7 +312,7 @@ public class Chapter1Questions {
                         "It is a list of files and folders that git should pretend don't exist."
                 ),
 
-                build("q2", "chapter-1", "section-1-7",
+                build("q2",
                         "Which of the following files belongs in the `.gitignore` file?",
                         opts("index.html", "README.md", ".env", "style.css"),
                         "C", "intermediate",
@@ -319,7 +320,7 @@ public class Chapter1Questions {
                         "Files containing passwords, API keys or secrets should be ignored. Which file usually contains those?"
                 ),
 
-                build("q3", "chapter-1", "section-1-7",
+                build("q3",
                         "What does `*.log` inside a `.gitignore` file mean?",
                         opts("Ignore only the file named log",
                                 "Ignore the folder named log",
@@ -330,7 +331,7 @@ public class Chapter1Questions {
                         "It means any filename combined with a .log extension."
                 ),
 
-                build("q4", "chapter-1", "section-1-7",
+                build("q4",
                         "Which command untracks a file without deleting it from your computer?",
                         opts("git remove --now filename",
                                 "git rm --cached filename",
@@ -345,18 +346,15 @@ public class Chapter1Questions {
 
     // Builders
 
-    private static Question build(String id, String chapterId, String sectionId, String text, Map<String, String> options,
+    private static Question build(String id, String text, Map<String, String> options,
                                   String correctAnswer, String difficulty, String hint1, String hint2) {
         Question q = new Question();
         q.setId(id);
-        q.setChapterId(chapterId);
-        q.setSectionId(sectionId);
         q.setText(text);
         q.setOptions(options);
         q.setCorrectAnswer(correctAnswer);
-        q.setDifficulty(difficulty);
-        q.setHint1(hint1);
-        q.setHint2(hint2);
+        q.setDifficulty(QuestionDifficulty.fromValue(difficulty));
+        q.setHints(Arrays.asList(hint1, hint2));
         return q;
     }
 

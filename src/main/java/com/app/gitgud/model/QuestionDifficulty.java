@@ -2,9 +2,9 @@ package com.app.gitgud.model;
 
 public enum QuestionDifficulty {
 
-    EASY("easy"),
-    MEDIUM("medium"),
-    HARD("hard");
+    BEGINNER("beginner"),
+    INTERMEDIATE("intermediate"),
+    ADVANCED("advanced");
 
     private final String value;
 
