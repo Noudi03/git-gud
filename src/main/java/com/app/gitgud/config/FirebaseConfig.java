@@ -1,26 +1,49 @@
 package com.app.gitgud.config;
 
 import com.google.auth.oauth2.GoogleCredentials;
+import com.google.cloud.firestore.Firestore;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
-import jakarta.annotation.PostConstruct;
+import com.google.firebase.cloud.FirestoreClient;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.io.IOException;
 import java.io.InputStream;
 
-
 @Configuration
 public class FirebaseConfig {
 
-    @PostConstruct
-    public void initialize() throws IOException {
-        InputStream serviceAccount =  getClass().getClassLoader().getResourceAsStream("firebase-service-account.json");
-        FirebaseOptions options = FirebaseOptions.builder().setCredentials(GoogleCredentials.fromStream(serviceAccount)).build();
+    @Bean
+    public Firestore firestore() throws IOException {
+
         if (FirebaseApp.getApps().isEmpty()) {
+
+            InputStream serviceAccount =
+                    getClass()
+                            .getClassLoader()
+                            .getResourceAsStream(
+                                    "firebase-service-account.json"
+                            );
+
+            if (serviceAccount == null) {
+                throw new IllegalStateException(
+                        "Firebase service account file not found."
+                );
+            }
+
+            FirebaseOptions options =
+                    FirebaseOptions.builder()
+                            .setCredentials(
+                                    GoogleCredentials.fromStream(
+                                            serviceAccount
+                                    )
+                            )
+                            .build();
+
             FirebaseApp.initializeApp(options);
         }
 
-
+        return FirestoreClient.getFirestore();
     }
 }

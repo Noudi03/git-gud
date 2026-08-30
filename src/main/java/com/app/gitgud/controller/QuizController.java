@@ -1,28 +1,23 @@
 package com.app.gitgud.controller;
 
-import com.app.gitgud.model.dto.QuizData;
-import com.app.gitgud.model.Question;
-import com.app.gitgud.model.Quiz;
-import com.app.gitgud.service.QuestionService;
-import com.app.gitgud.service.QuizService;
+import com.app.gitgud.model.dto.QuizPageDto;
+import com.app.gitgud.service.QuizPageService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 @RestController
 public class QuizController {
 
-    private final QuizService quizService;
-    private final QuestionService questionService;
+    private final QuizPageService quizPageService;
+
 
     public QuizController(
-            QuizService quizService,
-            QuestionService questionService
+            QuizPageService quizPageService
     ) {
-        this.quizService = quizService;
-        this.questionService = questionService;
+
+        this.quizPageService =
+                quizPageService;
     }
 
 
@@ -33,32 +28,26 @@ public class QuizController {
     @GetMapping(
             "/api/quizzes/sections/{chapterId}/{sectionId}/{quizId}"
     )
-    public QuizData getSectionQuiz(
+    public QuizPageDto getSectionQuiz(
             @PathVariable String chapterId,
             @PathVariable String sectionId,
             @PathVariable String quizId
     ) throws Exception {
 
-        Quiz quiz =
-                quizService.getSectionQuiz(
+        QuizPageDto page =
+                quizPageService.getSectionQuiz(
                         chapterId,
                         sectionId,
                         quizId
                 );
 
-        if (quiz == null) {
+        if (page == null) {
             throw new IllegalArgumentException(
                     "Quiz not found"
             );
         }
 
-        List<Question> questions =
-                questionService.getQuizQuestions(quiz);
-
-        return new QuizData(
-                quiz,
-                questions
-        );
+        return page;
     }
 
 
@@ -69,30 +58,24 @@ public class QuizController {
     @GetMapping(
             "/api/quizzes/chapters/{chapterId}/{quizId}"
     )
-    public QuizData getChapterQuiz(
+    public QuizPageDto getChapterQuiz(
             @PathVariable String chapterId,
             @PathVariable String quizId
     ) throws Exception {
 
-        Quiz quiz =
-                quizService.getChapterQuiz(
+        QuizPageDto page =
+                quizPageService.getChapterQuiz(
                         chapterId,
                         quizId
                 );
 
-        if (quiz == null) {
+        if (page == null) {
             throw new IllegalArgumentException(
                     "Quiz not found"
             );
         }
 
-        List<Question> questions =
-                questionService.getQuizQuestions(quiz);
-
-        return new QuizData(
-                quiz,
-                questions
-        );
+        return page;
     }
 
 
@@ -103,27 +86,21 @@ public class QuizController {
     @GetMapping(
             "/api/quizzes/{quizId}"
     )
-    public QuizData getGlobalQuiz(
+    public QuizPageDto getGlobalQuiz(
             @PathVariable String quizId
     ) throws Exception {
 
-        Quiz quiz =
-                quizService.getGlobalQuiz(
+        QuizPageDto page =
+                quizPageService.getGlobalQuiz(
                         quizId
                 );
 
-        if (quiz == null) {
+        if (page == null) {
             throw new IllegalArgumentException(
                     "Quiz not found"
             );
         }
 
-        List<Question> questions =
-                questionService.getQuizQuestions(quiz);
-
-        return new QuizData(
-                quiz,
-                questions
-        );
+        return page;
     }
 }

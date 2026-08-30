@@ -3,7 +3,7 @@
     <h5>Tutorials</h5>
 
     <div
-            th:each="chapter : ${chapters}"
+            th:each="chapter : ${page.chapters}"
             class="tutorial-chapter">
 
         <h6 th:text="${chapter.title}">
@@ -11,13 +11,13 @@
         </h6>
 
         <a
-                th:each="section : ${sectionsByChapter[chapter.id]}"
+                th:each="section : ${page.sectionsByChapter[chapter.id]}"
                 th:text="${section.title}"
                 th:href="@{/tutorials/{chapterId}/{sectionId}(
                     chapterId=${chapter.id},
                     sectionId=${section.id}
                 )}"
-                th:classappend="${currentSectionId == section.id} ? ' active' : ''">
+                th:classappend="${page.section != null and page.section.id == section.id} ? ' active' : ''">
             Section title
         </a>
 

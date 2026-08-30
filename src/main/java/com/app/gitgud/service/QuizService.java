@@ -1,14 +1,14 @@
 package com.app.gitgud.service;
 
+import com.app.gitgud.mapper.QuizFirestoreMapper;
 import com.app.gitgud.model.ChapterQuizContext;
+import com.app.gitgud.model.GlobalQuizContext;
 import com.app.gitgud.model.Quiz;
 import com.app.gitgud.model.QuizContext;
-import com.app.gitgud.model.QuizType;
 import com.app.gitgud.model.SectionQuizContext;
+import com.app.gitgud.repository.QuizFirestoreRepository;
 import com.google.cloud.firestore.DocumentSnapshot;
-import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QuerySnapshot;
-import com.google.firebase.cloud.FirestoreClient;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -17,26 +17,27 @@ import java.util.List;
 @Service
 public class QuizService {
 
-    private final Firestore db;
+    private final QuizFirestoreRepository quizFirestoreRepository;
+    private final QuizFirestoreMapper quizFirestoreMapper;
 
-    public QuizService() {
-        this.db = FirestoreClient.getFirestore();
+
+    public QuizService(
+            QuizFirestoreRepository quizFirestoreRepository,
+            QuizFirestoreMapper quizFirestoreMapper
+    ) {
+
+        this.quizFirestoreRepository =
+                quizFirestoreRepository;
+
+        this.quizFirestoreMapper =
+                quizFirestoreMapper;
     }
+
 
     public List<Quiz> getSectionQuizzes(
             String chapterId,
             String sectionId
     ) throws Exception {
-
-        QuerySnapshot snapshot =
-                db.collection("chapters")
-                        .document(chapterId)
-                        .collection("sections")
-                        .document(sectionId)
-                        .collection("quizzes")
-                        .orderBy("order")
-                        .get()
-                        .get();
 
         QuizContext context =
                 new SectionQuizContext(
@@ -44,8 +45,19 @@ public class QuizService {
                         sectionId
                 );
 
-        return convertQuizzes(snapshot, context);
+        QuerySnapshot snapshot =
+                quizFirestoreRepository
+                        .getQuizCollection(context)
+                        .orderBy("order")
+                        .get()
+                        .get();
+
+        return convertQuizzes(
+                snapshot,
+                context
+        );
     }
+
 
     public Quiz getSectionQuiz(
             String chapterId,
@@ -53,97 +65,132 @@ public class QuizService {
             String quizId
     ) throws Exception {
 
-        DocumentSnapshot document =
-                db.collection("chapters")
-                        .document(chapterId)
-                        .collection("sections")
-                        .document(sectionId)
-                        .collection("quizzes")
-                        .document(quizId)
-                        .get()
-                        .get();
-
         QuizContext context =
                 new SectionQuizContext(
                         chapterId,
                         sectionId
                 );
 
-        return convertQuiz(document, context);
+        DocumentSnapshot document =
+                quizFirestoreRepository
+                        .getQuizCollection(context)
+                        .document(quizId)
+                        .get()
+                        .get();
+
+        return quizFirestoreMapper.toQuiz(
+                document,
+                context
+        );
     }
+
 
     public List<Quiz> getChapterQuizzes(
             String chapterId
     ) throws Exception {
 
+        QuizContext context =
+                new ChapterQuizContext(
+                        chapterId
+                );
+
         QuerySnapshot snapshot =
-                db.collection("chapters")
-                        .document(chapterId)
-                        .collection("quizzes")
+                quizFirestoreRepository
+                        .getQuizCollection(context)
                         .orderBy("order")
                         .get()
                         .get();
 
-        QuizContext context =
-                new ChapterQuizContext(chapterId);
-
-        return convertQuizzes(snapshot, context);
+        return convertQuizzes(
+                snapshot,
+                context
+        );
     }
+
 
     public Quiz getChapterQuiz(
             String chapterId,
             String quizId
     ) throws Exception {
 
+        QuizContext context =
+                new ChapterQuizContext(
+                        chapterId
+                );
+
         DocumentSnapshot document =
-                db.collection("chapters")
-                        .document(chapterId)
-                        .collection("quizzes")
+                quizFirestoreRepository
+                        .getQuizCollection(context)
                         .document(quizId)
                         .get()
                         .get();
 
-        QuizContext context =
-                new ChapterQuizContext(chapterId);
-
-        return convertQuiz(document, context);
+        return quizFirestoreMapper.toQuiz(
+                document,
+                context
+        );
     }
 
-    public List<Quiz> getGlobalQuizzes() throws Exception {
+
+    public List<Quiz> getGlobalQuizzes()
+            throws Exception {
+
+        QuizContext context =
+                new GlobalQuizContext();
 
         QuerySnapshot snapshot =
-                db.collection("quizzes")
+                quizFirestoreRepository
+                        .getQuizCollection(context)
                         .orderBy("order")
                         .get()
                         .get();
 
-        return convertQuizzes(snapshot, null);
+        return convertQuizzes(
+                snapshot,
+                context
+        );
     }
+
 
     public Quiz getGlobalQuiz(
             String quizId
     ) throws Exception {
 
+        QuizContext context =
+                new GlobalQuizContext();
+
         DocumentSnapshot document =
-                db.collection("quizzes")
+                quizFirestoreRepository
+                        .getQuizCollection(context)
                         .document(quizId)
                         .get()
                         .get();
 
-        return convertQuiz(document, null);
+        return quizFirestoreMapper.toQuiz(
+                document,
+                context
+        );
     }
+
 
     private List<Quiz> convertQuizzes(
             QuerySnapshot snapshot,
             QuizContext context
     ) {
 
-        List<Quiz> quizzes = new ArrayList<>();
+        List<Quiz> quizzes =
+                new ArrayList<>();
 
-        for (DocumentSnapshot document : snapshot.getDocuments()) {
+        for (
+                DocumentSnapshot document :
+                snapshot.getDocuments()
+        ) {
 
             Quiz quiz =
-                    convertQuiz(document, context);
+                    quizFirestoreMapper.toQuiz(
+                            document,
+                            context
+                    );
 
             if (quiz != null) {
                 quizzes.add(quiz);
@@ -151,43 +198,5 @@ public class QuizService {
         }
 
         return quizzes;
-    }
-
-    private Quiz convertQuiz(
-            DocumentSnapshot document,
-            QuizContext context
-    ) {
-
-        if (!document.exists()) {
-            return null;
-        }
-
-        String id =
-                document.getId();
-
-        String title =
-                document.getString("title");
-
-        String typeValue =
-                document.getString("type");
-
-        QuizType type =
-                QuizType.fromValue(typeValue);
-
-        Long orderValue =
-                document.getLong("order");
-
-        int order =
-                orderValue != null
-                        ? orderValue.intValue()
-                        : 0;
-
-        return new Quiz(
-                id,
-                title,
-                type,
-                order,
-                context
-        );
     }
 }

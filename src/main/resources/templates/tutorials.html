@@ -19,37 +19,39 @@
         <!-- Main content -->
         <main class="col-md-9 col-lg-10 p-4">
 
-            <article th:if="${section != null}">
+            <article th:if="${page.section != null}">
 
-                <h1 th:text="${section.title}">
+                <h1 th:text="${page.section.title}">
                     Section title
                 </h1>
 
-                <div th:text="${section.content}">
+                <div th:text="${page.section.content}">
                     Section content
                 </div>
 
-                <div th:if="${section.advancedContent != null}"
-                     th:text="${section.advancedContent}">
+                <div
+                        th:if="${page.section.advancedContent != null}"
+                        th:text="${page.section.advancedContent}">
                     Advanced content
                 </div>
 
-                <div th:if="${quizzes != null and !quizzes.isEmpty()}">
+                <div
+                        th:if="${page.quizzes != null and !page.quizzes.isEmpty()}">
 
                     <h2>Quizzes</h2>
 
-                    <div th:each="quiz : ${quizzes}">
+                    <div th:each="quiz : ${page.quizzes}">
 
                         <a
                                 class="quiz-start-button"
                                 th:href="@{/tutorials/chapters/{chapterId}/sections/{sectionId}/quizzes/{quizId}(
-                                    chapterId=${chapter.id},
-                                    sectionId=${section.id},
+                                    chapterId=${page.chapter.id},
+                                    sectionId=${page.section.id},
                                     quizId=${quiz.id}
                                 )}"
                                 th:attr="data-quiz-url=@{/api/quizzes/sections/{chapterId}/{sectionId}/{quizId}(
-                                    chapterId=${chapter.id},
-                                    sectionId=${section.id},
+                                    chapterId=${page.chapter.id},
+                                    sectionId=${page.section.id},
                                     quizId=${quiz.id}
                                 )}"
                                 th:text="${quiz.title}">
@@ -62,7 +64,7 @@
 
             </article>
 
-            <article th:if="${section == null}">
+            <article th:if="${page.section == null}">
 
                 <h1>Welcome to the tutorials</h1>
 
