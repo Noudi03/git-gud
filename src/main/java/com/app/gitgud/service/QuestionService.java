@@ -3,7 +3,7 @@ package com.app.gitgud.service;
 import com.app.gitgud.mapper.QuestionFirestoreMapper;
 import com.app.gitgud.model.Question;
 import com.app.gitgud.model.Quiz;
-import com.app.gitgud.repository.QuizFirestoreRepository;
+import com.app.gitgud.repository.FirestoreQuizRepository;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.QuerySnapshot;
 import org.springframework.stereotype.Service;
@@ -14,17 +14,17 @@ import java.util.List;
 @Service
 public class QuestionService {
 
-    private final QuizFirestoreRepository quizFirestoreRepository;
+    private final FirestoreQuizRepository firestoreQuizRepository;
     private final QuestionFirestoreMapper questionFirestoreMapper;
 
 
     public QuestionService(
-            QuizFirestoreRepository quizFirestoreRepository,
+            FirestoreQuizRepository firestoreQuizRepository,
             QuestionFirestoreMapper questionFirestoreMapper
     ) {
 
-        this.quizFirestoreRepository =
-                quizFirestoreRepository;
+        this.firestoreQuizRepository =
+                firestoreQuizRepository;
 
         this.questionFirestoreMapper =
                 questionFirestoreMapper;
@@ -36,7 +36,7 @@ public class QuestionService {
     ) throws Exception {
 
         QuerySnapshot snapshot =
-                quizFirestoreRepository
+                firestoreQuizRepository
                         .getQuestionsCollection(
                                 quiz.getContext(),
                                 quiz.getId()
@@ -55,7 +55,7 @@ public class QuestionService {
     ) throws Exception {
 
         DocumentSnapshot document =
-                quizFirestoreRepository
+                firestoreQuizRepository
                         .getQuestionsCollection(
                                 quiz.getContext(),
                                 quiz.getId()

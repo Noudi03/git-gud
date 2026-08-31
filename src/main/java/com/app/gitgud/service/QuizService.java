@@ -6,7 +6,7 @@ import com.app.gitgud.model.GlobalQuizContext;
 import com.app.gitgud.model.Quiz;
 import com.app.gitgud.model.QuizContext;
 import com.app.gitgud.model.SectionQuizContext;
-import com.app.gitgud.repository.QuizFirestoreRepository;
+import com.app.gitgud.repository.FirestoreQuizRepository;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.QuerySnapshot;
 import org.springframework.stereotype.Service;
@@ -17,17 +17,17 @@ import java.util.List;
 @Service
 public class QuizService {
 
-    private final QuizFirestoreRepository quizFirestoreRepository;
+    private final FirestoreQuizRepository firestoreQuizRepository;
     private final QuizFirestoreMapper quizFirestoreMapper;
 
 
     public QuizService(
-            QuizFirestoreRepository quizFirestoreRepository,
+            FirestoreQuizRepository firestoreQuizRepository,
             QuizFirestoreMapper quizFirestoreMapper
     ) {
 
-        this.quizFirestoreRepository =
-                quizFirestoreRepository;
+        this.firestoreQuizRepository =
+                firestoreQuizRepository;
 
         this.quizFirestoreMapper =
                 quizFirestoreMapper;
@@ -46,7 +46,7 @@ public class QuizService {
                 );
 
         QuerySnapshot snapshot =
-                quizFirestoreRepository
+                firestoreQuizRepository
                         .getQuizCollection(context)
                         .orderBy("order")
                         .get()
@@ -72,7 +72,7 @@ public class QuizService {
                 );
 
         DocumentSnapshot document =
-                quizFirestoreRepository
+                firestoreQuizRepository
                         .getQuizCollection(context)
                         .document(quizId)
                         .get()
@@ -95,7 +95,7 @@ public class QuizService {
                 );
 
         QuerySnapshot snapshot =
-                quizFirestoreRepository
+                firestoreQuizRepository
                         .getQuizCollection(context)
                         .orderBy("order")
                         .get()
@@ -119,7 +119,7 @@ public class QuizService {
                 );
 
         DocumentSnapshot document =
-                quizFirestoreRepository
+                firestoreQuizRepository
                         .getQuizCollection(context)
                         .document(quizId)
                         .get()
@@ -139,7 +139,7 @@ public class QuizService {
                 new GlobalQuizContext();
 
         QuerySnapshot snapshot =
-                quizFirestoreRepository
+                firestoreQuizRepository
                         .getQuizCollection(context)
                         .orderBy("order")
                         .get()
@@ -160,7 +160,7 @@ public class QuizService {
                 new GlobalQuizContext();
 
         DocumentSnapshot document =
-                quizFirestoreRepository
+                firestoreQuizRepository
                         .getQuizCollection(context)
                         .document(quizId)
                         .get()

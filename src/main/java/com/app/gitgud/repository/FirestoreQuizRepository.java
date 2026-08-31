@@ -9,12 +9,12 @@ import com.google.cloud.firestore.Firestore;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class QuizFirestoreRepository {
+public class FirestoreQuizRepository {
 
     private final Firestore db;
 
 
-    public QuizFirestoreRepository(
+    public FirestoreQuizRepository(
             Firestore db
     ) {
 

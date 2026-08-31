@@ -2,7 +2,7 @@ package com.app.gitgud.service;
 
 import com.app.gitgud.mapper.SectionFirestoreMapper;
 import com.app.gitgud.model.Section;
-import com.app.gitgud.repository.TutorialFirestoreRepository;
+import com.app.gitgud.repository.FirestoreTutorialRepository;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.QuerySnapshot;
 import org.springframework.stereotype.Service;
@@ -13,17 +13,17 @@ import java.util.List;
 @Service
 public class SectionService {
 
-    private final TutorialFirestoreRepository tutorialFirestoreRepository;
+    private final FirestoreTutorialRepository firestoreTutorialRepository;
     private final SectionFirestoreMapper sectionFirestoreMapper;
 
 
     public SectionService(
-            TutorialFirestoreRepository tutorialFirestoreRepository,
+            FirestoreTutorialRepository firestoreTutorialRepository,
             SectionFirestoreMapper sectionFirestoreMapper
     ) {
 
-        this.tutorialFirestoreRepository =
-                tutorialFirestoreRepository;
+        this.firestoreTutorialRepository =
+                firestoreTutorialRepository;
 
         this.sectionFirestoreMapper =
                 sectionFirestoreMapper;
@@ -35,7 +35,7 @@ public class SectionService {
     ) throws Exception {
 
         QuerySnapshot snapshot =
-                tutorialFirestoreRepository
+                firestoreTutorialRepository
                         .getSectionsCollection(chapterId)
                         .orderBy("order")
                         .get()
@@ -70,7 +70,7 @@ public class SectionService {
     ) throws Exception {
 
         DocumentSnapshot document =
-                tutorialFirestoreRepository
+                firestoreTutorialRepository
                         .getSection(
                                 chapterId,
                                 sectionId

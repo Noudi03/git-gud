@@ -2,7 +2,7 @@ package com.app.gitgud.service;
 
 import com.app.gitgud.mapper.ChapterFirestoreMapper;
 import com.app.gitgud.model.Chapter;
-import com.app.gitgud.repository.TutorialFirestoreRepository;
+import com.app.gitgud.repository.FirestoreTutorialRepository;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.QuerySnapshot;
 import org.springframework.stereotype.Service;
@@ -13,17 +13,17 @@ import java.util.List;
 @Service
 public class ChapterService {
 
-    private final TutorialFirestoreRepository tutorialFirestoreRepository;
+    private final FirestoreTutorialRepository firestoreTutorialRepository;
     private final ChapterFirestoreMapper chapterFirestoreMapper;
 
 
     public ChapterService(
-            TutorialFirestoreRepository tutorialFirestoreRepository,
+            FirestoreTutorialRepository firestoreTutorialRepository,
             ChapterFirestoreMapper chapterFirestoreMapper
     ) {
 
-        this.tutorialFirestoreRepository =
-                tutorialFirestoreRepository;
+        this.firestoreTutorialRepository =
+                firestoreTutorialRepository;
 
         this.chapterFirestoreMapper =
                 chapterFirestoreMapper;
@@ -34,7 +34,7 @@ public class ChapterService {
             throws Exception {
 
         QuerySnapshot snapshot =
-                tutorialFirestoreRepository
+                firestoreTutorialRepository
                         .getChaptersCollection()
                         .orderBy("order")
                         .get()
@@ -67,7 +67,7 @@ public class ChapterService {
     ) throws Exception {
 
         DocumentSnapshot document =
-                tutorialFirestoreRepository
+                firestoreTutorialRepository
                         .getChapter(chapterId)
                         .get()
                         .get();

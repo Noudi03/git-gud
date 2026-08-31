@@ -6,12 +6,12 @@ import com.google.cloud.firestore.Firestore;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class TutorialFirestoreRepository {
+public class FirestoreTutorialRepository {
 
     private final Firestore db;
 
 
-    public TutorialFirestoreRepository(
+    public FirestoreTutorialRepository(
             Firestore db
     ) {
 
