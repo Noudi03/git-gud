@@ -1,51 +1,74 @@
 package com.app.gitgud.controller;
 
-import com.google.firebase.auth.FirebaseAuth;
+import com.app.gitgud.model.dto.LoginRequestDto;
+import com.app.gitgud.service.AuthenticationService;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
-
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
 
+    private final AuthenticationService authenticationService;
+
+    public AuthController(
+            AuthenticationService authenticationService
+    ) {
+        this.authenticationService =
+                authenticationService;
+    }
+
+
     @PostMapping("/login")
     public ResponseEntity<?> login(
-            @RequestBody Map<String, String> body,
-            HttpSession session) {
+            @RequestBody LoginRequestDto request,
+            HttpSession session
+    ) {
 
-        String idToken = body.get("idToken");
-
-        if (idToken == null || idToken.isBlank()) {
-            return ResponseEntity.badRequest().body("Missing ID token");
+        if (
+                request.getIdToken() == null ||
+                        request.getIdToken().isBlank()
+        ) {
+            return ResponseEntity
+                    .badRequest()
+                    .body("Missing ID token");
         }
 
         try {
 
-            FirebaseToken decodedToken =
-                    FirebaseAuth.getInstance().verifyIdToken(idToken);
+            FirebaseToken token =
+                    authenticationService.verifyIdToken(
+                            request.getIdToken()
+                    );
 
-            String uid = decodedToken.getUid();
-            String email = decodedToken.getEmail();
+            session.setAttribute(
+                    "uid",
+                    token.getUid()
+            );
 
-            session.setAttribute("uid", uid);
-            session.setAttribute("email", email);
+            session.setAttribute(
+                    "email",
+                    token.getEmail()
+            );
 
             return ResponseEntity.ok().build();
 
         } catch (FirebaseAuthException e) {
 
-            return ResponseEntity.status(401)
+            return ResponseEntity
+                    .status(401)
                     .body("Invalid Firebase token");
         }
     }
 
+
     @PostMapping("/logout")
-    public ResponseEntity<?> logout(HttpSession session) {
+    public ResponseEntity<?> logout(
+            HttpSession session
+    ) {
 
         session.invalidate();
 
