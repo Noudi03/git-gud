@@ -1,5 +1,6 @@
 package com.app.gitgud.service;
 
+import com.app.gitgud.model.User;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Service;
 
@@ -7,15 +8,38 @@ import org.springframework.stereotype.Service;
 public class CurrentUserService {
 
     private static final String UID_ATTRIBUTE = "uid";
-    private static final String EMAIL_ATTRIBUTE = "email";
 
     private final HttpSession session;
+    private final UserService userService;
 
 
     public CurrentUserService(
-            HttpSession session
+            HttpSession session,
+            UserService userService
     ) {
-        this.session = session;
+
+        this.session =
+                session;
+
+        this.userService =
+                userService;
+    }
+
+
+    public void login(
+            String userId
+    ) {
+
+        session.setAttribute(
+                UID_ATTRIBUTE,
+                userId
+        );
+    }
+
+
+    public void logout() {
+
+        session.invalidate();
     }
 
 
@@ -28,12 +52,44 @@ public class CurrentUserService {
     }
 
 
-    public String getEmail() {
+    public User getUser() throws Exception {
 
-        return (String)
-                session.getAttribute(
-                        EMAIL_ATTRIBUTE
-                );
+        String userId =
+                getUserId();
+
+        if (userId == null) {
+            return null;
+        }
+
+        return userService.getUser(
+                userId
+        );
+    }
+
+
+    public String getEmail() throws Exception {
+
+        User user =
+                getUser();
+
+        if (user == null) {
+            return null;
+        }
+
+        return user.getEmail();
+    }
+
+
+    public String getUsername() throws Exception {
+
+        User user =
+                getUser();
+
+        if (user == null) {
+            return null;
+        }
+
+        return user.getUsername();
     }
 
 
