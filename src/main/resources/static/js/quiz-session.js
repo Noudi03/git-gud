@@ -132,6 +132,11 @@ export class QuizSession {
                 ];
 
 
+        if (!question) {
+            return;
+        }
+
+
         this.questionStartTime =
             Date.now();
 
@@ -159,6 +164,11 @@ export class QuizSession {
                     originalQuestion.id ===
                     question.id
             );
+
+
+        if (questionIndex === -1) {
+            return;
+        }
 
 
         this.currentQuestionIndex =
@@ -189,6 +199,14 @@ export class QuizSession {
         selectedAnswer
     ) {
 
+        if (
+            this.isFinished ||
+            this.isCancelled
+        ) {
+            return;
+        }
+
+
         const timeSpentMillis =
             this.getTimeSpent();
 
@@ -214,11 +232,16 @@ export class QuizSession {
                 questionId:
                 question.id,
 
+                selectedAnswer:
+                selectedAnswer,
+
                 correct:
                 correct,
 
                 timeSpentMillis:
-                timeSpentMillis,
+                    (
+                        existingAttempt?.timeSpentMillis ?? 0
+                    ) + timeSpentMillis,
 
                 hintsUsed:
                     existingAttempt?.hintsUsed ?? 0,
@@ -257,6 +280,14 @@ export class QuizSession {
 
     skip() {
 
+        if (
+            this.isFinished ||
+            this.isCancelled
+        ) {
+            return;
+        }
+
+
         const question =
             this.quizData.questions[
                 this.currentQuestionIndex
@@ -279,7 +310,9 @@ export class QuizSession {
 
 
         const skipCount =
-            (existingAttempt?.skipCount ?? 0) + 1;
+            (
+                existingAttempt?.skipCount ?? 0
+            ) + 1;
 
 
         this.questionAttempts.set(
@@ -288,12 +321,16 @@ export class QuizSession {
                 questionId:
                 question.id,
 
+                selectedAnswer:
+                    existingAttempt?.selectedAnswer ?? null,
+
                 correct:
                     existingAttempt?.correct ?? false,
 
                 timeSpentMillis:
-                    (existingAttempt?.timeSpentMillis ?? 0)
-                    + timeSpentMillis,
+                    (
+                        existingAttempt?.timeSpentMillis ?? 0
+                    ) + timeSpentMillis,
 
                 hintsUsed:
                     existingAttempt?.hintsUsed ?? 0,
@@ -330,6 +367,14 @@ export class QuizSession {
 
 
     next() {
+
+        if (
+            this.isFinished ||
+            this.isCancelled
+        ) {
+            return;
+        }
+
 
         if (
             this.isCurrentQuestionAnswered()
@@ -521,7 +566,10 @@ export class QuizSession {
 
     async finish() {
 
-        if (this.isFinished) {
+        if (
+            this.isFinished ||
+            this.isCancelled
+        ) {
             return;
         }
 
@@ -556,6 +604,16 @@ export class QuizSession {
         }
 
 
+        /*
+         * An empty quiz has no actual attempt to save.
+         */
+        if (
+            this.quizData.questions.length === 0
+        ) {
+            return;
+        }
+
+
         this.isCancelled =
             true;
 
@@ -567,6 +625,11 @@ export class QuizSession {
 
 
     async submitAttempt(status) {
+
+        if (!this.quizData) {
+            return;
+        }
+
 
         const questionAttempts =
             this.quizData.questions.map(
