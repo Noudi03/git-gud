@@ -7,7 +7,7 @@ import com.google.cloud.firestore.DocumentSnapshot;
 import org.springframework.stereotype.Component;
 
 @Component
-public class QuizFirestoreMapper {
+public class FirestoreQuizMapper {
 
     public Quiz toQuiz(
             DocumentSnapshot document,

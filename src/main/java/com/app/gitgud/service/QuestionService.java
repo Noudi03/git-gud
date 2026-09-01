@@ -1,6 +1,6 @@
 package com.app.gitgud.service;
 
-import com.app.gitgud.mapper.QuestionFirestoreMapper;
+import com.app.gitgud.mapper.FirestoreQuestionMapper;
 import com.app.gitgud.model.Question;
 import com.app.gitgud.model.Quiz;
 import com.app.gitgud.repository.FirestoreQuizRepository;
@@ -15,19 +15,19 @@ import java.util.List;
 public class QuestionService {
 
     private final FirestoreQuizRepository firestoreQuizRepository;
-    private final QuestionFirestoreMapper questionFirestoreMapper;
+    private final FirestoreQuestionMapper firestoreQuestionMapper;
 
 
     public QuestionService(
             FirestoreQuizRepository firestoreQuizRepository,
-            QuestionFirestoreMapper questionFirestoreMapper
+            FirestoreQuestionMapper firestoreQuestionMapper
     ) {
 
         this.firestoreQuizRepository =
                 firestoreQuizRepository;
 
-        this.questionFirestoreMapper =
-                questionFirestoreMapper;
+        this.firestoreQuestionMapper =
+                firestoreQuestionMapper;
     }
 
 
@@ -64,7 +64,7 @@ public class QuestionService {
                         .get()
                         .get();
 
-        return questionFirestoreMapper.toQuestion(
+        return firestoreQuestionMapper.toQuestion(
                 document
         );
     }
@@ -83,7 +83,7 @@ public class QuestionService {
         ) {
 
             Question question =
-                    questionFirestoreMapper.toQuestion(
+                    firestoreQuestionMapper.toQuestion(
                             document
                     );
 

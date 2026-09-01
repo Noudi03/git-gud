@@ -1,6 +1,6 @@
 package com.app.gitgud.service;
 
-import com.app.gitgud.mapper.ChapterFirestoreMapper;
+import com.app.gitgud.mapper.FirestoreChapterMapper;
 import com.app.gitgud.model.Chapter;
 import com.app.gitgud.repository.FirestoreTutorialRepository;
 import com.google.cloud.firestore.DocumentSnapshot;
@@ -14,19 +14,19 @@ import java.util.List;
 public class ChapterService {
 
     private final FirestoreTutorialRepository firestoreTutorialRepository;
-    private final ChapterFirestoreMapper chapterFirestoreMapper;
+    private final FirestoreChapterMapper firestoreChapterMapper;
 
 
     public ChapterService(
             FirestoreTutorialRepository firestoreTutorialRepository,
-            ChapterFirestoreMapper chapterFirestoreMapper
+            FirestoreChapterMapper firestoreChapterMapper
     ) {
 
         this.firestoreTutorialRepository =
                 firestoreTutorialRepository;
 
-        this.chapterFirestoreMapper =
-                chapterFirestoreMapper;
+        this.firestoreChapterMapper =
+                firestoreChapterMapper;
     }
 
 
@@ -49,7 +49,7 @@ public class ChapterService {
         ) {
 
             Chapter chapter =
-                    chapterFirestoreMapper.toChapter(
+                    firestoreChapterMapper.toChapter(
                             document
                     );
 
@@ -72,7 +72,7 @@ public class ChapterService {
                         .get()
                         .get();
 
-        return chapterFirestoreMapper.toChapter(
+        return firestoreChapterMapper.toChapter(
                 document
         );
     }

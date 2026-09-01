@@ -5,7 +5,7 @@ import com.google.cloud.firestore.DocumentSnapshot;
 import org.springframework.stereotype.Component;
 
 @Component
-public class SectionFirestoreMapper {
+public class FirestoreSectionMapper {
 
     public Section toSection(
             DocumentSnapshot document,

@@ -1,6 +1,6 @@
 package com.app.gitgud.service;
 
-import com.app.gitgud.mapper.SectionFirestoreMapper;
+import com.app.gitgud.mapper.FirestoreSectionMapper;
 import com.app.gitgud.model.Section;
 import com.app.gitgud.repository.FirestoreTutorialRepository;
 import com.google.cloud.firestore.DocumentSnapshot;
@@ -14,19 +14,19 @@ import java.util.List;
 public class SectionService {
 
     private final FirestoreTutorialRepository firestoreTutorialRepository;
-    private final SectionFirestoreMapper sectionFirestoreMapper;
+    private final FirestoreSectionMapper firestoreSectionMapper;
 
 
     public SectionService(
             FirestoreTutorialRepository firestoreTutorialRepository,
-            SectionFirestoreMapper sectionFirestoreMapper
+            FirestoreSectionMapper firestoreSectionMapper
     ) {
 
         this.firestoreTutorialRepository =
                 firestoreTutorialRepository;
 
-        this.sectionFirestoreMapper =
-                sectionFirestoreMapper;
+        this.firestoreSectionMapper =
+                firestoreSectionMapper;
     }
 
 
@@ -50,7 +50,7 @@ public class SectionService {
         ) {
 
             Section section =
-                    sectionFirestoreMapper.toSection(
+                    firestoreSectionMapper.toSection(
                             document,
                             chapterId
                     );
@@ -78,7 +78,7 @@ public class SectionService {
                         .get()
                         .get();
 
-        return sectionFirestoreMapper.toSection(
+        return firestoreSectionMapper.toSection(
                 document,
                 chapterId
         );

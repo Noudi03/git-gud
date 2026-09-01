@@ -1,6 +1,6 @@
 package com.app.gitgud.service;
 
-import com.app.gitgud.mapper.QuizFirestoreMapper;
+import com.app.gitgud.mapper.FirestoreQuizMapper;
 import com.app.gitgud.model.ChapterQuizContext;
 import com.app.gitgud.model.GlobalQuizContext;
 import com.app.gitgud.model.Quiz;
@@ -18,19 +18,19 @@ import java.util.List;
 public class QuizService {
 
     private final FirestoreQuizRepository firestoreQuizRepository;
-    private final QuizFirestoreMapper quizFirestoreMapper;
+    private final FirestoreQuizMapper firestoreQuizMapper;
 
 
     public QuizService(
             FirestoreQuizRepository firestoreQuizRepository,
-            QuizFirestoreMapper quizFirestoreMapper
+            FirestoreQuizMapper firestoreQuizMapper
     ) {
 
         this.firestoreQuizRepository =
                 firestoreQuizRepository;
 
-        this.quizFirestoreMapper =
-                quizFirestoreMapper;
+        this.firestoreQuizMapper =
+                firestoreQuizMapper;
     }
 
 
@@ -78,7 +78,7 @@ public class QuizService {
                         .get()
                         .get();
 
-        return quizFirestoreMapper.toQuiz(
+        return firestoreQuizMapper.toQuiz(
                 document,
                 context
         );
@@ -125,7 +125,7 @@ public class QuizService {
                         .get()
                         .get();
 
-        return quizFirestoreMapper.toQuiz(
+        return firestoreQuizMapper.toQuiz(
                 document,
                 context
         );
@@ -166,7 +166,7 @@ public class QuizService {
                         .get()
                         .get();
 
-        return quizFirestoreMapper.toQuiz(
+        return firestoreQuizMapper.toQuiz(
                 document,
                 context
         );
@@ -187,7 +187,7 @@ public class QuizService {
         ) {
 
             Quiz quiz =
-                    quizFirestoreMapper.toQuiz(
+                    firestoreQuizMapper.toQuiz(
                             document,
                             context
                     );
