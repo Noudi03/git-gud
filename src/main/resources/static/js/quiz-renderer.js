@@ -3,7 +3,8 @@ export function renderQuestion(
     currentIndex,
     totalQuestions,
     elements,
-    onAnswer
+    onAnswer,
+    canSkip
 ) {
     const {
         progress,
@@ -26,7 +27,7 @@ export function renderQuestion(
     feedback.hidden = true;
     feedback.className = "quiz-feedback";
 
-    skipButton.hidden = false;
+    skipButton.hidden = !canSkip;
     nextButton.hidden = true;
 
     Object.entries(question.options)
@@ -39,7 +40,9 @@ export function renderQuestion(
             button.classList.add("quiz-option");
 
             button.dataset.answer = key;
-            button.textContent = `${key}. ${text}`;
+
+            button.textContent =
+                `${key}. ${text}`;
 
             button.addEventListener(
                 "click",
@@ -52,7 +55,6 @@ export function renderQuestion(
 
 
 export function renderAnswer(
-    question,
     selectedAnswer,
     elements
 ) {
@@ -74,48 +76,56 @@ export function renderAnswer(
 
         if (
             button.dataset.answer ===
-            question.correctAnswer
+            selectedAnswer
         ) {
-            button.classList.add("correct");
+            button.classList.add(
+                "selected"
+            );
         }
     });
 
-    const correct =
-        selectedAnswer === question.correctAnswer;
+    feedback.textContent =
+        "Answer selected.";
 
-    if (correct) {
-
-        feedback.textContent =
-            "Correct!";
-
-        feedback.className =
-            "quiz-feedback quiz-feedback-correct";
-
-    } else {
-
-        feedback.textContent =
-            "Not quite.";
-
-        feedback.className =
-            "quiz-feedback quiz-feedback-incorrect";
-
-        optionButtons.forEach(button => {
-
-            if (
-                button.dataset.answer ===
-                selectedAnswer
-            ) {
-                button.classList.add("incorrect");
-            }
-        });
-    }
+    feedback.className =
+        "quiz-feedback";
 
     feedback.hidden = false;
 
     skipButton.hidden = true;
     nextButton.hidden = false;
+}
 
-    return correct;
+
+export function renderSkipped(
+    elements
+) {
+    const {
+        optionsContainer,
+        feedback,
+        skipButton,
+        nextButton
+    } = elements;
+
+    const optionButtons =
+        optionsContainer.querySelectorAll(
+            ".quiz-option"
+        );
+
+    optionButtons.forEach(button => {
+        button.disabled = true;
+    });
+
+    feedback.textContent =
+        "Question skipped.";
+
+    feedback.className =
+        "quiz-feedback";
+
+    feedback.hidden = false;
+
+    skipButton.hidden = true;
+    nextButton.hidden = false;
 }
 
 
@@ -145,8 +155,11 @@ export function renderEmptyQuiz(elements) {
 }
 
 
-export function renderCompletion(elements) {
-
+export function renderCompletion(
+    quizData,
+    questionResults,
+    elements
+) {
     const {
         progress,
         questionText,
@@ -163,8 +176,62 @@ export function renderCompletion(elements) {
 
     optionsContainer.innerHTML = "";
 
+    let correctCount = 0;
+
+    questionResults.forEach(result => {
+
+        if (result.correct) {
+            correctCount++;
+        }
+
+        const container =
+            document.createElement("div");
+
+        container.classList.add(
+            "quiz-result"
+        );
+
+        const question =
+            quizData.questions.find(
+                item =>
+                    item.id === result.questionId
+            );
+
+        if (!question) {
+            return;
+        }
+
+        const text =
+            document.createElement("p");
+
+        text.textContent =
+            question.text;
+
+        container.appendChild(text);
+
+
+        const answer =
+            document.createElement("p");
+
+        answer.textContent =
+            `Correct answer: ${question.correctAnswer}`;
+
+        answer.classList.add(
+            result.correct
+                ? "quiz-result-correct"
+                : "quiz-result-incorrect"
+        );
+
+        container.appendChild(answer);
+
+        optionsContainer.appendChild(
+            container
+        );
+    });
+
+
     feedback.textContent =
-        "Nice work!";
+        `You got ${correctCount} / ${questionResults.length} correct.`;
 
     feedback.className =
         "quiz-feedback quiz-feedback-correct";

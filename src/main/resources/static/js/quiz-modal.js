@@ -117,7 +117,9 @@ document.addEventListener(
         }
 
 
-        function closeQuiz() {
+        async function closeQuiz() {
+
+            await session.cancel();
 
             modal.hidden = true;
 
@@ -144,7 +146,7 @@ document.addEventListener(
         });
 
 
-        closeButton.addEventListener(
+        closeButton?.addEventListener(
             "click",
             closeQuiz
         );
