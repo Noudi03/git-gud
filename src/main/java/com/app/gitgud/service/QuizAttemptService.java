@@ -1,32 +1,99 @@
 package com.app.gitgud.service;
 
+import com.app.gitgud.mapper.QuizAttemptMapper;
+import com.app.gitgud.model.QuestionAttempt;
 import com.app.gitgud.model.QuizAttempt;
+import com.app.gitgud.model.dto.QuizAttemptRequestDto;
 import com.app.gitgud.repository.FirestoreQuizAttemptRepository;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class QuizAttemptService {
 
-    private final FirestoreQuizAttemptRepository firestoreQuizAttemptRepository;
-
+    private final FirestoreQuizAttemptRepository quizAttemptRepository;
+    private final QuizAttemptMapper quizAttemptMapper;
 
     public QuizAttemptService(
-            FirestoreQuizAttemptRepository firestoreQuizAttemptRepository
+            FirestoreQuizAttemptRepository quizAttemptRepository,
+            QuizAttemptMapper quizAttemptMapper
     ) {
-
-        this.firestoreQuizAttemptRepository =
-                firestoreQuizAttemptRepository;
+        this.quizAttemptRepository = quizAttemptRepository;
+        this.quizAttemptMapper = quizAttemptMapper;
     }
-
 
     public void createAttempt(
             String userId,
-            QuizAttempt attempt
+            QuizAttemptRequestDto request
     ) throws Exception {
 
-        firestoreQuizAttemptRepository.createAttempt(
+        QuizAttempt attempt =
+                quizAttemptMapper.toModel(request);
+
+        quizAttemptRepository.createAttempt(
                 userId,
                 attempt
         );
+    }
+
+    public List<QuizAttempt> getAttempts(
+            String userId
+    ) throws Exception {
+
+        return quizAttemptRepository.findAttempts(
+                userId
+        );
+    }
+
+    public QuizAttempt getAttempt(
+            String userId,
+            String attemptId
+    ) throws Exception {
+
+        return quizAttemptRepository
+                .findAttempt(
+                        userId,
+                        attemptId
+                )
+                .orElseThrow(
+                        () -> new IllegalArgumentException(
+                                "Quiz attempt not found"
+                        )
+                );
+    }
+
+    public List<QuestionAttempt> getQuestionAttempts(
+            String userId,
+            String attemptId
+    ) throws Exception {
+
+        return getAttempt(
+                userId,
+                attemptId
+        ).getQuestionAttempts();
+    }
+
+    public QuestionAttempt getQuestionAttempt(
+            String userId,
+            String attemptId,
+            String questionId
+    ) throws Exception {
+
+        return getQuestionAttempts(
+                userId,
+                attemptId
+        )
+                .stream()
+                .filter(attempt ->
+                        attempt.getQuestionId()
+                                .equals(questionId)
+                )
+                .findFirst()
+                .orElseThrow(
+                        () -> new IllegalArgumentException(
+                                "Question attempt not found"
+                        )
+                );
     }
 }
