@@ -41,19 +41,9 @@ public class ViewController {
                 user.getEmail()
         );
 
-        String username =
-                user.getUsername();
-
-        if (
-                username == null ||
-                        username.isBlank()
-        ) {
-            username = "user";
-        }
-
         model.addAttribute(
                 "username",
-                username
+                user.getUsername()
         );
 
         return "home";
