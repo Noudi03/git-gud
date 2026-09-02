@@ -29,6 +29,7 @@ public class SectionMapper {
         );
     }
 
+
     public List<SectionDto> toDtoList(
             List<Section> sections
     ) {
