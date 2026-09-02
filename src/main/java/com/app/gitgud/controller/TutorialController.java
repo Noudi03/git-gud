@@ -35,6 +35,29 @@ public class TutorialController {
         return "tutorials";
     }
 
+    @GetMapping("/tutorials/{chapterId}")
+    public String chapter(
+            @PathVariable String chapterId,
+            Model model
+    ) throws Exception {
+
+        TutorialPageDto page =
+                tutorialPageService.getTutorialPage(
+                        chapterId
+                );
+
+        if (page == null) {
+            return "redirect:/tutorials";
+        }
+
+        model.addAttribute(
+                "page",
+                page
+        );
+
+        return "tutorials";
+    }
+
     @GetMapping(
             "/tutorials/{chapterId}/{sectionId}"
     )

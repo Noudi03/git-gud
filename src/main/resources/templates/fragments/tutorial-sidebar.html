@@ -1,26 +1,67 @@
-<aside th:fragment="tutorial-sidebar" class="tutorial-sidebar">
+<aside
+        th:fragment="tutorial-sidebar"
+        class="tutorial-sidebar">
 
-    <h5>Tutorials</h5>
-
-    <div
-            th:each="chapter : ${page.chapters}"
-            class="tutorial-chapter">
-
-        <h6 th:text="${chapter.title}">
-            Chapter title
-        </h6>
-
-        <a
-                th:each="section : ${page.sectionsByChapter[chapter.id]}"
-                th:text="${section.title}"
-                th:href="@{/tutorials/{chapterId}/{sectionId}(
-                    chapterId=${chapter.id},
-                    sectionId=${section.id}
-                )}"
-                th:classappend="${page.section != null and page.section.id == section.id} ? ' active' : ''">
-            Section title
-        </a>
-
+    <div class="tutorial-sidebar-header">
+        <span class="tutorial-sidebar-title">
+            Tutorials
+        </span>
     </div>
+
+
+    <nav class="tutorial-navigation">
+
+        <div
+                th:each="chapter : ${page.chapters}"
+                class="tutorial-chapter"
+                th:classappend="${page.chapter != null and page.chapter.id == chapter.id} ? ' expanded' : ''">
+
+            <div class="tutorial-chapter-row">
+
+                <a
+                        class="tutorial-chapter-link"
+                        th:text="${chapter.title}"
+                        th:href="@{/tutorials/{chapterId}(
+                            chapterId=${chapter.id}
+                        )}"
+                        th:classappend="${page.chapter != null and page.chapter.id == chapter.id} ? ' active' : ''">
+                    Chapter title
+                </a>
+
+
+                <button
+                        type="button"
+                        class="tutorial-chapter-toggle"
+                        th:attr="aria-expanded=${page.chapter != null and page.chapter.id == chapter.id}"
+                        aria-label="Toggle chapter">
+
+                    <span class="tutorial-chapter-chevron">
+                        ›
+                    </span>
+
+                </button>
+
+            </div>
+
+
+            <div class="tutorial-sections">
+
+                <a
+                        th:each="section : ${page.sectionsByChapter[chapter.id]}"
+                        class="tutorial-section-link"
+                        th:text="${section.title}"
+                        th:href="@{/tutorials/{chapterId}/{sectionId}(
+                            chapterId=${chapter.id},
+                            sectionId=${section.id}
+                        )}"
+                        th:classappend="${page.section != null and page.section.id == section.id} ? ' active' : ''">
+                    Section title
+                </a>
+
+            </div>
+
+        </div>
+
+    </nav>
 
 </aside>

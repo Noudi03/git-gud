@@ -19,6 +19,57 @@
         <!-- Main content -->
         <main class="col-md-9 col-lg-10 p-4">
 
+            <!-- Welcome -->
+            <article th:if="${page.chapter == null}">
+
+                <h1>Welcome to the tutorials</h1>
+
+                <p>
+                    Select a chapter or section from the sidebar to begin.
+                </p>
+
+            </article>
+
+
+            <!-- Chapter -->
+            <article
+                    th:if="${page.chapter != null and page.section == null}">
+
+                <h1 th:text="${page.chapter.title}">
+                    Chapter title
+                </h1>
+
+
+                <!-- Chapter quizzes -->
+                <div
+                        th:if="${page.quizzes != null and !page.quizzes.isEmpty()}">
+
+                    <h2>Quizzes</h2>
+
+                    <div th:each="quiz : ${page.quizzes}">
+
+                        <a
+                                class="quiz-start-button"
+                                th:href="@{/tutorials/chapters/{chapterId}/quizzes/{quizId}(
+                                    chapterId=${page.chapter.id},
+                                    quizId=${quiz.id}
+                                )}"
+                                th:attr="data-quiz-url=@{/api/quizzes/chapters/{chapterId}/{quizId}(
+                                    chapterId=${page.chapter.id},
+                                    quizId=${quiz.id}
+                                )}"
+                                th:text="${quiz.title}">
+                            Start Quiz
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </article>
+
+
+            <!-- Section -->
             <article th:if="${page.section != null}">
 
                 <h1 th:text="${page.section.title}">
@@ -35,6 +86,8 @@
                     Advanced content
                 </div>
 
+
+                <!-- Section quizzes -->
                 <div
                         th:if="${page.quizzes != null and !page.quizzes.isEmpty()}">
 
@@ -61,14 +114,6 @@
                     </div>
 
                 </div>
-
-            </article>
-
-            <article th:if="${page.section == null}">
-
-                <h1>Welcome to the tutorials</h1>
-
-                <p>Select a section from the sidebar to begin.</p>
 
             </article>
 

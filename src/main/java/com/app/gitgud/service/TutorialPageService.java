@@ -1,13 +1,13 @@
 package com.app.gitgud.service;
 
 import com.app.gitgud.mapper.ChapterMapper;
-import com.app.gitgud.mapper.SectionMapper;
 import com.app.gitgud.mapper.QuizMapper;
+import com.app.gitgud.mapper.SectionMapper;
 import com.app.gitgud.model.Chapter;
-import com.app.gitgud.model.Section;
 import com.app.gitgud.model.Quiz;
-import com.app.gitgud.model.dto.TutorialPageDto;
+import com.app.gitgud.model.Section;
 import com.app.gitgud.model.dto.SectionDto;
+import com.app.gitgud.model.dto.TutorialPageDto;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -25,7 +25,6 @@ public class TutorialPageService {
     private final SectionMapper sectionMapper;
     private final QuizMapper quizMapper;
 
-
     public TutorialPageService(
             ChapterService chapterService,
             SectionService sectionService,
@@ -34,7 +33,6 @@ public class TutorialPageService {
             SectionMapper sectionMapper,
             QuizMapper quizMapper
     ) {
-
         this.chapterService =
                 chapterService;
 
@@ -53,7 +51,6 @@ public class TutorialPageService {
         this.quizMapper =
                 quizMapper;
     }
-
 
     public TutorialPageDto getTutorialPage()
             throws Exception {
@@ -75,6 +72,40 @@ public class TutorialPageService {
         );
     }
 
+    public TutorialPageDto getTutorialPage(
+            String chapterId
+    ) throws Exception {
+
+        List<Chapter> chapters =
+                chapterService.getChapters();
+
+        Map<String, List<Section>> sectionsByChapter =
+                getSectionsByChapter(chapters);
+
+        Chapter chapter =
+                chapterService.getChapter(
+                        chapterId
+                );
+
+        if (chapter == null) {
+            return null;
+        }
+
+        List<Quiz> quizzes =
+                quizService.getChapterQuizzes(
+                        chapterId
+                );
+
+        return new TutorialPageDto(
+                chapterMapper.toDtoList(chapters),
+                convertSectionsByChapter(
+                        sectionsByChapter
+                ),
+                chapterMapper.toDto(chapter),
+                null,
+                quizMapper.toDtoList(quizzes)
+        );
+    }
 
     public TutorialPageDto getTutorialPage(
             String chapterId,
@@ -123,7 +154,6 @@ public class TutorialPageService {
         );
     }
 
-
     private Map<String, List<Section>> getSectionsByChapter(
             List<Chapter> chapters
     ) throws Exception {
@@ -146,7 +176,6 @@ public class TutorialPageService {
 
         return sectionsByChapter;
     }
-
 
     private Map<String, List<SectionDto>>
     convertSectionsByChapter(

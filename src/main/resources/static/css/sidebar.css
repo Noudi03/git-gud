@@ -1,74 +1,282 @@
+/* =========================
+   Tutorial Sidebar
+   ========================= */
+
 .tutorial-sidebar {
     min-height: calc(100vh - var(--navbar-height));
 
-    padding: 1.5rem 1rem;
+    padding: 1.25rem 0.75rem;
 
     background-color: var(--color-surface);
     border-right: 1px solid var(--color-border);
 }
 
 
-/* Sidebar heading */
+/* =========================
+   Header
+   ========================= */
 
-.tutorial-sidebar h5 {
-    margin: 0 0 1.25rem;
+.tutorial-sidebar-header {
+    padding: 0 0.75rem 1rem;
 
-    font-size: 0.85rem;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.tutorial-sidebar-title {
+    font-size: 0.8rem;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.06em;
 
     color: var(--color-text-muted);
 }
 
 
-/* Groups */
+/* =========================
+   Navigation
+   ========================= */
+
+.tutorial-navigation {
+    padding-top: 0.75rem;
+}
+
+
+/* =========================
+   Chapter
+   ========================= */
 
 .tutorial-chapter {
-    margin-bottom: 1.5rem;
-}
-
-.tutorial-chapter h6 {
-    margin: 0 0 0.4rem;
-
-    padding: 0 0.75rem;
-
-    font-size: 0.9rem;
-    font-weight: 600;
+    margin-bottom: 0.35rem;
 }
 
 
-/* Links */
+/* =========================
+   Chapter Row
+   ========================= */
 
-.tutorial-chapter a {
-    display: block;
-
-    padding: 0.45rem 0.75rem;
-
-    color: var(--color-text-muted);
+.tutorial-chapter-row {
+    display: flex;
+    align-items: stretch;
 
     border-radius: var(--radius-sm);
 
+    transition:
+            background-color 0.15s ease;
+}
+
+
+/* =========================
+   Chapter Link
+   ========================= */
+
+.tutorial-chapter-link {
+    flex: 1;
+
+    display: flex;
+    align-items: center;
+
+    min-width: 0;
+
+    padding: 0.7rem 0.75rem;
+
+    font-size: 0.95rem;
+    font-weight: 700;
+
+    color: var(--color-text);
+
     text-decoration: none;
+
+    border-radius: var(--radius-sm);
 
     transition:
             background-color 0.15s ease,
             color 0.15s ease;
 }
 
-.tutorial-chapter a:hover {
+.tutorial-chapter-link:hover {
     background-color: var(--color-surface-muted);
+
     color: var(--color-text);
+
     text-decoration: none;
 }
 
-.tutorial-chapter a.active {
-    background-color: var(--color-success);
-    color: white;
 
-    font-weight: 600;
+/* Active chapter */
+
+.tutorial-chapter-link.active {
+    background-color: var(--color-success);
+
+    color: white;
 }
 
-.tutorial-chapter a.active:hover {
+.tutorial-chapter-link.active:hover {
     background-color: var(--color-success-hover);
+
+    color: white;
+}
+
+
+/* =========================
+   Chapter Toggle
+   ========================= */
+
+.tutorial-chapter-toggle {
+    flex: 0 0 2.5rem;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    border: 0;
+    background: transparent;
+
+    color: var(--color-text-muted);
+
+    cursor: pointer;
+
+    border-radius: var(--radius-sm);
+
+    transition:
+            background-color 0.15s ease,
+            color 0.15s ease;
+}
+
+.tutorial-chapter-toggle:hover {
+    background-color: var(--color-surface-muted);
+
+    color: var(--color-text);
+}
+
+.tutorial-chapter-link.active + .tutorial-chapter-toggle {
+    color: white;
+}
+
+.tutorial-chapter-link.active + .tutorial-chapter-toggle:hover {
+    background-color: var(--color-success-hover);
+
+    color: white;
+}
+
+
+/* =========================
+   Chevron
+   ========================= */
+
+.tutorial-chapter-chevron {
+    display: inline-block;
+
+    font-size: 1.35rem;
+    line-height: 1;
+
+    transform: rotate(0deg);
+
+    transition:
+            transform 0.2s ease;
+}
+
+
+/* Expanded */
+
+.tutorial-chapter.expanded .tutorial-chapter-chevron {
+    transform: rotate(90deg);
+}
+
+
+/* =========================
+   Sections
+   ========================= */
+
+.tutorial-sections {
+    max-height: 0;
+
+    overflow: hidden;
+
+    transition:
+            max-height 0.2s ease;
+}
+
+.tutorial-chapter.expanded .tutorial-sections {
+    max-height: 500px;
+}
+
+
+/*
+ * Inner links need a wrapper-like behavior
+ * because grid-template-rows animation
+ * requires the content to be constrained.
+ */
+
+.tutorial-sections::before {
+    content: "";
+    min-height: 0;
+}
+
+
+/* =========================
+   Section Links
+   ========================= */
+
+.tutorial-section-link {
+    display: block;
+
+    margin-left: 0.75rem;
+    padding: 0.5rem 0.75rem;
+
+    font-size: 0.875rem;
+    font-weight: 400;
+
+    color: var(--color-text-muted);
+
+    border-left: 2px solid var(--color-border);
+
+    text-decoration: none;
+
+    transition:
+            background-color 0.15s ease,
+            color 0.15s ease,
+            border-color 0.15s ease;
+}
+
+.tutorial-section-link:hover {
+    background-color: var(--color-surface-muted);
+
+    color: var(--color-text);
+
+    text-decoration: none;
+
+    border-left-color: var(--color-text-muted);
+}
+
+
+/* Active section */
+
+.tutorial-section-link.active {
+    background-color: var(--color-success-light);
+
+    color: var(--color-success);
+
+    font-weight: 600;
+
+    border-left-color: var(--color-success);
+}
+
+.tutorial-section-link.active:hover {
+    background-color: var(--color-success-light);
+
+    color: var(--color-success);
+}
+
+
+/* =========================
+   Focus
+   ========================= */
+
+.tutorial-chapter-link:focus-visible,
+.tutorial-chapter-toggle:focus-visible,
+.tutorial-section-link:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
 }
