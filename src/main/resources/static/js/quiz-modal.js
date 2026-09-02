@@ -96,12 +96,16 @@ document.addEventListener(
                     link.dataset.quizUrl
                 );
 
+
                 session.start();
+
 
                 modal.dataset.quizUrl =
                     link.dataset.quizUrl;
 
+
                 modal.hidden = false;
+
 
                 document.body.classList.add(
                     "quiz-modal-open"
@@ -117,13 +121,25 @@ document.addEventListener(
         }
 
 
-        function closeQuiz() {
+        async function closeQuiz() {
+
+            /*
+             * If a quiz is currently active, closing
+             * the modal means the user cancelled it.
+             *
+             * QuizSession.cancel() safely does nothing
+             * if the quiz has already been completed.
+             */
+            await session.cancel();
+
 
             modal.hidden = true;
+
 
             document.body.classList.remove(
                 "quiz-modal-open"
             );
+
 
             delete modal.dataset.quizUrl;
         }
@@ -144,9 +160,11 @@ document.addEventListener(
         });
 
 
-        closeButton.addEventListener(
+        closeButton?.addEventListener(
             "click",
-            closeQuiz
+            () => {
+                closeQuiz();
+            }
         );
 
 

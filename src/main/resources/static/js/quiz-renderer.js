@@ -3,7 +3,8 @@ export function renderQuestion(
     currentIndex,
     totalQuestions,
     elements,
-    onAnswer
+    onAnswer,
+    canSkip
 ) {
     const {
         progress,
@@ -14,11 +15,13 @@ export function renderQuestion(
         nextButton
     } = elements;
 
+
     progress.textContent =
         `Question ${currentIndex + 1} / ${totalQuestions}`;
 
     questionText.textContent =
         question.text;
+
 
     optionsContainer.innerHTML = "";
 
@@ -26,8 +29,12 @@ export function renderQuestion(
     feedback.hidden = true;
     feedback.className = "quiz-feedback";
 
-    skipButton.hidden = false;
+
+    skipButton.hidden =
+        !canSkip;
+
     nextButton.hidden = true;
+
 
     Object.entries(question.options)
         .forEach(([key, text]) => {
@@ -35,24 +42,41 @@ export function renderQuestion(
             const button =
                 document.createElement("button");
 
-            button.type = "button";
-            button.classList.add("quiz-option");
 
-            button.dataset.answer = key;
-            button.textContent = `${key}. ${text}`;
+            button.type = "button";
+
+            button.classList.add(
+                "quiz-option"
+            );
+
+
+            button.dataset.answer =
+                key;
+
+            button.setAttribute(
+                "aria-pressed",
+                "false"
+            );
+
+
+            button.textContent =
+                `${key}. ${text}`;
+
 
             button.addEventListener(
                 "click",
                 () => onAnswer(key)
             );
 
-            optionsContainer.appendChild(button);
+
+            optionsContainer.appendChild(
+                button
+            );
         });
 }
 
 
 export function renderAnswer(
-    question,
     selectedAnswer,
     elements
 ) {
@@ -63,64 +87,92 @@ export function renderAnswer(
         nextButton
     } = elements;
 
+
     const optionButtons =
         optionsContainer.querySelectorAll(
             ".quiz-option"
         );
 
+
     optionButtons.forEach(button => {
 
         button.disabled = true;
 
-        if (
+
+        const selected =
             button.dataset.answer ===
-            question.correctAnswer
-        ) {
-            button.classList.add("correct");
+            selectedAnswer;
+
+
+        button.setAttribute(
+            "aria-pressed",
+            selected ? "true" : "false"
+        );
+
+
+        if (selected) {
+
+            button.classList.add(
+                "selected"
+            );
         }
     });
 
-    const correct =
-        selectedAnswer === question.correctAnswer;
 
-    if (correct) {
+    feedback.textContent =
+        "Answer selected. Your result will be shown when the quiz is complete.";
 
-        feedback.textContent =
-            "Correct!";
-
-        feedback.className =
-            "quiz-feedback quiz-feedback-correct";
-
-    } else {
-
-        feedback.textContent =
-            "Not quite.";
-
-        feedback.className =
-            "quiz-feedback quiz-feedback-incorrect";
-
-        optionButtons.forEach(button => {
-
-            if (
-                button.dataset.answer ===
-                selectedAnswer
-            ) {
-                button.classList.add("incorrect");
-            }
-        });
-    }
+    feedback.className =
+        "quiz-feedback";
 
     feedback.hidden = false;
 
+
     skipButton.hidden = true;
     nextButton.hidden = false;
-
-    return correct;
 }
 
 
-export function renderEmptyQuiz(elements) {
+export function renderSkipped(
+    elements
+) {
+    const {
+        optionsContainer,
+        feedback,
+        skipButton,
+        nextButton
+    } = elements;
 
+
+    const optionButtons =
+        optionsContainer.querySelectorAll(
+            ".quiz-option"
+        );
+
+
+    optionButtons.forEach(button => {
+
+        button.disabled = true;
+    });
+
+
+    feedback.textContent =
+        "Question skipped. You can return to it later.";
+
+    feedback.className =
+        "quiz-feedback";
+
+    feedback.hidden = false;
+
+
+    skipButton.hidden = true;
+    nextButton.hidden = false;
+}
+
+
+export function renderEmptyQuiz(
+    elements
+) {
     const {
         progress,
         questionText,
@@ -130,23 +182,31 @@ export function renderEmptyQuiz(elements) {
         nextButton
     } = elements;
 
+
     progress.textContent = "";
+
 
     questionText.textContent =
         "This quiz has no questions.";
 
+
     optionsContainer.innerHTML = "";
+
 
     feedback.textContent = "";
     feedback.hidden = true;
+
 
     skipButton.hidden = true;
     nextButton.hidden = true;
 }
 
 
-export function renderCompletion(elements) {
-
+export function renderCompletion(
+    quizData,
+    questionResults,
+    elements
+) {
     const {
         progress,
         questionText,
@@ -156,20 +216,211 @@ export function renderCompletion(elements) {
         nextButton
     } = elements;
 
+
     progress.textContent = "";
+
 
     questionText.textContent =
         "Quiz complete!";
 
+
     optionsContainer.innerHTML = "";
 
+
+    let correctCount = 0;
+    let answeredCount = 0;
+    let skippedCount = 0;
+
+
+    questionResults.forEach(result => {
+
+        const question =
+            quizData.questions.find(
+                item =>
+                    item.id ===
+                    result.questionId
+            );
+
+
+        if (!question) {
+            return;
+        }
+
+
+        const container =
+            document.createElement("div");
+
+        container.classList.add(
+            "quiz-result"
+        );
+
+
+        const questionTextElement =
+            document.createElement("p");
+
+        questionTextElement.classList.add(
+            "quiz-result-question"
+        );
+
+        questionTextElement.textContent =
+            question.text;
+
+        container.appendChild(
+            questionTextElement
+        );
+
+
+        const selectedAnswer =
+            result.selectedAnswer;
+
+
+        const skipped =
+            selectedAnswer === null ||
+            selectedAnswer === undefined;
+
+
+        if (skipped) {
+
+            skippedCount++;
+
+        } else {
+
+            answeredCount++;
+
+            if (result.correct) {
+                correctCount++;
+            }
+        }
+
+
+        const resultStatus =
+            document.createElement("p");
+
+        resultStatus.classList.add(
+            "quiz-result-status"
+        );
+
+
+        if (skipped) {
+
+            resultStatus.textContent =
+                "Skipped";
+
+            resultStatus.classList.add(
+                "quiz-result-skipped"
+            );
+
+        } else if (result.correct) {
+
+            resultStatus.textContent =
+                "Correct";
+
+            resultStatus.classList.add(
+                "quiz-result-correct"
+            );
+
+        } else {
+
+            resultStatus.textContent =
+                "Incorrect";
+
+            resultStatus.classList.add(
+                "quiz-result-incorrect"
+            );
+        }
+
+
+        container.appendChild(
+            resultStatus
+        );
+
+
+        const selectedAnswerElement =
+            document.createElement("p");
+
+        selectedAnswerElement.classList.add(
+            "quiz-result-answer"
+        );
+
+
+        if (skipped) {
+
+            selectedAnswerElement.innerHTML =
+                "<strong>Your answer:</strong> Skipped";
+
+        } else {
+
+            const selectedText =
+                question.options[
+                    selectedAnswer
+                    ] ?? selectedAnswer;
+
+
+            selectedAnswerElement.textContent =
+                `Your answer: ${selectedAnswer}. ${selectedText}`;
+        }
+
+
+        container.appendChild(
+            selectedAnswerElement
+        );
+
+
+        const correctAnswerElement =
+            document.createElement("p");
+
+        correctAnswerElement.classList.add(
+            "quiz-result-answer",
+            "quiz-result-correct-answer"
+        );
+
+
+        const correctText =
+            question.options[
+                question.correctAnswer
+                ] ?? question.correctAnswer;
+
+
+        correctAnswerElement.textContent =
+            `Correct answer: ${question.correctAnswer}. ${correctText}`;
+
+
+        container.appendChild(
+            correctAnswerElement
+        );
+
+
+        optionsContainer.appendChild(
+            container
+        );
+    });
+
+
+    let summary;
+
+
+    if (skippedCount > 0) {
+
+        summary =
+            `You got ${correctCount} / ${answeredCount} answered correctly. `
+            + `${skippedCount} question`
+            + `${skippedCount === 1 ? "" : "s"} skipped.`;
+
+    } else {
+
+        summary =
+            `You got ${correctCount} / ${answeredCount} correct.`;
+    }
+
+
     feedback.textContent =
-        "Nice work!";
+        summary;
 
     feedback.className =
         "quiz-feedback quiz-feedback-correct";
 
     feedback.hidden = false;
+
 
     skipButton.hidden = true;
     nextButton.hidden = true;

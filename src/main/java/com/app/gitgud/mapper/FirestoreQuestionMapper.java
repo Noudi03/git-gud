@@ -11,10 +11,9 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-public class QuestionFirestoreMapper {
+public class FirestoreQuestionMapper {
 
-
-    public Question toQuestion(
+    public Question toModel(
             DocumentSnapshot document
     ) {
 

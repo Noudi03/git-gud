@@ -4,18 +4,21 @@ import { signInWithEmailAndPassword } from
 import { auth } from "./firebase.js";
 
 
-const loginForm = document.getElementById("login-form");
-const errorMessage = document.getElementById("login-error");
+const loginForm =
+    document.getElementById("login-form");
 
 
 loginForm.addEventListener("submit", async (event) => {
 
     event.preventDefault();
 
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
 
-    errorMessage.textContent = "";
+    const email =
+        document.getElementById("email").value;
+
+    const password =
+        document.getElementById("password").value;
+
 
     try {
 
@@ -26,31 +29,51 @@ loginForm.addEventListener("submit", async (event) => {
                 password
             );
 
-        const user = userCredential.user;
 
-        const idToken = await user.getIdToken();
+        const user =
+            userCredential.user;
 
-        const response = await fetch("/api/auth/login", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                idToken: idToken
-            })
-        });
+
+        const idToken =
+            await user.getIdToken();
+
+
+        const response =
+            await fetch("/api/auth/login", {
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+                    idToken: idToken
+                })
+            });
+
 
         if (!response.ok) {
-            throw new Error("Could not create application session.");
+
+            throw new Error(
+                "Could not create application session."
+            );
         }
 
-        window.location.href = "/home";
+
+        window.location.href =
+            "/home";
+
 
     } catch (error) {
 
-        console.error("Login failed:", error);
+        console.error(
+            "Login failed:",
+            error
+        );
 
-        errorMessage.textContent = getLoginErrorMessage(error);
+        alert(
+            getLoginErrorMessage(error)
+        );
     }
 });
 

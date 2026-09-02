@@ -1,36 +1,27 @@
 package com.app.gitgud.service;
 
-import com.app.gitgud.mapper.QuizFirestoreMapper;
 import com.app.gitgud.model.ChapterQuizContext;
 import com.app.gitgud.model.GlobalQuizContext;
 import com.app.gitgud.model.Quiz;
 import com.app.gitgud.model.QuizContext;
 import com.app.gitgud.model.SectionQuizContext;
-import com.app.gitgud.repository.QuizFirestoreRepository;
-import com.google.cloud.firestore.DocumentSnapshot;
-import com.google.cloud.firestore.QuerySnapshot;
+import com.app.gitgud.repository.FirestoreQuizRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class QuizService {
 
-    private final QuizFirestoreRepository quizFirestoreRepository;
-    private final QuizFirestoreMapper quizFirestoreMapper;
+    private final FirestoreQuizRepository quizRepository;
 
 
     public QuizService(
-            QuizFirestoreRepository quizFirestoreRepository,
-            QuizFirestoreMapper quizFirestoreMapper
+            FirestoreQuizRepository quizRepository
     ) {
 
-        this.quizFirestoreRepository =
-                quizFirestoreRepository;
-
-        this.quizFirestoreMapper =
-                quizFirestoreMapper;
+        this.quizRepository =
+                quizRepository;
     }
 
 
@@ -45,15 +36,7 @@ public class QuizService {
                         sectionId
                 );
 
-        QuerySnapshot snapshot =
-                quizFirestoreRepository
-                        .getQuizCollection(context)
-                        .orderBy("order")
-                        .get()
-                        .get();
-
-        return convertQuizzes(
-                snapshot,
+        return quizRepository.findQuizzes(
                 context
         );
     }
@@ -71,16 +54,9 @@ public class QuizService {
                         sectionId
                 );
 
-        DocumentSnapshot document =
-                quizFirestoreRepository
-                        .getQuizCollection(context)
-                        .document(quizId)
-                        .get()
-                        .get();
-
-        return quizFirestoreMapper.toQuiz(
-                document,
-                context
+        return quizRepository.findQuiz(
+                context,
+                quizId
         );
     }
 
@@ -94,15 +70,7 @@ public class QuizService {
                         chapterId
                 );
 
-        QuerySnapshot snapshot =
-                quizFirestoreRepository
-                        .getQuizCollection(context)
-                        .orderBy("order")
-                        .get()
-                        .get();
-
-        return convertQuizzes(
-                snapshot,
+        return quizRepository.findQuizzes(
                 context
         );
     }
@@ -118,16 +86,9 @@ public class QuizService {
                         chapterId
                 );
 
-        DocumentSnapshot document =
-                quizFirestoreRepository
-                        .getQuizCollection(context)
-                        .document(quizId)
-                        .get()
-                        .get();
-
-        return quizFirestoreMapper.toQuiz(
-                document,
-                context
+        return quizRepository.findQuiz(
+                context,
+                quizId
         );
     }
 
@@ -138,15 +99,7 @@ public class QuizService {
         QuizContext context =
                 new GlobalQuizContext();
 
-        QuerySnapshot snapshot =
-                quizFirestoreRepository
-                        .getQuizCollection(context)
-                        .orderBy("order")
-                        .get()
-                        .get();
-
-        return convertQuizzes(
-                snapshot,
+        return quizRepository.findQuizzes(
                 context
         );
     }
@@ -159,44 +112,9 @@ public class QuizService {
         QuizContext context =
                 new GlobalQuizContext();
 
-        DocumentSnapshot document =
-                quizFirestoreRepository
-                        .getQuizCollection(context)
-                        .document(quizId)
-                        .get()
-                        .get();
-
-        return quizFirestoreMapper.toQuiz(
-                document,
-                context
+        return quizRepository.findQuiz(
+                context,
+                quizId
         );
-    }
-
-
-    private List<Quiz> convertQuizzes(
-            QuerySnapshot snapshot,
-            QuizContext context
-    ) {
-
-        List<Quiz> quizzes =
-                new ArrayList<>();
-
-        for (
-                DocumentSnapshot document :
-                snapshot.getDocuments()
-        ) {
-
-            Quiz quiz =
-                    quizFirestoreMapper.toQuiz(
-                            document,
-                            context
-                    );
-
-            if (quiz != null) {
-                quizzes.add(quiz);
-            }
-        }
-
-        return quizzes;
     }
 }

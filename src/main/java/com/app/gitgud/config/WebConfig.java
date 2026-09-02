@@ -7,22 +7,42 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
+    private final AuthInterceptor authInterceptor;
+    private final GuestInterceptor guestInterceptor;
+
+
+    public WebConfig(
+            AuthInterceptor authInterceptor,
+            GuestInterceptor guestInterceptor
+    ) {
+
+        this.authInterceptor =
+                authInterceptor;
+
+        this.guestInterceptor =
+                guestInterceptor;
+    }
+
+
     @Override
-    public void addInterceptors(InterceptorRegistry registry) {
+    public void addInterceptors(
+            InterceptorRegistry registry
+    ) {
 
-        // Protected pages
-        registry.addInterceptor(new AuthInterceptor())
-                .addPathPatterns(
-                        "/home",
-                        "/tutorials/**",
-                        "/statistics"
-                );
+        registry.addInterceptor(
+                authInterceptor
+        ).addPathPatterns(
+                "/home",
+                "/tutorials/**",
+                "/statistics"
+        );
 
-        // Guest-only pages
-        registry.addInterceptor(new GuestInterceptor())
-                .addPathPatterns(
-                        "/login",
-                        "/register"
-                );
+
+        registry.addInterceptor(
+                guestInterceptor
+        ).addPathPatterns(
+                "/login",
+                "/register"
+        );
     }
 }

@@ -171,16 +171,90 @@
    Answer States
    ========================= */
 
-.quiz-option.correct {
-    background-color: var(--color-success);
-    border-color: var(--color-success);
+.quiz-option.selected {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
     color: white;
+
+    box-shadow:
+            0 0 0 2px
+            color-mix(
+                    in srgb,
+                    var(--color-primary) 20%,
+                    transparent
+            );
 }
 
-.quiz-option.incorrect {
-    background-color: var(--color-danger);
-    border-color: var(--color-danger);
-    color: white;
+.quiz-option.selected:hover:not(:disabled) {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+
+    transform: none;
+}
+
+
+/* =========================
+   Quiz Results
+   ========================= */
+
+.quiz-result {
+    margin-bottom: 1rem;
+    padding: 1rem;
+
+    background-color: var(--color-surface-muted);
+
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+}
+
+.quiz-result:last-child {
+    margin-bottom: 0;
+}
+
+.quiz-result-question {
+    margin: 0 0 0.75rem;
+
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+.quiz-result-status {
+    display: inline-block;
+
+    margin: 0 0 0.75rem;
+    padding: 0.25rem 0.6rem;
+
+    border-radius: 999px;
+
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.quiz-result-correct {
+    background-color: var(--color-success-light);
+    color: var(--color-success);
+}
+
+.quiz-result-incorrect {
+    background-color: var(--color-danger-light);
+    color: var(--color-danger);
+}
+
+.quiz-result-skipped {
+    background-color: var(--color-surface);
+    color: var(--color-text-muted);
+
+    border: 1px solid var(--color-border);
+}
+
+.quiz-result-answer {
+    margin: 0.35rem 0 0;
+
+    line-height: 1.5;
+}
+
+.quiz-result-correct-answer {
+    font-weight: 600;
 }
 
 

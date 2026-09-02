@@ -1,17 +1,14 @@
 package com.app.gitgud.mapper;
 
-import com.app.gitgud.model.Quiz;
-import com.app.gitgud.model.QuizContext;
-import com.app.gitgud.model.QuizType;
+import com.app.gitgud.model.Chapter;
 import com.google.cloud.firestore.DocumentSnapshot;
 import org.springframework.stereotype.Component;
 
 @Component
-public class QuizFirestoreMapper {
+public class FirestoreChapterMapper {
 
-    public Quiz toQuiz(
-            DocumentSnapshot document,
-            QuizContext context
+    public Chapter toModel(
+            DocumentSnapshot document
     ) {
 
         if (!document.exists()) {
@@ -24,12 +21,6 @@ public class QuizFirestoreMapper {
         String title =
                 document.getString("title");
 
-        String typeValue =
-                document.getString("type");
-
-        QuizType type =
-                QuizType.fromValue(typeValue);
-
         Long orderValue =
                 document.getLong("order");
 
@@ -38,12 +29,10 @@ public class QuizFirestoreMapper {
                         ? orderValue.intValue()
                         : 0;
 
-        return new Quiz(
+        return new Chapter(
                 id,
                 title,
-                type,
-                order,
-                context
+                order
         );
     }
 }
