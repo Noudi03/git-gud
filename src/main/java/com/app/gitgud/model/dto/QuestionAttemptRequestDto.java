@@ -8,10 +8,8 @@ public class QuestionAttemptRequestDto {
     private int hintsUsed;
     private int skipCount;
 
-
     public QuestionAttemptRequestDto() {
     }
-
 
     public String getQuestionId() {
         return questionId;
@@ -20,11 +18,8 @@ public class QuestionAttemptRequestDto {
     public void setQuestionId(
             String questionId
     ) {
-
-        this.questionId =
-                questionId;
+        this.questionId = questionId;
     }
-
 
     public boolean isCorrect() {
         return correct;
@@ -33,11 +28,8 @@ public class QuestionAttemptRequestDto {
     public void setCorrect(
             boolean correct
     ) {
-
-        this.correct =
-                correct;
+        this.correct = correct;
     }
-
 
     public long getTimeSpentMillis() {
         return timeSpentMillis;
@@ -46,11 +38,8 @@ public class QuestionAttemptRequestDto {
     public void setTimeSpentMillis(
             long timeSpentMillis
     ) {
-
-        this.timeSpentMillis =
-                timeSpentMillis;
+        this.timeSpentMillis = timeSpentMillis;
     }
-
 
     public int getHintsUsed() {
         return hintsUsed;
@@ -59,11 +48,8 @@ public class QuestionAttemptRequestDto {
     public void setHintsUsed(
             int hintsUsed
     ) {
-
-        this.hintsUsed =
-                hintsUsed;
+        this.hintsUsed = hintsUsed;
     }
-
 
     public int getSkipCount() {
         return skipCount;
@@ -72,8 +58,6 @@ public class QuestionAttemptRequestDto {
     public void setSkipCount(
             int skipCount
     ) {
-
-        this.skipCount =
-                skipCount;
+        this.skipCount = skipCount;
     }
 }

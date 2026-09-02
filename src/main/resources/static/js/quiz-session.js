@@ -17,6 +17,9 @@ export class QuizSession {
         this.quizData =
             null;
 
+        this.attemptId =
+            null;
+
         this.currentQuestionIndex =
             0;
 
@@ -63,6 +66,9 @@ export class QuizSession {
         this.quizData =
             await response.json();
 
+
+        this.attemptId =
+            null;
 
         this.currentQuestionIndex =
             0;
@@ -604,14 +610,14 @@ export class QuizSession {
         }
 
 
-        /*
-         * An empty quiz has no actual attempt to save.
-         */
         if (
             this.quizData.questions.length === 0
         ) {
             return;
         }
+
+
+        this.recordCurrentQuestionTime();
 
 
         this.isCancelled =
@@ -624,10 +630,147 @@ export class QuizSession {
     }
 
 
+    recordCurrentQuestionTime() {
+
+        const question =
+            this.quizData?.questions?.[
+                this.currentQuestionIndex
+                ];
+
+
+        if (
+            !question ||
+            this.questionStartTime === null
+        ) {
+            return;
+        }
+
+
+        const timeSpentMillis =
+            this.getTimeSpent();
+
+
+        if (timeSpentMillis <= 0) {
+            return;
+        }
+
+
+        const existingAttempt =
+            this.questionAttempts.get(
+                question.id
+            );
+
+
+        this.questionAttempts.set(
+            question.id,
+            {
+                questionId:
+                question.id,
+
+                selectedAnswer:
+                    existingAttempt?.selectedAnswer ?? null,
+
+                correct:
+                    existingAttempt?.correct ?? false,
+
+                timeSpentMillis:
+                    (
+                        existingAttempt?.timeSpentMillis ?? 0
+                    ) + timeSpentMillis,
+
+                hintsUsed:
+                    existingAttempt?.hintsUsed ?? 0,
+
+                skipCount:
+                    existingAttempt?.skipCount ?? 0
+            }
+        );
+
+
+        this.questionStartTime =
+            null;
+    }
+
+
     async submitAttempt(status) {
 
         if (!this.quizData) {
             return;
+        }
+
+
+        try {
+
+            const attempt =
+                await this.createQuizAttempt(
+                    status
+                );
+
+
+            this.attemptId =
+                attempt.id;
+
+
+            await this.createQuestionAttempts();
+
+
+        } catch (error) {
+
+            console.error(
+                "Could not save quiz attempt:",
+                error
+            );
+        }
+    }
+
+
+    async createQuizAttempt(status) {
+
+        const request = {
+
+            quizId:
+            this.quizData.quiz.id,
+
+            status:
+            status
+        };
+
+
+        const response =
+            await fetch(
+                "/api/quiz-attempts",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify(request)
+                }
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                `Failed to save quiz attempt (${response.status})`
+            );
+        }
+
+
+        return response.json();
+    }
+
+
+    async createQuestionAttempts() {
+
+        if (!this.attemptId) {
+            throw new Error(
+                "Missing quiz attempt ID."
+            );
         }
 
 
@@ -661,53 +804,44 @@ export class QuizSession {
             );
 
 
-        const request = {
-
-            quizId:
-            this.quizData.quiz.id,
-
-            status:
-            status,
-
-            questionAttempts:
-            questionAttempts
-        };
+        await Promise.all(
+            questionAttempts.map(
+                questionAttempt =>
+                    this.createQuestionAttempt(
+                        questionAttempt
+                    )
+            )
+        );
+    }
 
 
-        try {
+    async createQuestionAttempt(
+        questionAttempt
+    ) {
 
-            const response =
-                await fetch(
-                    "/api/quiz-attempts",
-                    {
-                        method: "POST",
+        const response =
+            await fetch(
+                `/api/quiz-attempts/${this.attemptId}/question-attempts`,
+                {
+                    method: "POST",
 
-                        headers: {
-                            "Content-Type":
-                                "application/json"
-                        },
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
 
-                        body:
-                            JSON.stringify(
-                                request
-                            )
-                    }
-                );
-
-
-            if (!response.ok) {
-
-                throw new Error(
-                    `Failed to save quiz attempt (${response.status})`
-                );
-            }
+                    body:
+                        JSON.stringify(
+                            questionAttempt
+                        )
+                }
+            );
 
 
-        } catch (error) {
+        if (!response.ok) {
 
-            console.error(
-                "Could not save quiz attempt:",
-                error
+            throw new Error(
+                `Failed to save question attempt (${response.status})`
             );
         }
     }

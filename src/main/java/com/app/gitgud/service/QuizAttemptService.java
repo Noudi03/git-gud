@@ -1,7 +1,6 @@
 package com.app.gitgud.service;
 
 import com.app.gitgud.mapper.QuizAttemptMapper;
-import com.app.gitgud.model.QuestionAttempt;
 import com.app.gitgud.model.QuizAttempt;
 import com.app.gitgud.model.dto.QuizAttemptRequestDto;
 import com.app.gitgud.repository.FirestoreQuizAttemptRepository;
@@ -23,7 +22,7 @@ public class QuizAttemptService {
         this.quizAttemptMapper = quizAttemptMapper;
     }
 
-    public void createAttempt(
+    public QuizAttempt createAttempt(
             String userId,
             QuizAttemptRequestDto request
     ) throws Exception {
@@ -35,6 +34,8 @@ public class QuizAttemptService {
                 userId,
                 attempt
         );
+
+        return attempt;
     }
 
     public List<QuizAttempt> getAttempts(
@@ -59,40 +60,6 @@ public class QuizAttemptService {
                 .orElseThrow(
                         () -> new IllegalArgumentException(
                                 "Quiz attempt not found"
-                        )
-                );
-    }
-
-    public List<QuestionAttempt> getQuestionAttempts(
-            String userId,
-            String attemptId
-    ) throws Exception {
-
-        return getAttempt(
-                userId,
-                attemptId
-        ).getQuestionAttempts();
-    }
-
-    public QuestionAttempt getQuestionAttempt(
-            String userId,
-            String attemptId,
-            String questionId
-    ) throws Exception {
-
-        return getQuestionAttempts(
-                userId,
-                attemptId
-        )
-                .stream()
-                .filter(attempt ->
-                        attempt.getQuestionId()
-                                .equals(questionId)
-                )
-                .findFirst()
-                .orElseThrow(
-                        () -> new IllegalArgumentException(
-                                "Question attempt not found"
                         )
                 );
     }

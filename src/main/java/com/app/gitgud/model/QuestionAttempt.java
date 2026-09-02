@@ -8,7 +8,6 @@ public class QuestionAttempt {
     private final int hintsUsed;
     private final int skipCount;
 
-
     public QuestionAttempt(
             String questionId,
             boolean correct,
@@ -16,23 +15,12 @@ public class QuestionAttempt {
             int hintsUsed,
             int skipCount
     ) {
-
-        this.questionId =
-                questionId;
-
-        this.correct =
-                correct;
-
-        this.timeSpentMillis =
-                timeSpentMillis;
-
-        this.hintsUsed =
-                hintsUsed;
-
-        this.skipCount =
-                skipCount;
+        this.questionId = questionId;
+        this.correct = correct;
+        this.timeSpentMillis = timeSpentMillis;
+        this.hintsUsed = hintsUsed;
+        this.skipCount = skipCount;
     }
-
 
     public String getQuestionId() {
         return questionId;
