@@ -12,15 +12,12 @@ public class TutorialController {
 
     private final TutorialPageService tutorialPageService;
 
-
     public TutorialController(
             TutorialPageService tutorialPageService
     ) {
-
         this.tutorialPageService =
                 tutorialPageService;
     }
-
 
     @GetMapping("/tutorials")
     public String tutorials(
@@ -38,8 +35,9 @@ public class TutorialController {
         return "tutorials";
     }
 
-
-    @GetMapping("/tutorials/{chapterId}/{sectionId}")
+    @GetMapping(
+            "/tutorials/{chapterId}/{sectionId}"
+    )
     public String section(
             @PathVariable String chapterId,
             @PathVariable String sectionId,

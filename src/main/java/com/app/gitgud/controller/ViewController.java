@@ -11,22 +11,18 @@ public class ViewController {
 
     private final CurrentUserService currentUserService;
 
-
     public ViewController(
             CurrentUserService currentUserService
     ) {
-
         this.currentUserService =
                 currentUserService;
     }
-
 
     @GetMapping("/")
     public String index() {
 
         return "redirect:/home";
     }
-
 
     @GetMapping("/home")
     public String home(
@@ -49,20 +45,17 @@ public class ViewController {
         return "home";
     }
 
-
     @GetMapping("/statistics")
     public String statistics() {
 
         return "statistics";
     }
 
-
     @GetMapping("/register")
     public String register() {
 
         return "register";
     }
-
 
     @GetMapping("/login")
     public String login() {

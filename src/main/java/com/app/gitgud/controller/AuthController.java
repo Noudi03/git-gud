@@ -19,13 +19,11 @@ public class AuthController {
     private final CurrentUserService currentUserService;
     private final UserService userService;
 
-
     public AuthController(
             AuthenticationService authenticationService,
             CurrentUserService currentUserService,
             UserService userService
     ) {
-
         this.authenticationService =
                 authenticationService;
 
@@ -35,7 +33,6 @@ public class AuthController {
         this.userService =
                 userService;
     }
-
 
     @PostMapping("/register")
     public ResponseEntity<?> register(
@@ -60,14 +57,11 @@ public class AuthController {
                     .body("Missing username");
         }
 
-
         try {
-
             FirebaseToken token =
                     verifyToken(
                             request.getIdToken()
                     );
-
 
             User user =
                     new User(
@@ -76,16 +70,15 @@ public class AuthController {
                             request.getUsername()
                     );
 
-
             userService.createUser(user);
 
             currentUserService.login(
                     token.getUid()
             );
 
-
-            return ResponseEntity.ok().build();
-
+            return ResponseEntity
+                    .ok()
+                    .build();
 
         } catch (FirebaseAuthException e) {
 
@@ -101,7 +94,6 @@ public class AuthController {
         }
     }
 
-
     @PostMapping("/login")
     public ResponseEntity<?> login(
             @RequestBody LoginRequestDto request
@@ -116,40 +108,43 @@ public class AuthController {
                     .body("Missing ID token");
         }
 
-
         try {
-
             FirebaseToken token =
                     verifyToken(
                             request.getIdToken()
                     );
 
-
             currentUserService.login(
                     token.getUid()
             );
 
-
-            return ResponseEntity.ok().build();
-
+            return ResponseEntity
+                    .ok()
+                    .build();
 
         } catch (FirebaseAuthException e) {
 
             return ResponseEntity
                     .status(401)
                     .body("Invalid Firebase token");
+
+        } catch (Exception e) {
+
+            return ResponseEntity
+                    .internalServerError()
+                    .body("Could not log in");
         }
     }
-
 
     @PostMapping("/logout")
     public ResponseEntity<?> logout() {
 
         currentUserService.logout();
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity
+                .ok()
+                .build();
     }
-
 
     private FirebaseToken verifyToken(
             String idToken

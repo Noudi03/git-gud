@@ -34,16 +34,17 @@ public class QuestionAttemptController {
             @PathVariable String attemptId,
             @RequestBody QuestionAttemptRequestDto request
     ) {
+
+        String userId =
+                currentUserService.getUserId();
+
+        if (userId == null) {
+            return ResponseEntity
+                    .status(401)
+                    .body("Not authenticated");
+        }
+
         try {
-            String userId =
-                    currentUserService.getUserId();
-
-            if (userId == null) {
-                return ResponseEntity
-                        .status(401)
-                        .body("Not authenticated");
-            }
-
             questionAttemptService.createQuestionAttempt(
                     userId,
                     attemptId,
@@ -55,11 +56,13 @@ public class QuestionAttemptController {
                     .build();
 
         } catch (IllegalArgumentException e) {
+
             return ResponseEntity
                     .badRequest()
                     .body(e.getMessage());
 
         } catch (Exception e) {
+
             return ResponseEntity
                     .internalServerError()
                     .body(
@@ -72,16 +75,17 @@ public class QuestionAttemptController {
     public ResponseEntity<?> getQuestionAttempts(
             @PathVariable String attemptId
     ) {
+
+        String userId =
+                currentUserService.getUserId();
+
+        if (userId == null) {
+            return ResponseEntity
+                    .status(401)
+                    .body("Not authenticated");
+        }
+
         try {
-            String userId =
-                    currentUserService.getUserId();
-
-            if (userId == null) {
-                return ResponseEntity
-                        .status(401)
-                        .body("Not authenticated");
-            }
-
             List<QuestionAttempt> attempts =
                     questionAttemptService
                             .getQuestionAttempts(
@@ -94,6 +98,7 @@ public class QuestionAttemptController {
             );
 
         } catch (Exception e) {
+
             return ResponseEntity
                     .internalServerError()
                     .body(
@@ -107,31 +112,37 @@ public class QuestionAttemptController {
             @PathVariable String attemptId,
             @PathVariable String questionId
     ) {
+
+        String userId =
+                currentUserService.getUserId();
+
+        if (userId == null) {
+            return ResponseEntity
+                    .status(401)
+                    .body("Not authenticated");
+        }
+
         try {
-            String userId =
-                    currentUserService.getUserId();
-
-            if (userId == null) {
-                return ResponseEntity
-                        .status(401)
-                        .body("Not authenticated");
-            }
-
-            return ResponseEntity.ok(
+            QuestionAttempt attempt =
                     questionAttemptService
                             .getQuestionAttempt(
                                     userId,
                                     attemptId,
                                     questionId
-                            )
+                            );
+
+            return ResponseEntity.ok(
+                    attempt
             );
 
         } catch (IllegalArgumentException e) {
+
             return ResponseEntity
                     .notFound()
                     .build();
 
         } catch (Exception e) {
+
             return ResponseEntity
                     .internalServerError()
                     .body(

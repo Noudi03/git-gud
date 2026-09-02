@@ -31,16 +31,17 @@ public class QuizAttemptController {
     public ResponseEntity<?> createAttempt(
             @RequestBody QuizAttemptRequestDto request
     ) {
+
+        String userId =
+                currentUserService.getUserId();
+
+        if (userId == null) {
+            return ResponseEntity
+                    .status(401)
+                    .body("Not authenticated");
+        }
+
         try {
-            String userId =
-                    currentUserService.getUserId();
-
-            if (userId == null) {
-                return ResponseEntity
-                        .status(401)
-                        .body("Not authenticated");
-            }
-
             QuizAttempt attempt =
                     quizAttemptService.createAttempt(
                             userId,
@@ -52,11 +53,13 @@ public class QuizAttemptController {
             );
 
         } catch (IllegalArgumentException e) {
+
             return ResponseEntity
                     .badRequest()
                     .body(e.getMessage());
 
         } catch (Exception e) {
+
             return ResponseEntity
                     .internalServerError()
                     .body(
@@ -66,8 +69,7 @@ public class QuizAttemptController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getAttempts()
-            throws Exception {
+    public ResponseEntity<?> getAttempts() {
 
         String userId =
                 currentUserService.getUserId();
@@ -78,43 +80,59 @@ public class QuizAttemptController {
                     .body("Not authenticated");
         }
 
-        List<QuizAttempt> attempts =
-                quizAttemptService.getAttempts(
-                        userId
-                );
+        try {
+            List<QuizAttempt> attempts =
+                    quizAttemptService.getAttempts(
+                            userId
+                    );
 
-        return ResponseEntity.ok(
-                attempts
-        );
+            return ResponseEntity.ok(
+                    attempts
+            );
+
+        } catch (Exception e) {
+
+            return ResponseEntity
+                    .internalServerError()
+                    .body(
+                            "Could not get quiz attempts"
+                    );
+        }
     }
 
     @GetMapping("/{attemptId}")
     public ResponseEntity<?> getAttempt(
             @PathVariable String attemptId
     ) {
+
+        String userId =
+                currentUserService.getUserId();
+
+        if (userId == null) {
+            return ResponseEntity
+                    .status(401)
+                    .body("Not authenticated");
+        }
+
         try {
-            String userId =
-                    currentUserService.getUserId();
-
-            if (userId == null) {
-                return ResponseEntity
-                        .status(401)
-                        .body("Not authenticated");
-            }
-
-            return ResponseEntity.ok(
+            QuizAttempt attempt =
                     quizAttemptService.getAttempt(
                             userId,
                             attemptId
-                    )
+                    );
+
+            return ResponseEntity.ok(
+                    attempt
             );
 
         } catch (IllegalArgumentException e) {
+
             return ResponseEntity
                     .notFound()
                     .build();
 
         } catch (Exception e) {
+
             return ResponseEntity
                     .internalServerError()
                     .body(

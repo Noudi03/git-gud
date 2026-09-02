@@ -2,105 +2,122 @@ package com.app.gitgud.controller;
 
 import com.app.gitgud.model.dto.QuizPageDto;
 import com.app.gitgud.service.QuizPageService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("/api/quizzes")
 public class QuizController {
 
     private final QuizPageService quizPageService;
 
-
     public QuizController(
             QuizPageService quizPageService
     ) {
-
         this.quizPageService =
                 quizPageService;
     }
 
-
-    /*
-     * Section quiz
-     */
-
     @GetMapping(
-            "/api/quizzes/sections/{chapterId}/{sectionId}/{quizId}"
+            "/sections/{chapterId}/{sectionId}/{quizId}"
     )
-    public QuizPageDto getSectionQuiz(
+    public ResponseEntity<?> getSectionQuiz(
             @PathVariable String chapterId,
             @PathVariable String sectionId,
             @PathVariable String quizId
-    ) throws Exception {
+    ) {
 
-        QuizPageDto page =
-                quizPageService.getSectionQuiz(
-                        chapterId,
-                        sectionId,
-                        quizId
-                );
+        try {
+            QuizPageDto page =
+                    quizPageService.getSectionQuiz(
+                            chapterId,
+                            sectionId,
+                            quizId
+                    );
 
-        if (page == null) {
-            throw new IllegalArgumentException(
-                    "Quiz not found"
+            if (page == null) {
+                return ResponseEntity
+                        .notFound()
+                        .build();
+            }
+
+            return ResponseEntity.ok(
+                    page
             );
-        }
 
-        return page;
+        } catch (Exception e) {
+
+            return ResponseEntity
+                    .internalServerError()
+                    .body(
+                            "Could not get quiz"
+                    );
+        }
     }
 
-
-    /*
-     * Chapter quiz
-     */
-
     @GetMapping(
-            "/api/quizzes/chapters/{chapterId}/{quizId}"
+            "/chapters/{chapterId}/{quizId}"
     )
-    public QuizPageDto getChapterQuiz(
+    public ResponseEntity<?> getChapterQuiz(
             @PathVariable String chapterId,
             @PathVariable String quizId
-    ) throws Exception {
+    ) {
 
-        QuizPageDto page =
-                quizPageService.getChapterQuiz(
-                        chapterId,
-                        quizId
-                );
+        try {
+            QuizPageDto page =
+                    quizPageService.getChapterQuiz(
+                            chapterId,
+                            quizId
+                    );
 
-        if (page == null) {
-            throw new IllegalArgumentException(
-                    "Quiz not found"
+            if (page == null) {
+                return ResponseEntity
+                        .notFound()
+                        .build();
+            }
+
+            return ResponseEntity.ok(
+                    page
             );
-        }
 
-        return page;
+        } catch (Exception e) {
+
+            return ResponseEntity
+                    .internalServerError()
+                    .body(
+                            "Could not get quiz"
+                    );
+        }
     }
 
-
-    /*
-     * Global quiz
-     */
-
-    @GetMapping(
-            "/api/quizzes/{quizId}"
-    )
-    public QuizPageDto getGlobalQuiz(
+    @GetMapping("/{quizId}")
+    public ResponseEntity<?> getGlobalQuiz(
             @PathVariable String quizId
-    ) throws Exception {
+    ) {
 
-        QuizPageDto page =
-                quizPageService.getGlobalQuiz(
-                        quizId
-                );
+        try {
+            QuizPageDto page =
+                    quizPageService.getGlobalQuiz(
+                            quizId
+                    );
 
-        if (page == null) {
-            throw new IllegalArgumentException(
-                    "Quiz not found"
+            if (page == null) {
+                return ResponseEntity
+                        .notFound()
+                        .build();
+            }
+
+            return ResponseEntity.ok(
+                    page
             );
-        }
 
-        return page;
+        } catch (Exception e) {
+
+            return ResponseEntity
+                    .internalServerError()
+                    .body(
+                            "Could not get quiz"
+                    );
+        }
     }
 }
