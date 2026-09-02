@@ -250,6 +250,7 @@ export class QuizSession {
             );
 
         renderAnswer(
+            trial,
             selectedAnswer,
             this.elements
         );
@@ -527,14 +528,42 @@ export class QuizSession {
         switch (trial.type) {
 
             case "QUESTION":
+
                 return (
                     answer ===
                     trial.correctAnswer
                 );
 
+            case "FILL_IN_THE_BLANK":
+
+                return (
+                    this.normalizeAnswer(answer) ===
+                    this.normalizeAnswer(
+                        trial.correctAnswer
+                    )
+                );
+
             default:
+
                 return false;
         }
+    }
+
+
+    normalizeAnswer(
+        answer
+    ) {
+
+        if (
+            answer === null ||
+            answer === undefined
+        ) {
+            return "";
+        }
+
+        return String(answer)
+            .trim()
+            .toLowerCase();
     }
 
 

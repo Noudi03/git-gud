@@ -67,6 +67,82 @@ export function renderQuestionTrial(
 }
 
 
+export function renderFillInTheBlankTrial(
+    trial,
+    currentIndex,
+    totalTrials,
+    elements,
+    onAnswer,
+    canSkip
+) {
+    const {
+        progress,
+        questionText,
+        optionsContainer,
+        feedback,
+        skipButton,
+        nextButton
+    } = elements;
+
+    progress.textContent =
+        `Trial ${currentIndex + 1} / ${totalTrials}`;
+
+    questionText.textContent =
+        trial.text;
+
+    optionsContainer.innerHTML = "";
+
+    feedback.textContent = "";
+    feedback.hidden = true;
+    feedback.className = "quiz-feedback";
+
+    skipButton.hidden =
+        !canSkip;
+
+    nextButton.hidden = true;
+
+    const input =
+        document.createElement("input");
+
+    input.type = "text";
+
+    input.classList.add(
+        "quiz-fill-in-the-blank"
+    );
+
+    input.autocomplete = "off";
+
+    input.setAttribute(
+        "aria-label",
+        "Your answer"
+    );
+
+    input.addEventListener(
+        "keydown",
+        event => {
+
+            if (event.key !== "Enter") {
+                return;
+            }
+
+            event.preventDefault();
+
+            if (input.value.trim() === "") {
+                return;
+            }
+
+            onAnswer(input.value);
+        }
+    );
+
+    optionsContainer.appendChild(
+        input
+    );
+
+    input.focus();
+}
+
+
 export function renderTrial(
     trial,
     currentIndex,
@@ -78,6 +154,7 @@ export function renderTrial(
     switch (trial.type) {
 
         case "QUESTION":
+
             renderQuestionTrial(
                 trial,
                 currentIndex,
@@ -86,9 +163,24 @@ export function renderTrial(
                 onAnswer,
                 canSkip
             );
+
+            break;
+
+        case "FILL_IN_THE_BLANK":
+
+            renderFillInTheBlankTrial(
+                trial,
+                currentIndex,
+                totalTrials,
+                elements,
+                onAnswer,
+                canSkip
+            );
+
             break;
 
         default:
+
             throw new Error(
                 `Unsupported trial type: ${trial.type}`
             );
@@ -97,6 +189,7 @@ export function renderTrial(
 
 
 export function renderAnswer(
+    trial,
     selectedAnswer,
     elements
 ) {
@@ -107,30 +200,47 @@ export function renderAnswer(
         nextButton
     } = elements;
 
-    const optionButtons =
-        optionsContainer.querySelectorAll(
-            ".quiz-option"
-        );
+    if (trial.type === "QUESTION") {
 
-    optionButtons.forEach(button => {
-
-        button.disabled = true;
-
-        const selected =
-            button.dataset.answer ===
-            selectedAnswer;
-
-        button.setAttribute(
-            "aria-pressed",
-            selected ? "true" : "false"
-        );
-
-        if (selected) {
-            button.classList.add(
-                "selected"
+        const optionButtons =
+            optionsContainer.querySelectorAll(
+                ".quiz-option"
             );
+
+        optionButtons.forEach(button => {
+
+            button.disabled = true;
+
+            const selected =
+                button.dataset.answer ===
+                selectedAnswer;
+
+            button.setAttribute(
+                "aria-pressed",
+                selected ? "true" : "false"
+            );
+
+            if (selected) {
+
+                button.classList.add(
+                    "selected"
+                );
+            }
+        });
+
+    } else if (
+        trial.type === "FILL_IN_THE_BLANK"
+    ) {
+
+        const input =
+            optionsContainer.querySelector(
+                ".quiz-fill-in-the-blank"
+            );
+
+        if (input) {
+            input.disabled = true;
         }
-    });
+    }
 
     feedback.textContent =
         "Answer selected. Your result will be shown when the quiz is complete.";
@@ -163,6 +273,15 @@ export function renderSkipped(
     optionButtons.forEach(button => {
         button.disabled = true;
     });
+
+    const fillInTheBlankInput =
+        optionsContainer.querySelector(
+            ".quiz-fill-in-the-blank"
+        );
+
+    if (fillInTheBlankInput) {
+        fillInTheBlankInput.disabled = true;
+    }
 
     feedback.textContent =
         "Trial skipped. You can return to it later.";
@@ -271,8 +390,11 @@ export function renderCompletion(
             selectedAnswer === undefined;
 
         if (skipped) {
+
             skippedCount++;
+
         } else {
+
             answeredCount++;
 
             if (result.correct) {
@@ -340,7 +462,7 @@ export function renderCompletion(
                 );
 
             selectedAnswerElement.textContent =
-                `Your answer: ${selectedAnswer}. ${selectedText}`;
+                `Your answer: ${selectedText}`;
         }
 
         container.appendChild(
@@ -356,7 +478,9 @@ export function renderCompletion(
         );
 
         const correctText =
-            getTrialCorrectAnswerText(trial);
+            getTrialCorrectAnswerText(
+                trial
+            );
 
         if (correctText) {
 
@@ -401,16 +525,10 @@ export function renderCompletion(
 }
 
 
-function getTrialDisplayText(trial) {
-
-    switch (trial.type) {
-
-        case "QUESTION":
-            return trial.text;
-
-        default:
-            return "Unsupported trial";
-    }
+function getTrialDisplayText(
+    trial
+) {
+    return trial.text;
 }
 
 
@@ -418,11 +536,16 @@ function getTrialAnswerText(
     trial,
     answer
 ) {
-
     switch (trial.type) {
 
         case "QUESTION":
-            return trial.options?.[answer] ?? answer;
+            return (
+                `${answer}. ` +
+                (trial.options?.[answer] ?? answer)
+            );
+
+        case "FILL_IN_THE_BLANK":
+            return answer;
 
         default:
             return answer;
@@ -430,8 +553,9 @@ function getTrialAnswerText(
 }
 
 
-function getTrialCorrectAnswerText(trial) {
-
+function getTrialCorrectAnswerText(
+    trial
+) {
     switch (trial.type) {
 
         case "QUESTION": {
@@ -444,6 +568,9 @@ function getTrialCorrectAnswerText(trial) {
 
             return `${answer}. ${text}`;
         }
+
+        case "FILL_IN_THE_BLANK":
+            return trial.correctAnswer;
 
         default:
             return null;
