@@ -20,6 +20,7 @@ public class TutorialPageService {
     private final ChapterService chapterService;
     private final SectionService sectionService;
     private final QuizService quizService;
+    private final MarkdownService markdownService;
 
     private final ChapterMapper chapterMapper;
     private final SectionMapper sectionMapper;
@@ -29,6 +30,7 @@ public class TutorialPageService {
             ChapterService chapterService,
             SectionService sectionService,
             QuizService quizService,
+            MarkdownService markdownService,
             ChapterMapper chapterMapper,
             SectionMapper sectionMapper,
             QuizMapper quizMapper
@@ -41,6 +43,9 @@ public class TutorialPageService {
 
         this.quizService =
                 quizService;
+
+        this.markdownService =
+                markdownService;
 
         this.chapterMapper =
                 chapterMapper;
@@ -149,7 +154,7 @@ public class TutorialPageService {
                         sectionsByChapter
                 ),
                 chapterMapper.toDto(chapter),
-                sectionMapper.toDto(section),
+                convertSection(section),
                 quizMapper.toDtoList(quizzes)
         );
     }
@@ -193,12 +198,44 @@ public class TutorialPageService {
 
             result.put(
                     entry.getKey(),
-                    sectionMapper.toDtoList(
+                    convertSections(
                             entry.getValue()
                     )
             );
         }
 
         return result;
+    }
+
+    private List<SectionDto> convertSections(
+            List<Section> sections
+    ) {
+
+        return sections.stream()
+                .map(this::convertSection)
+                .toList();
+    }
+
+    private SectionDto convertSection(
+            Section section
+    ) {
+
+        SectionDto dto =
+                sectionMapper.toDto(section);
+
+        return new SectionDto(
+                dto.getId(),
+                dto.getChapterId(),
+                dto.getTitle(),
+                markdownService.toHtml(
+                        dto.getContent()
+                ),
+                dto.getOrder(),
+                dto.getPrerequisiteId(),
+                dto.isLocked(),
+                markdownService.toHtml(
+                        dto.getAdvancedContent()
+                )
+        );
     }
 }
