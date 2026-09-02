@@ -6,6 +6,7 @@ import com.app.gitgud.mapper.SectionMapper;
 import com.app.gitgud.model.Chapter;
 import com.app.gitgud.model.Quiz;
 import com.app.gitgud.model.Section;
+import com.app.gitgud.model.dto.ChapterDto;
 import com.app.gitgud.model.dto.SectionDto;
 import com.app.gitgud.model.dto.TutorialPageDto;
 import org.springframework.stereotype.Service;
@@ -106,7 +107,7 @@ public class TutorialPageService {
                 convertSectionsByChapter(
                         sectionsByChapter
                 ),
-                chapterMapper.toDto(chapter),
+                convertChapter(chapter),
                 null,
                 quizMapper.toDtoList(quizzes)
         );
@@ -153,9 +154,26 @@ public class TutorialPageService {
                 convertSectionsByChapter(
                         sectionsByChapter
                 ),
-                chapterMapper.toDto(chapter),
+                convertChapter(chapter),
                 convertSection(section),
                 quizMapper.toDtoList(quizzes)
+        );
+    }
+
+    private ChapterDto convertChapter(
+            Chapter chapter
+    ) {
+
+        ChapterDto dto =
+                chapterMapper.toDto(chapter);
+
+        return new ChapterDto(
+                dto.getId(),
+                dto.getTitle(),
+                markdownService.toHtml(
+                        dto.getContent()
+                ),
+                dto.getOrder()
         );
     }
 

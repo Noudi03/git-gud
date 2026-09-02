@@ -21,6 +21,9 @@ public class FirestoreChapterMapper {
         String title =
                 document.getString("title");
 
+        String content =
+                document.getString("content");
+
         Long orderValue =
                 document.getLong("order");
 
@@ -32,6 +35,7 @@ public class FirestoreChapterMapper {
         return new Chapter(
                 id,
                 title,
+                content,
                 order
         );
     }

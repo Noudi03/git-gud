@@ -1,15 +1,24 @@
 package com.app.gitgud.model;
 
 public class Chapter {
+
     private String id;
     private String title;
+    private String content;
     private int order;
 
-    public Chapter() {}
+    public Chapter() {
+    }
 
-    public Chapter(String id, String title, int order) {
+    public Chapter(
+            String id,
+            String title,
+            String content,
+            int order
+    ) {
         this.id = id;
         this.title = title;
+        this.content = content;
         this.order = order;
     }
 
@@ -17,7 +26,9 @@ public class Chapter {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(
+            String id
+    ) {
         this.id = id;
     }
 
@@ -25,15 +36,29 @@ public class Chapter {
         return title;
     }
 
-    public void setTitle(String title) {
+    public void setTitle(
+            String title
+    ) {
         this.title = title;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(
+            String content
+    ) {
+        this.content = content;
     }
 
     public int getOrder() {
         return order;
     }
 
-    public void setOrder(int order) {
+    public void setOrder(
+            int order
+    ) {
         this.order = order;
     }
 }

@@ -39,6 +39,12 @@
                     Chapter title
                 </h1>
 
+                <div
+                        th:if="${page.chapter.content != null and !page.chapter.content.isEmpty()}"
+                        th:utext="${page.chapter.content}">
+                    Chapter content
+                </div>
+
 
                 <!-- Chapter quizzes -->
                 <div

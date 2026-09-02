@@ -20,10 +20,10 @@ public class ChapterMapper {
         return new ChapterDto(
                 chapter.getId(),
                 chapter.getTitle(),
+                chapter.getContent(),
                 chapter.getOrder()
         );
     }
-
 
     public List<ChapterDto> toDtoList(
             List<Chapter> chapters
