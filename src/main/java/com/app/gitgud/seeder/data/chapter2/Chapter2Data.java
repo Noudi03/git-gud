@@ -1,11 +1,9 @@
 package com.app.gitgud.seeder.data.chapter2;
 
 import com.app.gitgud.model.Chapter;
-import com.app.gitgud.model.Question;
+import com.app.gitgud.model.QuestionTrial;
 import com.app.gitgud.model.Section;
 import com.app.gitgud.seeder.ChapterData;
-import com.app.gitgud.seeder.data.chapter1.Chapter1Curriculum;
-import com.app.gitgud.seeder.data.chapter1.Chapter1Questions;
 
 import java.util.List;
 import java.util.Map;
@@ -27,7 +25,7 @@ public class Chapter2Data implements ChapterData{
     }
 
     @Override
-    public Map<String, List<Question>> getQuestions() {
+    public Map<String, List<QuestionTrial>> getQuestions() {
         return Chapter2Questions.getQuestions();
     }
 }

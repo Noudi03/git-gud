@@ -1,7 +1,7 @@
-export function renderQuestion(
-    question,
+export function renderQuestionTrial(
+    trial,
     currentIndex,
-    totalQuestions,
+    totalTrials,
     elements,
     onAnswer,
     canSkip
@@ -15,13 +15,11 @@ export function renderQuestion(
         nextButton
     } = elements;
 
-
     progress.textContent =
-        `Question ${currentIndex + 1} / ${totalQuestions}`;
+        `Trial ${currentIndex + 1} / ${totalTrials}`;
 
     questionText.textContent =
-        question.text;
-
+        trial.text;
 
     optionsContainer.innerHTML = "";
 
@@ -29,26 +27,22 @@ export function renderQuestion(
     feedback.hidden = true;
     feedback.className = "quiz-feedback";
 
-
     skipButton.hidden =
         !canSkip;
 
     nextButton.hidden = true;
 
-
-    Object.entries(question.options)
+    Object.entries(trial.options)
         .forEach(([key, text]) => {
 
             const button =
                 document.createElement("button");
-
 
             button.type = "button";
 
             button.classList.add(
                 "quiz-option"
             );
-
 
             button.dataset.answer =
                 key;
@@ -58,21 +52,47 @@ export function renderQuestion(
                 "false"
             );
 
-
             button.textContent =
                 `${key}. ${text}`;
-
 
             button.addEventListener(
                 "click",
                 () => onAnswer(key)
             );
 
-
             optionsContainer.appendChild(
                 button
             );
         });
+}
+
+
+export function renderTrial(
+    trial,
+    currentIndex,
+    totalTrials,
+    elements,
+    onAnswer,
+    canSkip
+) {
+    switch (trial.type) {
+
+        case "QUESTION":
+            renderQuestionTrial(
+                trial,
+                currentIndex,
+                totalTrials,
+                elements,
+                onAnswer,
+                canSkip
+            );
+            break;
+
+        default:
+            throw new Error(
+                `Unsupported trial type: ${trial.type}`
+            );
+    }
 }
 
 
@@ -87,37 +107,30 @@ export function renderAnswer(
         nextButton
     } = elements;
 
-
     const optionButtons =
         optionsContainer.querySelectorAll(
             ".quiz-option"
         );
 
-
     optionButtons.forEach(button => {
 
         button.disabled = true;
 
-
         const selected =
             button.dataset.answer ===
             selectedAnswer;
-
 
         button.setAttribute(
             "aria-pressed",
             selected ? "true" : "false"
         );
 
-
         if (selected) {
-
             button.classList.add(
                 "selected"
             );
         }
     });
-
 
     feedback.textContent =
         "Answer selected. Your result will be shown when the quiz is complete.";
@@ -126,7 +139,6 @@ export function renderAnswer(
         "quiz-feedback";
 
     feedback.hidden = false;
-
 
     skipButton.hidden = true;
     nextButton.hidden = false;
@@ -143,27 +155,22 @@ export function renderSkipped(
         nextButton
     } = elements;
 
-
     const optionButtons =
         optionsContainer.querySelectorAll(
             ".quiz-option"
         );
 
-
     optionButtons.forEach(button => {
-
         button.disabled = true;
     });
 
-
     feedback.textContent =
-        "Question skipped. You can return to it later.";
+        "Trial skipped. You can return to it later.";
 
     feedback.className =
         "quiz-feedback";
 
     feedback.hidden = false;
-
 
     skipButton.hidden = true;
     nextButton.hidden = false;
@@ -182,20 +189,15 @@ export function renderEmptyQuiz(
         nextButton
     } = elements;
 
-
     progress.textContent = "";
 
-
     questionText.textContent =
-        "This quiz has no questions.";
-
+        "This quiz has no trials.";
 
     optionsContainer.innerHTML = "";
 
-
     feedback.textContent = "";
     feedback.hidden = true;
-
 
     skipButton.hidden = true;
     nextButton.hidden = true;
@@ -204,7 +206,7 @@ export function renderEmptyQuiz(
 
 export function renderCompletion(
     quizData,
-    questionResults,
+    trialResults,
     elements
 ) {
     const {
@@ -216,36 +218,29 @@ export function renderCompletion(
         nextButton
     } = elements;
 
-
     progress.textContent = "";
-
 
     questionText.textContent =
         "Quiz complete!";
 
-
     optionsContainer.innerHTML = "";
-
 
     let correctCount = 0;
     let answeredCount = 0;
     let skippedCount = 0;
 
+    trialResults.forEach(result => {
 
-    questionResults.forEach(result => {
-
-        const question =
-            quizData.questions.find(
+        const trial =
+            quizData.trials.find(
                 item =>
                     item.id ===
-                    result.questionId
+                    result.trialId
             );
 
-
-        if (!question) {
+        if (!trial) {
             return;
         }
-
 
         const container =
             document.createElement("div");
@@ -254,37 +249,30 @@ export function renderCompletion(
             "quiz-result"
         );
 
-
-        const questionTextElement =
+        const trialTextElement =
             document.createElement("p");
 
-        questionTextElement.classList.add(
+        trialTextElement.classList.add(
             "quiz-result-question"
         );
 
-        questionTextElement.textContent =
-            question.text;
+        trialTextElement.textContent =
+            getTrialDisplayText(trial);
 
         container.appendChild(
-            questionTextElement
+            trialTextElement
         );
-
 
         const selectedAnswer =
             result.selectedAnswer;
-
 
         const skipped =
             selectedAnswer === null ||
             selectedAnswer === undefined;
 
-
         if (skipped) {
-
             skippedCount++;
-
         } else {
-
             answeredCount++;
 
             if (result.correct) {
@@ -292,14 +280,12 @@ export function renderCompletion(
             }
         }
 
-
         const resultStatus =
             document.createElement("p");
 
         resultStatus.classList.add(
             "quiz-result-status"
         );
-
 
         if (skipped) {
 
@@ -329,11 +315,9 @@ export function renderCompletion(
             );
         }
 
-
         container.appendChild(
             resultStatus
         );
-
 
         const selectedAnswerElement =
             document.createElement("p");
@@ -341,7 +325,6 @@ export function renderCompletion(
         selectedAnswerElement.classList.add(
             "quiz-result-answer"
         );
-
 
         if (skipped) {
 
@@ -351,20 +334,18 @@ export function renderCompletion(
         } else {
 
             const selectedText =
-                question.options[
+                getTrialAnswerText(
+                    trial,
                     selectedAnswer
-                    ] ?? selectedAnswer;
-
+                );
 
             selectedAnswerElement.textContent =
                 `Your answer: ${selectedAnswer}. ${selectedText}`;
         }
 
-
         container.appendChild(
             selectedAnswerElement
         );
-
 
         const correctAnswerElement =
             document.createElement("p");
@@ -374,36 +355,31 @@ export function renderCompletion(
             "quiz-result-correct-answer"
         );
 
-
         const correctText =
-            question.options[
-                question.correctAnswer
-                ] ?? question.correctAnswer;
+            getTrialCorrectAnswerText(trial);
 
+        if (correctText) {
 
-        correctAnswerElement.textContent =
-            `Correct answer: ${question.correctAnswer}. ${correctText}`;
+            correctAnswerElement.textContent =
+                `Correct answer: ${correctText}`;
 
-
-        container.appendChild(
-            correctAnswerElement
-        );
-
+            container.appendChild(
+                correctAnswerElement
+            );
+        }
 
         optionsContainer.appendChild(
             container
         );
     });
 
-
     let summary;
-
 
     if (skippedCount > 0) {
 
         summary =
             `You got ${correctCount} / ${answeredCount} answered correctly. `
-            + `${skippedCount} question`
+            + `${skippedCount} trial`
             + `${skippedCount === 1 ? "" : "s"} skipped.`;
 
     } else {
@@ -411,7 +387,6 @@ export function renderCompletion(
         summary =
             `You got ${correctCount} / ${answeredCount} correct.`;
     }
-
 
     feedback.textContent =
         summary;
@@ -421,7 +396,56 @@ export function renderCompletion(
 
     feedback.hidden = false;
 
-
     skipButton.hidden = true;
     nextButton.hidden = true;
+}
+
+
+function getTrialDisplayText(trial) {
+
+    switch (trial.type) {
+
+        case "QUESTION":
+            return trial.text;
+
+        default:
+            return "Unsupported trial";
+    }
+}
+
+
+function getTrialAnswerText(
+    trial,
+    answer
+) {
+
+    switch (trial.type) {
+
+        case "QUESTION":
+            return trial.options?.[answer] ?? answer;
+
+        default:
+            return answer;
+    }
+}
+
+
+function getTrialCorrectAnswerText(trial) {
+
+    switch (trial.type) {
+
+        case "QUESTION": {
+
+            const answer =
+                trial.correctAnswer;
+
+            const text =
+                trial.options?.[answer] ?? answer;
+
+            return `${answer}. ${text}`;
+        }
+
+        default:
+            return null;
+    }
 }

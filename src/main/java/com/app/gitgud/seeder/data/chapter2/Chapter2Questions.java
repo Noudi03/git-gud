@@ -1,7 +1,7 @@
 package com.app.gitgud.seeder.data.chapter2;
 
-import com.app.gitgud.model.Question;
-import com.app.gitgud.model.QuestionDifficulty;
+import com.app.gitgud.model.QuestionTrial;
+import com.app.gitgud.model.TrialDifficulty;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -13,8 +13,8 @@ import java.util.Map;
 
 public class Chapter2Questions {
 
-    public static Map<String, List<Question>> getQuestions() {
-        Map<String, List<Question>> map = new HashMap<>();
+    public static Map<String, List<QuestionTrial>> getQuestions() {
+        Map<String, List<QuestionTrial>> map = new HashMap<>();
         map.put("section-2-1", section21());
         map.put("section-2-2", section22());
         map.put("section-2-3", section23());
@@ -29,7 +29,7 @@ public class Chapter2Questions {
     // Section 2.1 — What is a branch?
     // -------------------------------------------------------------------------
 
-    private static List<Question> section21() {
+    private static List<QuestionTrial> section21() {
         return Arrays.asList(
 
                 build("q1",
@@ -71,7 +71,7 @@ public class Chapter2Questions {
     // Section 2.2 — Working on different branches (Git switch)
     // -------------------------------------------------------------------------
 
-    private static List<Question> section22() {
+    private static List<QuestionTrial> section22() {
         return Arrays.asList(
 
                 build("q1",
@@ -124,7 +124,7 @@ public class Chapter2Questions {
     // Section 2.3 — Git Merge
     // -------------------------------------------------------------------------
 
-    private static List<Question> section23() {
+    private static List<QuestionTrial> section23() {
         return Arrays.asList(
 
                 build("q1",
@@ -177,7 +177,7 @@ public class Chapter2Questions {
     // Section 2.4 — Merge Conflicts
     // -------------------------------------------------------------------------
 
-    private static List<Question> section24() {
+    private static List<QuestionTrial> section24() {
         return Arrays.asList(
 
                 build("q1",
@@ -230,7 +230,7 @@ public class Chapter2Questions {
     // Section 2.5 — Git Rebase
     // -------------------------------------------------------------------------
 
-    private static List<Question> section25() {
+    private static List<QuestionTrial> section25() {
         return Arrays.asList(
 
                 build("q1",
@@ -272,7 +272,7 @@ public class Chapter2Questions {
     // Section 2.6 — Git Stash
     // -------------------------------------------------------------------------
 
-    private static List<Question> section26() {
+    private static List<QuestionTrial> section26() {
         return Arrays.asList(
 
                 build("q1",
@@ -325,7 +325,7 @@ public class Chapter2Questions {
     // Section 2.7 — Git Tags
     // -------------------------------------------------------------------------
 
-    private static List<Question> section27() {
+    private static List<QuestionTrial> section27() {
         return Arrays.asList(
 
                 build("q1",
@@ -378,14 +378,14 @@ public class Chapter2Questions {
     // Builders
     // -------------------------------------------------------------------------
 
-    private static Question build(String id, String text, Map<String, String> options,
-                                  String correctAnswer, String difficulty, String hint1, String hint2) {
-        Question q = new Question();
+    private static QuestionTrial build(String id, String text, Map<String, String> options,
+                                       String correctAnswer, String difficulty, String hint1, String hint2) {
+        QuestionTrial q = new QuestionTrial();
         q.setId(id);
         q.setText(text);
         q.setOptions(options);
         q.setCorrectAnswer(correctAnswer);
-        q.setDifficulty(QuestionDifficulty.fromValue(difficulty));
+        q.setDifficulty(TrialDifficulty.fromValue(difficulty));
         q.setHints(Arrays.asList(hint1, hint2));
         return q;
     }

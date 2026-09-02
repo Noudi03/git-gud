@@ -1,6 +1,6 @@
 package com.app.gitgud.model;
 
-public enum QuestionDifficulty {
+public enum TrialDifficulty {
 
     BEGINNER("beginner"),
     INTERMEDIATE("intermediate"),
@@ -8,7 +8,7 @@ public enum QuestionDifficulty {
 
     private final String value;
 
-    QuestionDifficulty(String value) {
+    TrialDifficulty(String value) {
         this.value = value;
     }
 
@@ -16,9 +16,11 @@ public enum QuestionDifficulty {
         return value;
     }
 
-    public static QuestionDifficulty fromValue(String value) {
+    public static TrialDifficulty fromValue(
+            String value
+    ) {
 
-        for (QuestionDifficulty difficulty : values()) {
+        for (TrialDifficulty difficulty : values()) {
 
             if (difficulty.value.equalsIgnoreCase(value)) {
                 return difficulty;
@@ -26,7 +28,7 @@ public enum QuestionDifficulty {
         }
 
         throw new IllegalArgumentException(
-                "Unknown question difficulty: " + value
+                "Unknown trial difficulty: " + value
         );
     }
 }

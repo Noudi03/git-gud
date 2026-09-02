@@ -1,9 +1,6 @@
 package com.app.gitgud.seeder;
 
-import com.app.gitgud.model.Question;
-import com.app.gitgud.model.Quiz;
-import com.app.gitgud.model.QuizType;
-import com.app.gitgud.model.Section;
+import com.app.gitgud.model.*;
 import com.app.gitgud.seeder.data.chapter1.Chapter1Data;
 import com.app.gitgud.seeder.data.chapter2.Chapter2Data;
 import com.google.cloud.firestore.CollectionReference;
@@ -68,17 +65,17 @@ public class ContentSeeder implements CommandLineRunner {
         DocumentReference chapterRef = db.collection("chapters").document(data.getChapter().getId());
         chapterRef.set(data.getChapter()).get();
 
-        Map<String, List<Question>> allQuestions = data.getQuestions();
+        Map<String, List<QuestionTrial>> allQuestions = data.getQuestions();
 
         for (Section section : data.getSections()) {
 
             DocumentReference sectionRef = chapterRef.collection("sections").document(section.getId());
             sectionRef.set(section).get();
 
-            List<Question> questions = allQuestions.getOrDefault(section.getId(), List.of());
+            List<QuestionTrial> questionTrials = allQuestions.getOrDefault(section.getId(), List.of());
 
             // section level practice quiz
-            if (!questions.isEmpty()) {
+            if (!questionTrials.isEmpty()) {
                 String quizId = "quiz-practice";
 
                 Quiz practiceQuiz = new Quiz();
@@ -89,10 +86,10 @@ public class ContentSeeder implements CommandLineRunner {
 
                 sectionRef.collection("quizzes").document(quizId).set(practiceQuiz).get();
 
-                for (Question q : questions) {
+                for (QuestionTrial q : questionTrials) {
                     sectionRef.collection("quizzes")
                             .document(quizId)
-                            .collection("questions")
+                            .collection("questionTrials")
                             .document(q.getId())
                             .set(q)
                             .get();
@@ -101,9 +98,9 @@ public class ContentSeeder implements CommandLineRunner {
         }
         // todo: make it skill based
         // Chapter-level final quiz: one question per section
-        List<Question> finalQuestions = data.getSections().stream()
+        List<QuestionTrial> finalQuestionTrials = data.getSections().stream()
                 .map(section -> {
-                    List<Question> qs = allQuestions.getOrDefault(section.getId(), List.of());
+                    List<QuestionTrial> qs = allQuestions.getOrDefault(section.getId(), List.of());
                     return qs.isEmpty() ? null : qs.getFirst();
                 })
                 .filter(Objects::nonNull)
@@ -120,7 +117,7 @@ public class ContentSeeder implements CommandLineRunner {
 
         chapterRef.collection("quizzes").document(finalQuizId).set(finalQuiz).get();
 
-        for (Question q : finalQuestions) {
+        for (QuestionTrial q : finalQuestionTrials) {
             chapterRef.collection("quizzes")
                     .document(finalQuizId)
                     .collection("questions")
@@ -133,9 +130,9 @@ public class ContentSeeder implements CommandLineRunner {
     // global review quiz. One question per chapter
     private void seedReviewQuiz(Firestore db, List<ChapterData> chapters) throws Exception {
 
-        List<Question> reviewQuestions = chapters.stream()
+        List<QuestionTrial> reviewQuestionTrials = chapters.stream()
                 .map(data -> {
-                    List<Question> qs = data.getQuestions()
+                    List<QuestionTrial> qs = data.getQuestions()
                             .getOrDefault(data.getSections().getFirst().getId(), List.of()); // id of the first section of the chapter
                     return qs.isEmpty() ? null : qs.getFirst();
                 })
@@ -152,7 +149,7 @@ public class ContentSeeder implements CommandLineRunner {
 
         db.collection("quizzes").document(reviewQuizId).set(reviewQuiz).get();
 
-        for (Question q : reviewQuestions) {
+        for (QuestionTrial q : reviewQuestionTrials) {
             db.collection("quizzes")
                     .document(reviewQuizId)
                     .collection("questions")

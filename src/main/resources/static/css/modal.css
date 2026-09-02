@@ -14,10 +14,6 @@
     padding: 1rem;
 }
 
-/*
- * Explicitly hide the modal when the hidden
- * attribute is present.
- */
 .quiz-modal[hidden] {
     display: none;
 }
@@ -112,7 +108,7 @@
 
 
 /* =========================
-   Question
+   Trial Content
    ========================= */
 
 #quiz-question {
@@ -125,7 +121,7 @@
 
 
 /* =========================
-   Answer Options
+   Trial Options
    ========================= */
 
 .quiz-options {

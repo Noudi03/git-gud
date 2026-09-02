@@ -1,24 +1,24 @@
 package com.app.gitgud.model.dto;
 
-public class QuestionAttemptRequestDto {
+public class TrialAttemptRequestDto {
 
-    private String questionId;
+    private String trialId;
     private boolean correct;
     private long timeSpentMillis;
     private int hintsUsed;
     private int skipCount;
 
-    public QuestionAttemptRequestDto() {
+    public TrialAttemptRequestDto() {
     }
 
-    public String getQuestionId() {
-        return questionId;
+    public String getTrialId() {
+        return trialId;
     }
 
-    public void setQuestionId(
-            String questionId
+    public void setTrialId(
+            String trialId
     ) {
-        this.questionId = questionId;
+        this.trialId = trialId;
     }
 
     public boolean isCorrect() {

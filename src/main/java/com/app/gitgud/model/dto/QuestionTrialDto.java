@@ -1,26 +1,28 @@
 package com.app.gitgud.model.dto;
 
-import com.app.gitgud.model.QuestionDifficulty;
+import com.app.gitgud.model.TrialDifficulty;
+import com.app.gitgud.model.TrialType;
 
 import java.util.List;
 import java.util.Map;
 
-public class QuestionDto {
+public class QuestionTrialDto
+        implements TrialDto {
 
     private final String id;
     private final String text;
     private final Map<String, String> options;
     private final String correctAnswer;
-    private final QuestionDifficulty difficulty;
+    private final TrialDifficulty difficulty;
     private final List<String> hints;
     private final int order;
 
-    public QuestionDto(
+    public QuestionTrialDto(
             String id,
             String text,
             Map<String, String> options,
             String correctAnswer,
-            QuestionDifficulty difficulty,
+            TrialDifficulty difficulty,
             List<String> hints,
             int order
     ) {
@@ -33,6 +35,7 @@ public class QuestionDto {
         this.order = order;
     }
 
+    @Override
     public String getId() {
         return id;
     }
@@ -49,7 +52,8 @@ public class QuestionDto {
         return correctAnswer;
     }
 
-    public QuestionDifficulty getDifficulty() {
+    @Override
+    public TrialDifficulty getDifficulty() {
         return difficulty;
     }
 
@@ -57,7 +61,13 @@ public class QuestionDto {
         return hints;
     }
 
+    @Override
     public int getOrder() {
         return order;
+    }
+
+    @Override
+    public TrialType getType() {
+        return TrialType.QUESTION;
     }
 }

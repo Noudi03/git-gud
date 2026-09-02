@@ -1,29 +1,29 @@
 package com.app.gitgud.model;
 
-public class QuestionAttempt {
+public class TrialAttempt {
 
-    private final String questionId;
+    private final String trialId;
     private final boolean correct;
     private final long timeSpentMillis;
     private final int hintsUsed;
     private final int skipCount;
 
-    public QuestionAttempt(
-            String questionId,
+    public TrialAttempt(
+            String trialId,
             boolean correct,
             long timeSpentMillis,
             int hintsUsed,
             int skipCount
     ) {
-        this.questionId = questionId;
+        this.trialId = trialId;
         this.correct = correct;
         this.timeSpentMillis = timeSpentMillis;
         this.hintsUsed = hintsUsed;
         this.skipCount = skipCount;
     }
 
-    public String getQuestionId() {
-        return questionId;
+    public String getTrialId() {
+        return trialId;
     }
 
     public boolean isCorrect() {

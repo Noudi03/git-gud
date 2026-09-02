@@ -1,7 +1,7 @@
 package com.app.gitgud.mapper;
 
-import com.app.gitgud.model.Question;
-import com.app.gitgud.model.QuestionDifficulty;
+import com.app.gitgud.model.QuestionTrial;
+import com.app.gitgud.model.TrialDifficulty;
 import com.google.cloud.firestore.DocumentSnapshot;
 import org.springframework.stereotype.Component;
 
@@ -11,9 +11,9 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-public class FirestoreQuestionMapper {
+public class FirestoreQuestionTrialMapper {
 
-    public Question toModel(
+    public QuestionTrial toModel(
             DocumentSnapshot document
     ) {
 
@@ -35,8 +35,8 @@ public class FirestoreQuestionMapper {
         String correctAnswer =
                 document.getString("correctAnswer");
 
-        QuestionDifficulty difficulty =
-                QuestionDifficulty.fromValue(
+        TrialDifficulty difficulty =
+                TrialDifficulty.fromValue(
                         document.getString("difficulty")
                 );
 
@@ -53,7 +53,7 @@ public class FirestoreQuestionMapper {
                         ? orderValue.intValue()
                         : 0;
 
-        return new Question(
+        return new QuestionTrial(
                 id,
                 text,
                 options,
@@ -63,7 +63,6 @@ public class FirestoreQuestionMapper {
                 order
         );
     }
-
 
     private Map<String, String> convertOptions(
             Object value
@@ -82,8 +81,8 @@ public class FirestoreQuestionMapper {
         ) {
 
             if (
-                    entry.getKey() instanceof String key &&
-                            entry.getValue() != null
+                    entry.getKey() instanceof String key
+                            && entry.getValue() != null
             ) {
 
                 options.put(
@@ -95,7 +94,6 @@ public class FirestoreQuestionMapper {
 
         return options;
     }
-
 
     private List<String> convertHints(
             Object value

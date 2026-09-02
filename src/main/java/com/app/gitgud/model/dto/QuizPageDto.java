@@ -5,25 +5,22 @@ import java.util.List;
 public class QuizPageDto {
 
     private final QuizDto quiz;
-    private final List<QuestionDto> questions;
-
+    private final List<TrialDto> trials;
 
     public QuizPageDto(
             QuizDto quiz,
-            List<QuestionDto> questions
+            List<TrialDto> trials
     ) {
 
         this.quiz = quiz;
-        this.questions = questions;
+        this.trials = trials;
     }
-
 
     public QuizDto getQuiz() {
         return quiz;
     }
 
-
-    public List<QuestionDto> getQuestions() {
-        return questions;
+    public List<TrialDto> getTrials() {
+        return trials;
     }
 }

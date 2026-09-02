@@ -1,10 +1,11 @@
 package com.app.gitgud.service;
 
-import com.app.gitgud.mapper.QuestionMapper;
 import com.app.gitgud.mapper.QuizMapper;
-import com.app.gitgud.model.Question;
+import com.app.gitgud.mapper.TrialMapper;
 import com.app.gitgud.model.Quiz;
+import com.app.gitgud.model.Trial;
 import com.app.gitgud.model.dto.QuizPageDto;
+import com.app.gitgud.model.dto.TrialDto;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,31 +14,29 @@ import java.util.List;
 public class QuizPageService {
 
     private final QuizService quizService;
-    private final QuestionService questionService;
+    private final TrialService trialService;
     private final QuizMapper quizMapper;
-    private final QuestionMapper questionMapper;
-
+    private final TrialMapper trialMapper;
 
     public QuizPageService(
             QuizService quizService,
-            QuestionService questionService,
+            TrialService trialService,
             QuizMapper quizMapper,
-            QuestionMapper questionMapper
+            TrialMapper trialMapper
     ) {
 
         this.quizService =
                 quizService;
 
-        this.questionService =
-                questionService;
+        this.trialService =
+                trialService;
 
         this.quizMapper =
                 quizMapper;
 
-        this.questionMapper =
-                questionMapper;
+        this.trialMapper =
+                trialMapper;
     }
-
 
     public QuizPageDto getSectionQuiz(
             String chapterId,
@@ -55,7 +54,6 @@ public class QuizPageService {
         return buildQuizPage(quiz);
     }
 
-
     public QuizPageDto getChapterQuiz(
             String chapterId,
             String quizId
@@ -70,7 +68,6 @@ public class QuizPageService {
         return buildQuizPage(quiz);
     }
 
-
     public QuizPageDto getGlobalQuiz(
             String quizId
     ) throws Exception {
@@ -83,7 +80,6 @@ public class QuizPageService {
         return buildQuizPage(quiz);
     }
 
-
     private QuizPageDto buildQuizPage(
             Quiz quiz
     ) throws Exception {
@@ -92,16 +88,19 @@ public class QuizPageService {
             return null;
         }
 
-        List<Question> questions =
-                questionService.getQuizQuestions(
+        List<Trial> trials =
+                trialService.getQuizTrials(
                         quiz
                 );
 
+        List<TrialDto> trialDtos =
+                trials.stream()
+                        .map(trialMapper::toDto)
+                        .toList();
+
         return new QuizPageDto(
                 quizMapper.toDto(quiz),
-                questions.stream()
-                        .map(questionMapper::toDto)
-                        .toList()
+                trialDtos
         );
     }
 }

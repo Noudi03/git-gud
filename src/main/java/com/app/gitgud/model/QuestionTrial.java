@@ -3,25 +3,25 @@ package com.app.gitgud.model;
 import java.util.List;
 import java.util.Map;
 
-public class Question {
+public class QuestionTrial implements Trial {
 
     private String id;
     private String text;
     private Map<String, String> options;
     private String correctAnswer;
-    private QuestionDifficulty difficulty;
+    private TrialDifficulty difficulty;
     private List<String> hints;
     private int order;
 
-    public Question() {
+    public QuestionTrial() {
     }
 
-    public Question(
+    public QuestionTrial(
             String id,
             String text,
             Map<String, String> options,
             String correctAnswer,
-            QuestionDifficulty difficulty,
+            TrialDifficulty difficulty,
             List<String> hints,
             int order
     ) {
@@ -34,6 +34,7 @@ public class Question {
         this.order = order;
     }
 
+    @Override
     public String getId() {
         return id;
     }
@@ -54,7 +55,9 @@ public class Question {
         return options;
     }
 
-    public void setOptions(Map<String, String> options) {
+    public void setOptions(
+            Map<String, String> options
+    ) {
         this.options = options;
     }
 
@@ -62,15 +65,20 @@ public class Question {
         return correctAnswer;
     }
 
-    public void setCorrectAnswer(String correctAnswer) {
+    public void setCorrectAnswer(
+            String correctAnswer
+    ) {
         this.correctAnswer = correctAnswer;
     }
 
-    public QuestionDifficulty getDifficulty() {
+    @Override
+    public TrialDifficulty getDifficulty() {
         return difficulty;
     }
 
-    public void setDifficulty(QuestionDifficulty difficulty) {
+    public void setDifficulty(
+            TrialDifficulty difficulty
+    ) {
         this.difficulty = difficulty;
     }
 
@@ -78,15 +86,23 @@ public class Question {
         return hints;
     }
 
-    public void setHints(List<String> hints) {
+    public void setHints(
+            List<String> hints
+    ) {
         this.hints = hints;
     }
 
+    @Override
     public int getOrder() {
         return order;
     }
 
     public void setOrder(int order) {
         this.order = order;
+    }
+
+    @Override
+    public TrialType getType() {
+        return TrialType.QUESTION;
     }
 }

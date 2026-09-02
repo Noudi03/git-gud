@@ -1,8 +1,8 @@
 package com.app.gitgud.repository;
 
-import com.app.gitgud.mapper.FirestoreQuestionMapper;
-import com.app.gitgud.model.Question;
+import com.app.gitgud.mapper.FirestoreTrialMapper;
 import com.app.gitgud.model.Quiz;
+import com.app.gitgud.model.Trial;
 import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.Firestore;
 import org.springframework.stereotype.Repository;
@@ -10,63 +10,56 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public class FirestoreQuestionRepository {
+public class FirestoreTrialRepository {
 
     private final Firestore db;
-    private final FirestoreQuestionMapper mapper;
+    private final FirestoreTrialMapper mapper;
 
-
-    public FirestoreQuestionRepository(
+    public FirestoreTrialRepository(
             Firestore db,
-            FirestoreQuestionMapper mapper
+            FirestoreTrialMapper mapper
     ) {
 
         this.db = db;
         this.mapper = mapper;
     }
 
-
-    public List<Question> findQuestions(
+    public List<Trial> findTrials(
             Quiz quiz
     ) throws Exception {
 
-        return getQuestionsCollection(quiz)
+        return getTrialsCollection(quiz)
                 .orderBy("order")
                 .get()
                 .get()
                 .getDocuments()
                 .stream()
                 .map(mapper::toModel)
-                .filter(question -> question != null)
+                .filter(trial -> trial != null)
                 .toList();
     }
 
-
-    public Question findQuestion(
+    public Trial findTrial(
             Quiz quiz,
-            String questionId
+            String trialId
     ) throws Exception {
 
         return mapper.toModel(
-                getQuestionsCollection(quiz)
-                        .document(questionId)
+                getTrialsCollection(quiz)
+                        .document(trialId)
                         .get()
                         .get()
         );
     }
 
-
-    private CollectionReference getQuestionsCollection(
+    private CollectionReference getTrialsCollection(
             Quiz quiz
     ) {
 
         return db.collection(
-                getQuizPath(
-                        quiz
-                )
+                getQuizPath(quiz)
         );
     }
-
 
     private String getQuizPath(
             Quiz quiz
@@ -74,9 +67,8 @@ public class FirestoreQuestionRepository {
 
         return getQuizCollectionPath(
                 quiz.getContext()
-        ) + "/" + quiz.getId() + "/questions";
+        ) + "/" + quiz.getId() + "/trials";
     }
-
 
     private String getQuizCollectionPath(
             com.app.gitgud.model.QuizContext context
@@ -94,7 +86,6 @@ public class FirestoreQuestionRepository {
                     + "/quizzes";
         }
 
-
         if (
                 context instanceof com.app.gitgud.model.ChapterQuizContext
                         chapterContext
@@ -105,14 +96,12 @@ public class FirestoreQuestionRepository {
                     + "/quizzes";
         }
 
-
         if (
                 context instanceof com.app.gitgud.model.GlobalQuizContext
         ) {
 
             return "quizzes";
         }
-
 
         throw new IllegalArgumentException(
                 "Unsupported quiz context: "
