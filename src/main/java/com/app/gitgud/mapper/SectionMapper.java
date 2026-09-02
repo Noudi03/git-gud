@@ -2,12 +2,19 @@ package com.app.gitgud.mapper;
 
 import com.app.gitgud.model.Section;
 import com.app.gitgud.model.dto.SectionDto;
+import com.app.gitgud.service.MarkdownService;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component
 public class SectionMapper {
+
+    private final MarkdownService markdownService;
+
+    public SectionMapper(MarkdownService markdownService) {
+        this.markdownService = markdownService;
+    }
 
     public SectionDto toDto(
             Section section
@@ -21,11 +28,11 @@ public class SectionMapper {
                 section.getId(),
                 section.getChapterId(),
                 section.getTitle(),
-                section.getContent(),
+                markdownService.toHtml(section.getContent()),
                 section.getOrder(),
                 section.getPrerequisiteId(),
                 section.isLocked(),
-                section.getAdvancedContent()
+                markdownService.toHtml(section.getAdvancedContent())
         );
     }
 

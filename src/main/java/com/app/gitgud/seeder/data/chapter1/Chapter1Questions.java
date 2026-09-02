@@ -33,7 +33,7 @@ public class Chapter1Questions {
         return Arrays.asList(
 
                 build("q1",
-                        "What is git mainly used for?",
+                        "What is git mainly// Section 1.1 — What is Git? used for?",
                         opts("Managing databases", "Storing files",
                                 "Tracking changes in files over time", "Backing up a project"),
                         "C", "beginner",

@@ -75,14 +75,13 @@
                 <h1 th:text="${page.section.title}">
                     Section title
                 </h1>
-
-                <div th:text="${page.section.content}">
+                <div th:utext="${page.section.content}">
                     Section content
                 </div>
 
                 <div
                         th:if="${page.section.advancedContent != null}"
-                        th:text="${page.section.advancedContent}">
+                        th:utext="${page.section.advancedContent}">
                     Advanced content
                 </div>
 
