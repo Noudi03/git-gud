@@ -1,5 +1,5 @@
 package com.app.gitgud.seeder.data.chapter2;
-
+/*
 import com.app.gitgud.model.Section;
 
 import java.util.Arrays;
@@ -349,3 +349,4 @@ public class Chapter2Curriculum {
         return s;
     }
 }
+*/

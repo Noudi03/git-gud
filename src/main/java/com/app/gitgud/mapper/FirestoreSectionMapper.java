@@ -8,8 +8,7 @@ import org.springframework.stereotype.Component;
 public class FirestoreSectionMapper {
 
     public Section toModel(
-            DocumentSnapshot document,
-            String chapterId
+            DocumentSnapshot document
     ) {
 
         if (!document.exists()) {
@@ -33,27 +32,14 @@ public class FirestoreSectionMapper {
                         ? orderValue.intValue()
                         : 0;
 
-        String prerequisiteId =
-                document.getString("prerequisiteId");
-
-        Boolean lockedValue =
-                document.getBoolean("locked");
-
-        boolean locked =
-                lockedValue != null
-                        && lockedValue;
-
         String advancedContent =
                 document.getString("advancedContent");
 
         return new Section(
                 id,
-                chapterId,
                 title,
                 content,
                 order,
-                prerequisiteId,
-                locked,
                 advancedContent
         );
     }

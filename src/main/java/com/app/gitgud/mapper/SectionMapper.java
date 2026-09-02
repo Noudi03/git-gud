@@ -19,16 +19,12 @@ public class SectionMapper {
 
         return new SectionDto(
                 section.getId(),
-                section.getChapterId(),
                 section.getTitle(),
                 section.getContent(),
                 section.getOrder(),
-                section.getPrerequisiteId(),
-                section.isLocked(),
                 section.getAdvancedContent()
         );
     }
-
 
     public List<SectionDto> toDtoList(
             List<Section> sections

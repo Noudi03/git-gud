@@ -243,14 +243,11 @@ public class TutorialPageService {
 
         return new SectionDto(
                 dto.getId(),
-                dto.getChapterId(),
                 dto.getTitle(),
                 markdownService.toHtml(
                         dto.getContent()
                 ),
                 dto.getOrder(),
-                dto.getPrerequisiteId(),
-                dto.isLocked(),
                 markdownService.toHtml(
                         dto.getAdvancedContent()
                 )

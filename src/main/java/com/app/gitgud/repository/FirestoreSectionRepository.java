@@ -15,7 +15,6 @@ public class FirestoreSectionRepository {
     private final Firestore db;
     private final FirestoreSectionMapper mapper;
 
-
     public FirestoreSectionRepository(
             Firestore db,
             FirestoreSectionMapper mapper
@@ -24,7 +23,6 @@ public class FirestoreSectionRepository {
         this.db = db;
         this.mapper = mapper;
     }
-
 
     public List<Section> findSections(
             String chapterId
@@ -36,16 +34,10 @@ public class FirestoreSectionRepository {
                 .get()
                 .getDocuments()
                 .stream()
-                .map(document ->
-                        mapper.toModel(
-                                document,
-                                chapterId
-                        )
-                )
+                .map(mapper::toModel)
                 .filter(section -> section != null)
                 .toList();
     }
-
 
     public Section findSection(
             String chapterId,
@@ -58,11 +50,9 @@ public class FirestoreSectionRepository {
                         sectionId
                 )
                         .get()
-                        .get(),
-                chapterId
+                        .get()
         );
     }
-
 
     private CollectionReference getSectionsCollection(
             String chapterId
@@ -72,7 +62,6 @@ public class FirestoreSectionRepository {
                 .document(chapterId)
                 .collection("sections");
     }
-
 
     private DocumentReference getSection(
             String chapterId,
