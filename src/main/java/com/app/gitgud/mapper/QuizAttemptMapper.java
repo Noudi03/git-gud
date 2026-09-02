@@ -13,6 +13,7 @@ public class QuizAttemptMapper {
     public QuizAttempt toModel(
             QuizAttemptRequestDto request
     ) {
+
         return new QuizAttempt(
                 UUID.randomUUID().toString(),
                 request.getQuizId(),

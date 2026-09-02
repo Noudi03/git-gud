@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class FirestoreSectionMapper {
 
-    public Section toSection(
+    public Section toModel(
             DocumentSnapshot document,
             String chapterId
     ) {

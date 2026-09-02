@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class FirestoreQuizMapper {
 
-    public Quiz toQuiz(
+    public Quiz toModel(
             DocumentSnapshot document,
             QuizContext context
     ) {
@@ -28,7 +28,9 @@ public class FirestoreQuizMapper {
                 document.getString("type");
 
         QuizType type =
-                QuizType.fromValue(typeValue);
+                QuizType.fromValue(
+                        typeValue
+                );
 
         Long orderValue =
                 document.getLong("order");

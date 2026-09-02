@@ -37,7 +37,7 @@ public class FirestoreSectionRepository {
                 .getDocuments()
                 .stream()
                 .map(document ->
-                        mapper.toSection(
+                        mapper.toModel(
                                 document,
                                 chapterId
                         )
@@ -52,7 +52,7 @@ public class FirestoreSectionRepository {
             String sectionId
     ) throws Exception {
 
-        return mapper.toSection(
+        return mapper.toModel(
                 getSection(
                         chapterId,
                         sectionId

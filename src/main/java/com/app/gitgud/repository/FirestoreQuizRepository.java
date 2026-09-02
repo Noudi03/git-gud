@@ -41,7 +41,7 @@ public class FirestoreQuizRepository {
                 .getDocuments()
                 .stream()
                 .map(document ->
-                        mapper.toQuiz(
+                        mapper.toModel(
                                 document,
                                 context
                         )
@@ -56,7 +56,7 @@ public class FirestoreQuizRepository {
             String quizId
     ) throws Exception {
 
-        return mapper.toQuiz(
+        return mapper.toModel(
                 getQuizCollection(context)
                         .document(quizId)
                         .get()

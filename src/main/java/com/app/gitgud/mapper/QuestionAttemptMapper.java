@@ -10,6 +10,7 @@ public class QuestionAttemptMapper {
     public QuestionAttempt toModel(
             QuestionAttemptRequestDto request
     ) {
+
         return new QuestionAttempt(
                 request.getQuestionId(),
                 request.isCorrect(),

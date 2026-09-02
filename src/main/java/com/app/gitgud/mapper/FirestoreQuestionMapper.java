@@ -13,8 +13,7 @@ import java.util.Map;
 @Component
 public class FirestoreQuestionMapper {
 
-
-    public Question toQuestion(
+    public Question toModel(
             DocumentSnapshot document
     ) {
 

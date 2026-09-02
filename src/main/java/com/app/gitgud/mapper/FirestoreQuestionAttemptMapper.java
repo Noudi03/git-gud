@@ -13,6 +13,7 @@ public class FirestoreQuestionAttemptMapper {
     public Map<String, Object> toData(
             QuestionAttempt attempt
     ) {
+
         Map<String, Object> data =
                 new HashMap<>();
 
@@ -39,22 +40,37 @@ public class FirestoreQuestionAttemptMapper {
         return data;
     }
 
+
     public QuestionAttempt toModel(
             DocumentSnapshot document
     ) {
+
+        if (!document.exists()) {
+            return null;
+        }
+
+        Long timeSpentMillis =
+                document.getLong("timeSpentMillis");
+
+        Long hintsUsed =
+                document.getLong("hintsUsed");
+
+        Long skipCount =
+                document.getLong("skipCount");
+
         return new QuestionAttempt(
                 document.getId(),
                 Boolean.TRUE.equals(
                         document.getBoolean("correct")
                 ),
-                document.getLong("timeSpentMillis") != null
-                        ? document.getLong("timeSpentMillis")
+                timeSpentMillis != null
+                        ? timeSpentMillis
                         : 0,
-                document.getLong("hintsUsed") != null
-                        ? document.getLong("hintsUsed").intValue()
+                hintsUsed != null
+                        ? hintsUsed.intValue()
                         : 0,
-                document.getLong("skipCount") != null
-                        ? document.getLong("skipCount").intValue()
+                skipCount != null
+                        ? skipCount.intValue()
                         : 0
         );
     }

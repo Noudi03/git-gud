@@ -36,7 +36,7 @@ public class FirestoreQuestionRepository {
                 .get()
                 .getDocuments()
                 .stream()
-                .map(mapper::toQuestion)
+                .map(mapper::toModel)
                 .filter(question -> question != null)
                 .toList();
     }
@@ -47,7 +47,7 @@ public class FirestoreQuestionRepository {
             String questionId
     ) throws Exception {
 
-        return mapper.toQuestion(
+        return mapper.toModel(
                 getQuestionsCollection(quiz)
                         .document(questionId)
                         .get()

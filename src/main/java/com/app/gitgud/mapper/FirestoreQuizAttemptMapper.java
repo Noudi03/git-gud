@@ -14,6 +14,7 @@ public class FirestoreQuizAttemptMapper {
     public Map<String, Object> toData(
             QuizAttempt attempt
     ) {
+
         Map<String, Object> data =
                 new HashMap<>();
 
@@ -30,9 +31,15 @@ public class FirestoreQuizAttemptMapper {
         return data;
     }
 
+
     public QuizAttempt toModel(
             DocumentSnapshot document
     ) {
+
+        if (!document.exists()) {
+            return null;
+        }
+
         return new QuizAttempt(
                 document.getId(),
                 document.getString("quizId"),

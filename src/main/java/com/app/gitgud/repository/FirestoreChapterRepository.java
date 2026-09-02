@@ -35,7 +35,7 @@ public class FirestoreChapterRepository {
                 .get()
                 .getDocuments()
                 .stream()
-                .map(mapper::toChapter)
+                .map(mapper::toModel)
                 .filter(chapter -> chapter != null)
                 .toList();
     }
@@ -45,7 +45,7 @@ public class FirestoreChapterRepository {
             String chapterId
     ) throws Exception {
 
-        return mapper.toChapter(
+        return mapper.toModel(
                 getChapter(chapterId)
                         .get()
                         .get()
