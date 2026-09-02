@@ -5,6 +5,7 @@ import com.app.gitgud.model.Quiz;
 import com.app.gitgud.model.QuizType;
 import com.app.gitgud.model.Section;
 import com.app.gitgud.seeder.data.chapter1.Chapter1Data;
+import com.app.gitgud.seeder.data.chapter2.Chapter2Data;
 import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.Firestore;
@@ -47,8 +48,8 @@ public class ContentSeeder implements CommandLineRunner {
         }
 
         List<ChapterData> chapters = Arrays.asList(
-                new Chapter1Data()
-                // new Chapter2Data(),
+                new Chapter1Data(),
+                new Chapter2Data()
                 // new Chapter3Data()
         );
 
