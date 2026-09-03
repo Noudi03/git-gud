@@ -3,7 +3,7 @@ package com.app.gitgud.model;
 import java.util.List;
 import java.util.Map;
 
-public class QuestionTrial implements Trial {
+public class MultipleChoiceTrial implements Trial {
 
     private String id;
     private String text;
@@ -13,10 +13,10 @@ public class QuestionTrial implements Trial {
     private List<String> hints;
     private int order;
 
-    public QuestionTrial() {
+    public MultipleChoiceTrial() {
     }
 
-    public QuestionTrial(
+    public MultipleChoiceTrial(
             String id,
             String text,
             Map<String, String> options,
@@ -39,7 +39,9 @@ public class QuestionTrial implements Trial {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(
+            String id
+    ) {
         this.id = id;
     }
 
@@ -47,7 +49,9 @@ public class QuestionTrial implements Trial {
         return text;
     }
 
-    public void setText(String text) {
+    public void setText(
+            String text
+    ) {
         this.text = text;
     }
 
@@ -97,12 +101,14 @@ public class QuestionTrial implements Trial {
         return order;
     }
 
-    public void setOrder(int order) {
+    public void setOrder(
+            int order
+    ) {
         this.order = order;
     }
 
     @Override
     public TrialType getType() {
-        return TrialType.QUESTION;
+        return TrialType.MULTIPLE_CHOICE;
     }
 }

@@ -1,7 +1,7 @@
 package com.app.gitgud.factory;
 
 import com.app.gitgud.mapper.FirestoreFillInTheBlankTrialMapper;
-import com.app.gitgud.mapper.FirestoreQuestionTrialMapper;
+import com.app.gitgud.mapper.FirestoreMultipleChoiceTrialMapper;
 import com.app.gitgud.mapper.FirestoreTrueFalseTrialMapper;
 import com.app.gitgud.model.Trial;
 import com.app.gitgud.model.TrialType;
@@ -11,18 +11,18 @@ import org.springframework.stereotype.Component;
 @Component
 public class TrialFactory {
 
-    private final FirestoreQuestionTrialMapper questionTrialMapper;
+    private final FirestoreMultipleChoiceTrialMapper multipleChoiceTrialMapper;
     private final FirestoreFillInTheBlankTrialMapper fillInTheBlankTrialMapper;
     private final FirestoreTrueFalseTrialMapper trueFalseTrialMapper;
 
     public TrialFactory(
-            FirestoreQuestionTrialMapper questionTrialMapper,
+            FirestoreMultipleChoiceTrialMapper multipleChoiceTrialMapper,
             FirestoreFillInTheBlankTrialMapper fillInTheBlankTrialMapper,
             FirestoreTrueFalseTrialMapper trueFalseTrialMapper
     ) {
 
-        this.questionTrialMapper =
-                questionTrialMapper;
+        this.multipleChoiceTrialMapper =
+                multipleChoiceTrialMapper;
 
         this.fillInTheBlankTrialMapper =
                 fillInTheBlankTrialMapper;
@@ -46,8 +46,8 @@ public class TrialFactory {
 
         return switch (type) {
 
-            case QUESTION ->
-                    questionTrialMapper.toModel(
+            case MULTIPLE_CHOICE ->
+                    multipleChoiceTrialMapper.toModel(
                             document
                     );
 

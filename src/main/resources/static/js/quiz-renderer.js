@@ -1,4 +1,4 @@
-export function renderQuestionTrial(
+export function renderMultipleChoiceTrial(
     trial,
     currentIndex,
     totalTrials,
@@ -230,9 +230,9 @@ export function renderTrial(
 ) {
     switch (trial.type) {
 
-        case "QUESTION":
+        case "MULTIPLE_CHOICE":
 
-            renderQuestionTrial(
+            renderMultipleChoiceTrial(
                 trial,
                 currentIndex,
                 totalTrials,
@@ -291,7 +291,7 @@ export function renderAnswer(
     } = elements;
 
     if (
-        trial.type === "QUESTION" ||
+        trial.type === "MULTIPLE_CHOICE" ||
         trial.type === "TRUE_FALSE"
     ) {
 
@@ -631,7 +631,7 @@ function getTrialAnswerText(
 ) {
     switch (trial.type) {
 
-        case "QUESTION":
+        case "MULTIPLE_CHOICE":
             return (
                 `${answer}. ` +
                 (trial.options?.[answer] ?? answer)
@@ -656,7 +656,7 @@ function getTrialCorrectAnswerText(
 ) {
     switch (trial.type) {
 
-        case "QUESTION": {
+        case "MULTIPLE_CHOICE": {
 
             const answer =
                 trial.correctAnswer;

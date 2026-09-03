@@ -67,17 +67,17 @@ public class ContentSeeder implements CommandLineRunner {
         DocumentReference chapterRef = db.collection("chapters").document(data.getChapter().getId());
         chapterRef.set(data.getChapter()).get();
 
-        Map<String, List<QuestionTrial>> allQuestions = data.getQuestions();
+        Map<String, List<MultipleChoiceTrial>> allQuestions = data.getQuestions();
 
         for (Section section : data.getSections()) {
 
             DocumentReference sectionRef = chapterRef.collection("sections").document(section.getId());
             sectionRef.set(section).get();
 
-            List<QuestionTrial> questionTrials = allQuestions.getOrDefault(section.getId(), List.of());
+            List<MultipleChoiceTrial> multipleChoiceTrials = allQuestions.getOrDefault(section.getId(), List.of());
 
             // section level practice quiz
-            if (!questionTrials.isEmpty()) {
+            if (!multipleChoiceTrials.isEmpty()) {
                 String quizId = "quiz-practice";
 
                 Quiz practiceQuiz = new Quiz();
@@ -88,7 +88,7 @@ public class ContentSeeder implements CommandLineRunner {
 
                 sectionRef.collection("quizzes").document(quizId).set(practiceQuiz).get();
 
-                for (QuestionTrial q : questionTrials) {
+                for (MultipleChoiceTrial q : multipleChoiceTrials) {
                     sectionRef.collection("quizzes")
                             .document(quizId)
                             .collection("trials")
@@ -101,9 +101,9 @@ public class ContentSeeder implements CommandLineRunner {
 
         // todo: make it skill based
         // Chapter-level final quiz: one question per section
-        List<QuestionTrial> finalQuestionTrials = data.getSections().stream()
+        List<MultipleChoiceTrial> finalMultipleChoiceTrials = data.getSections().stream()
                 .map(section -> {
-                    List<QuestionTrial> qs = allQuestions.getOrDefault(section.getId(), List.of());
+                    List<MultipleChoiceTrial> qs = allQuestions.getOrDefault(section.getId(), List.of());
                     return qs.isEmpty() ? null : qs.getFirst();
                 })
                 .filter(Objects::nonNull)
@@ -120,7 +120,7 @@ public class ContentSeeder implements CommandLineRunner {
 
         chapterRef.collection("quizzes").document(finalQuizId).set(finalQuiz).get();
 
-        for (QuestionTrial q : finalQuestionTrials) {
+        for (MultipleChoiceTrial q : finalMultipleChoiceTrials) {
             chapterRef.collection("quizzes")
                     .document(finalQuizId)
                     .collection("trials")
@@ -134,9 +134,9 @@ public class ContentSeeder implements CommandLineRunner {
     // global review quiz. One question per chapter
     private void seedReviewQuiz(Firestore db, List<ChapterData> chapters) throws Exception {
 
-        List<QuestionTrial> reviewQuestionTrials = chapters.stream()
+        List<MultipleChoiceTrial> reviewMultipleChoiceTrials = chapters.stream()
                 .map(data -> {
-                    List<QuestionTrial> qs = data.getQuestions()
+                    List<MultipleChoiceTrial> qs = data.getQuestions()
                             .getOrDefault(data.getSections().getFirst().getId(), List.of());
                     return qs.isEmpty() ? null : qs.getFirst();
                 })
@@ -153,7 +153,7 @@ public class ContentSeeder implements CommandLineRunner {
 
         db.collection("quizzes").document(reviewQuizId).set(reviewQuiz).get();
 
-        for (QuestionTrial q : reviewQuestionTrials) {
+        for (MultipleChoiceTrial q : reviewMultipleChoiceTrials) {
             db.collection("quizzes")
                     .document(reviewQuizId)
                     .collection("trials")
@@ -165,8 +165,8 @@ public class ContentSeeder implements CommandLineRunner {
         System.out.println("Seeded review quiz.");
     }
 
-    // Builds the Firestore map for a QuestionTrial, ensuring type is saved as lowercase string
-    private Map<String, Object> toTrialData(QuestionTrial q) {
+    // Builds the Firestore map for a MultipleChoiceTrial, ensuring type is saved as lowercase string
+    private Map<String, Object> toTrialData(MultipleChoiceTrial q) {
         Map<String, Object> data = new HashMap<>();
         data.put("type", q.getType().getValue());           // "question"
         data.put("text", q.getText());

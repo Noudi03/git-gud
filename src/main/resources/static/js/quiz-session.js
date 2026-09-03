@@ -527,7 +527,7 @@ export class QuizSession {
 
         switch (trial.type) {
 
-            case "QUESTION":
+            case "MULTIPLE_CHOICE":
 
                 return (
                     answer ===

@@ -1,6 +1,6 @@
 package com.app.gitgud.mapper;
 
-import com.app.gitgud.model.QuestionTrial;
+import com.app.gitgud.model.MultipleChoiceTrial;
 import com.app.gitgud.model.TrialDifficulty;
 import com.google.cloud.firestore.DocumentSnapshot;
 import org.springframework.stereotype.Component;
@@ -11,9 +11,9 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-public class FirestoreQuestionTrialMapper {
+public class FirestoreMultipleChoiceTrialMapper {
 
-    public QuestionTrial toModel(
+    public MultipleChoiceTrial toModel(
             DocumentSnapshot document
     ) {
 
@@ -53,7 +53,7 @@ public class FirestoreQuestionTrialMapper {
                         ? orderValue.intValue()
                         : 0;
 
-        return new QuestionTrial(
+        return new MultipleChoiceTrial(
                 id,
                 text,
                 options,

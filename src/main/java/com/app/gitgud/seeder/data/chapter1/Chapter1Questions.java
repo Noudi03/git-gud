@@ -1,6 +1,6 @@
 package com.app.gitgud.seeder.data.chapter1;
 
-import com.app.gitgud.model.QuestionTrial;
+import com.app.gitgud.model.MultipleChoiceTrial;
 import com.app.gitgud.model.TrialDifficulty;
 
 import java.util.Arrays;
@@ -13,8 +13,8 @@ import java.util.Map;
 
 public class Chapter1Questions {
 
-    public static Map<String, List<QuestionTrial>> getQuestions() {
-        Map<String, List<QuestionTrial>> map = new HashMap<>();
+    public static Map<String, List<MultipleChoiceTrial>> getQuestions() {
+        Map<String, List<MultipleChoiceTrial>> map = new HashMap<>();
         map.put("section-1-1", section11());
         map.put("section-1-2", section12());
         map.put("section-1-3", section13());
@@ -29,7 +29,7 @@ public class Chapter1Questions {
     // Section 1.1 — What is Git?
     // -------------------------------------------------------------------------
 
-    private static List<QuestionTrial> section11() {
+    private static List<MultipleChoiceTrial> section11() {
         return Arrays.asList(
 
                 build("q1",
@@ -69,7 +69,7 @@ public class Chapter1Questions {
     // Section 1.2 — Initial Configuration
     // -------------------------------------------------------------------------
 
-    private static List<QuestionTrial> section12() {
+    private static List<MultipleChoiceTrial> section12() {
         return Arrays.asList(
 
                 build("q1",
@@ -107,7 +107,7 @@ public class Chapter1Questions {
     // Section 1.3 — Git Init
     // -------------------------------------------------------------------------
 
-    private static List<QuestionTrial> section13() {
+    private static List<MultipleChoiceTrial> section13() {
         return Arrays.asList(
 
                 build("q1",
@@ -143,7 +143,7 @@ public class Chapter1Questions {
     // Section 1.4 — Git Add
     // -------------------------------------------------------------------------
 
-    private static List<QuestionTrial> section14() {
+    private static List<MultipleChoiceTrial> section14() {
         return Arrays.asList(
 
                 build("q1",
@@ -188,7 +188,7 @@ public class Chapter1Questions {
     // Section 1.5 — Git Commit
     // -------------------------------------------------------------------------
 
-    private static List<QuestionTrial> section15() {
+    private static List<MultipleChoiceTrial> section15() {
         return Arrays.asList(
 
                 build("q1",
@@ -236,7 +236,7 @@ public class Chapter1Questions {
     // Section 1.6 — Log and Diff
     // -------------------------------------------------------------------------
 
-    private static List<QuestionTrial> section16() {
+    private static List<MultipleChoiceTrial> section16() {
         return Arrays.asList(
 
                 build("q1",
@@ -298,7 +298,7 @@ public class Chapter1Questions {
     // Section 1.7 — Ignore Files
     // -------------------------------------------------------------------------
 
-    private static List<QuestionTrial> section17() {
+    private static List<MultipleChoiceTrial> section17() {
         return Arrays.asList(
 
                 build("q1",
@@ -346,9 +346,9 @@ public class Chapter1Questions {
 
     // Builders
 
-    private static QuestionTrial build(String id, String text, Map<String, String> options,
-                                       String correctAnswer, String difficulty, String hint1, String hint2) {
-        QuestionTrial q = new QuestionTrial();
+    private static MultipleChoiceTrial build(String id, String text, Map<String, String> options,
+                                             String correctAnswer, String difficulty, String hint1, String hint2) {
+        MultipleChoiceTrial q = new MultipleChoiceTrial();
         q.setId(id);
         q.setText(text);
         q.setOptions(options);

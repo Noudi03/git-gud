@@ -1,6 +1,6 @@
 package com.app.gitgud.seeder.data.chapter3;
 
-import com.app.gitgud.model.QuestionTrial;
+import com.app.gitgud.model.MultipleChoiceTrial;
 import com.app.gitgud.model.TrialDifficulty;
 
 import java.util.Arrays;
@@ -13,8 +13,8 @@ import java.util.Map;
 
 public class Chapter3Questions {
 
-    public static Map<String, List<QuestionTrial>> getQuestions() {
-        Map<String, List<QuestionTrial>> map = new HashMap<>();
+    public static Map<String, List<MultipleChoiceTrial>> getQuestions() {
+        Map<String, List<MultipleChoiceTrial>> map = new HashMap<>();
         map.put("section-3-1", section31());
         map.put("section-3-2", section32());
         map.put("section-3-3", section33());
@@ -27,7 +27,7 @@ public class Chapter3Questions {
     // Section 3.1 — Remote Repositories
     // -------------------------------------------------------------------------
 
-    private static List<QuestionTrial> section31() {
+    private static List<MultipleChoiceTrial> section31() {
         return Arrays.asList(
 
                 build("q1",
@@ -80,7 +80,7 @@ public class Chapter3Questions {
     // Section 3.2 — Push and Pull
     // -------------------------------------------------------------------------
 
-    private static List<QuestionTrial> section32() {
+    private static List<MultipleChoiceTrial> section32() {
         return Arrays.asList(
 
                 build("q1",
@@ -144,7 +144,7 @@ public class Chapter3Questions {
     // Section 3.3 — Git Fetch
     // -------------------------------------------------------------------------
 
-    private static List<QuestionTrial> section33() {
+    private static List<MultipleChoiceTrial> section33() {
         return Arrays.asList(
 
                 build("q1",
@@ -186,7 +186,7 @@ public class Chapter3Questions {
     // Section 3.4 — Git Revert
     // -------------------------------------------------------------------------
 
-    private static List<QuestionTrial> section34() {
+    private static List<MultipleChoiceTrial> section34() {
         return Arrays.asList(
 
                 build("q1",
@@ -228,7 +228,7 @@ public class Chapter3Questions {
     // Section 3.5 — Git Reset
     // -------------------------------------------------------------------------
 
-    private static List<QuestionTrial> section35() {
+    private static List<MultipleChoiceTrial> section35() {
         return Arrays.asList(
 
                 build("q1",
@@ -301,9 +301,9 @@ public class Chapter3Questions {
 
     // Builders
 
-    private static QuestionTrial build(String id, String text, Map<String, String> options,
-                                       String correctAnswer, String difficulty, String hint1, String hint2) {
-        QuestionTrial q = new QuestionTrial();
+    private static MultipleChoiceTrial build(String id, String text, Map<String, String> options,
+                                             String correctAnswer, String difficulty, String hint1, String hint2) {
+        MultipleChoiceTrial q = new MultipleChoiceTrial();
         q.setId(id);
         q.setText(text);
         q.setOptions(options);

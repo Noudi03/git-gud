@@ -2,7 +2,7 @@ package com.app.gitgud.model;
 
 public enum TrialType {
 
-    QUESTION("question"),
+    MULTIPLE_CHOICE("multipleChoice"),
     FILL_IN_THE_BLANK("fillInTheBlank"),
     TRUE_FALSE("trueFalse");
 

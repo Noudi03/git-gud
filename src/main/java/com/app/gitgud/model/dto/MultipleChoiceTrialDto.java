@@ -6,7 +6,7 @@ import com.app.gitgud.model.TrialType;
 import java.util.List;
 import java.util.Map;
 
-public class QuestionTrialDto
+public class MultipleChoiceTrialDto
         implements TrialDto {
 
     private final String id;
@@ -17,7 +17,7 @@ public class QuestionTrialDto
     private final List<String> hints;
     private final int order;
 
-    public QuestionTrialDto(
+    public MultipleChoiceTrialDto(
             String id,
             String text,
             Map<String, String> options,
@@ -68,6 +68,6 @@ public class QuestionTrialDto
 
     @Override
     public TrialType getType() {
-        return TrialType.QUESTION;
+        return TrialType.MULTIPLE_CHOICE;
     }
 }

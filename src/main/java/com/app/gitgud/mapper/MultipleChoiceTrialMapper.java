@@ -1,21 +1,21 @@
 package com.app.gitgud.mapper;
 
-import com.app.gitgud.model.QuestionTrial;
-import com.app.gitgud.model.dto.QuestionTrialDto;
+import com.app.gitgud.model.MultipleChoiceTrial;
+import com.app.gitgud.model.dto.MultipleChoiceTrialDto;
 import org.springframework.stereotype.Component;
 
 @Component
-public class QuestionTrialMapper {
+public class MultipleChoiceTrialMapper {
 
-    public QuestionTrialDto toDto(
-            QuestionTrial trial
+    public MultipleChoiceTrialDto toDto(
+            MultipleChoiceTrial trial
     ) {
 
         if (trial == null) {
             return null;
         }
 
-        return new QuestionTrialDto(
+        return new MultipleChoiceTrialDto(
                 trial.getId(),
                 trial.getText(),
                 trial.getOptions(),
