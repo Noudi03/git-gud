@@ -1,5 +1,5 @@
 package com.app.gitgud.seeder.data.chapter2;
-/*
+
 import com.app.gitgud.model.Chapter;
 import com.app.gitgud.model.QuestionTrial;
 import com.app.gitgud.model.Section;
@@ -29,4 +29,3 @@ public class Chapter2Data implements ChapterData{
         return Chapter2Questions.getQuestions();
     }
 }
-*/

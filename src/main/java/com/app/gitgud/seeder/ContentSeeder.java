@@ -1,5 +1,5 @@
 package com.app.gitgud.seeder;
-/*
+
 import com.app.gitgud.model.*;
 import com.app.gitgud.seeder.data.chapter1.Chapter1Data;
 import com.app.gitgud.seeder.data.chapter2.Chapter2Data;
@@ -12,6 +12,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -58,8 +59,8 @@ public class ContentSeeder implements CommandLineRunner {
         System.out.println("Seeding completed.");
     }
 
-    // quizes are stored as subcollections within their parent section or parent chapter (except of global quizes)
-    // questions are stored as a subcolletion (under their quiz)
+    // quizzes are stored as subcollections within their parent section or parent chapter (except global quizzes)
+    // trials are stored as a subcollection (under their quiz)
     private void seedChapter(Firestore db, ChapterData data) throws Exception {
 
         DocumentReference chapterRef = db.collection("chapters").document(data.getChapter().getId());
@@ -89,13 +90,14 @@ public class ContentSeeder implements CommandLineRunner {
                 for (QuestionTrial q : questionTrials) {
                     sectionRef.collection("quizzes")
                             .document(quizId)
-                            .collection("questionTrials")
+                            .collection("trials")
                             .document(q.getId())
-                            .set(q)
+                            .set(toTrialData(q))
                             .get();
                 }
             }
         }
+
         // todo: make it skill based
         // Chapter-level final quiz: one question per section
         List<QuestionTrial> finalQuestionTrials = data.getSections().stream()
@@ -120,12 +122,13 @@ public class ContentSeeder implements CommandLineRunner {
         for (QuestionTrial q : finalQuestionTrials) {
             chapterRef.collection("quizzes")
                     .document(finalQuizId)
-                    .collection("questions")
+                    .collection("trials")
                     .document(q.getId())
-                    .set(q)
+                    .set(toTrialData(q))
                     .get();
         }
     }
+
     // todo: make it skill based
     // global review quiz. One question per chapter
     private void seedReviewQuiz(Firestore db, List<ChapterData> chapters) throws Exception {
@@ -133,7 +136,7 @@ public class ContentSeeder implements CommandLineRunner {
         List<QuestionTrial> reviewQuestionTrials = chapters.stream()
                 .map(data -> {
                     List<QuestionTrial> qs = data.getQuestions()
-                            .getOrDefault(data.getSections().getFirst().getId(), List.of()); // id of the first section of the chapter
+                            .getOrDefault(data.getSections().getFirst().getId(), List.of());
                     return qs.isEmpty() ? null : qs.getFirst();
                 })
                 .filter(Objects::nonNull)
@@ -152,23 +155,36 @@ public class ContentSeeder implements CommandLineRunner {
         for (QuestionTrial q : reviewQuestionTrials) {
             db.collection("quizzes")
                     .document(reviewQuizId)
-                    .collection("questions")
+                    .collection("trials")
                     .document(q.getId())
-                    .set(q)
+                    .set(toTrialData(q))
                     .get();
         }
 
         System.out.println("Seeded review quiz.");
     }
 
-    // deletes documents in a collection, including subcollections
+    // Builds the Firestore map for a QuestionTrial, ensuring type is saved as lowercase string
+    private Map<String, Object> toTrialData(QuestionTrial q) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("type", q.getType().getValue());           // "question"
+        data.put("text", q.getText());
+        data.put("options", q.getOptions());
+        data.put("correctAnswer", q.getCorrectAnswer());
+        data.put("difficulty", q.getDifficulty().getValue()); // "beginner" / "intermediate" / "advanced"
+        data.put("hints", q.getHints());
+        data.put("order", q.getOrder());
+        return data;
+    }
 
+    // deletes documents in a collection, including subcollections
     private void deleteCollection(CollectionReference colRef) throws Exception {
         for (var doc : colRef.get().get().getDocuments()) {
             deleteDocumentRecursively(doc.getReference());
         }
     }
-    // deletes documents and all of the subcollections, must delete the subcollections first and then the document
+
+    // deletes document and all of its subcollections — subcollections must be deleted first
     private void deleteDocumentRecursively(DocumentReference docRef) throws Exception {
         for (CollectionReference col : docRef.listCollections()) {
             deleteCollection(col);
@@ -176,4 +192,3 @@ public class ContentSeeder implements CommandLineRunner {
         docRef.delete().get();
     }
 }
-*/

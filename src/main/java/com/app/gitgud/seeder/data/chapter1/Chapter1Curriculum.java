@@ -1,5 +1,5 @@
 package com.app.gitgud.seeder.data.chapter1;
-/*
+
 import com.app.gitgud.model.Section;
 
 import java.util.Arrays;
@@ -14,7 +14,7 @@ public class Chapter1Curriculum {
         return Arrays.asList(
 
                 buildSection(
-                        "section-1-1", "What is Git?", 1, null,
+                        "section-1-1", "What is Git?", 1,
                         """
                                 **Git** is a version control system. It tracks changes in your files over time. \
                                 You can think of it as a **save history for your code**. If you break something, \
@@ -36,7 +36,7 @@ public class Chapter1Curriculum {
                 ),
 
                 buildSection(
-                        "section-1-2", "Initial Configuration", 2, "section-1-1",
+                        "section-1-2", "Initial Configuration", 2,
                         """
                                 Before you start working with Git, you need to specify your name and email. \
                                 Git attaches this information to every commit you make. You usually only need \
@@ -86,7 +86,7 @@ public class Chapter1Curriculum {
                 ),
 
                 buildSection(
-                        "section-1-3", "Git Init", 3, "section-1-2",
+                        "section-1-3", "Git Init", 3,
                         """
                                 `git init` is the command you run when starting a new Git project. \
                                 It tells Git to start tracking the folder you are currently in.
@@ -124,7 +124,7 @@ public class Chapter1Curriculum {
                 ),
 
                 buildSection(
-                        "section-1-4", "Git Add", 4, "section-1-3",
+                        "section-1-4", "Git Add", 4,
                         """
                                 In order for Git to save your changes, you need to tell it which files should be included. \
                                 This is called **staging**.
@@ -172,7 +172,7 @@ public class Chapter1Curriculum {
                 ),
 
                 buildSection(
-                        "section-1-5", "Git Commit", 5, "section-1-4",
+                        "section-1-5", "Git Commit", 5,
                         """
                                 `git commit` is the command that saves your staged changes into Git's history. \
                                 Essentially, it creates a **snapshot of your project** at that exact moment.
@@ -239,7 +239,7 @@ public class Chapter1Curriculum {
                 ),
 
                 buildSection(
-                        "section-1-6", "Log and Diff", 6, "section-1-5",
+                        "section-1-6", "Log and Diff", 6,
                         """
                                 With `git log`, you can see the list of commits made in the project. \
                                 Each entry shows information such as the commit hash, author, date, and commit message.
@@ -288,7 +288,7 @@ public class Chapter1Curriculum {
                 ),
 
                 buildSection(
-                        "section-1-7", "Ignore Files", 7, "section-1-6",
+                        "section-1-7", "Ignore Files", 7,
                         """
                                 Not every file in your project should be tracked by Git.
 
@@ -352,18 +352,19 @@ public class Chapter1Curriculum {
         );
     }
 
-    // builder
-    private static Section buildSection(String id, String title, int order, String prerequisiteId, String content,
-                                        String advancedContent) {
+    private static Section buildSection(
+            String id,
+            String title,
+            int order,
+            String content,
+            String advancedContent
+    ) {
         Section s = new Section();
         s.setId(id);
         s.setTitle(title);
         s.setOrder(order);
-        s.setPrerequisiteId(prerequisiteId);
-        s.setLocked(prerequisiteId != null);
         s.setContent(content);
         s.setAdvancedContent(advancedContent);
         return s;
     }
 }
-*/

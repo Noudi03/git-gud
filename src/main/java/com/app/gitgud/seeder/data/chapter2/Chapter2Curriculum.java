@@ -1,5 +1,5 @@
 package com.app.gitgud.seeder.data.chapter2;
-/*
+
 import com.app.gitgud.model.Section;
 
 import java.util.Arrays;
@@ -14,7 +14,7 @@ public class Chapter2Curriculum {
         return Arrays.asList(
 
                 buildSection(
-                        "section-2-1", "What is a branch?", 1, null,
+                        "section-2-1", "What is a branch?", 1,
                         """
                                 A **branch** refers to an independent line of development. It is a version of your project \
                                 in which you can make changes without affecting the main code. By default, Git creates \
@@ -51,7 +51,7 @@ public class Chapter2Curriculum {
                 ),
 
                 buildSection(
-                        "section-2-2", "Working on different branches (Git switch)", 2, "section-2-1",
+                        "section-2-2", "Working on different branches (Git switch)", 2,
                         """
                                 With `git switch`, you can move between branches. When you switch to a branch, \
                                 your files are updated to reflect the state of that branch.
@@ -92,7 +92,7 @@ public class Chapter2Curriculum {
                 ),
 
                 buildSection(
-                        "section-2-3", "Git Merge", 3, "section-2-2",
+                        "section-2-3", "Git Merge", 3,
                         """
                                 `git merge` combines the changes from one branch into another. \
                                 This is how you bring your work back into a branch after finishing a feature.
@@ -133,7 +133,7 @@ public class Chapter2Curriculum {
                 ),
 
                 buildSection(
-                        "section-2-4", "Merge Conflicts", 4, "section-2-3",
+                        "section-2-4", "Merge Conflicts", 4,
                         """
                                 A **merge conflict** happens when two branches have changed the same part of the \
                                 same file, and Git cannot determine which version should be kept. \
@@ -193,7 +193,7 @@ public class Chapter2Curriculum {
                 ),
 
                 buildSection(
-                        "section-2-5", "Git Rebase", 5, "section-2-4",
+                        "section-2-5", "Git Rebase", 5,
                         """
                                 `git rebase` moves your branch so that it starts from the tip of another branch. \
                                 This can result in a cleaner and more linear history without merge commits.
@@ -255,7 +255,7 @@ public class Chapter2Curriculum {
                 ),
 
                 buildSection(
-                        "section-2-6", "Git Stash", 6, "section-2-5",
+                        "section-2-6", "Git Stash", 6,
                         """
                                 `git stash` temporarily saves your uncommitted changes so you can switch branches \
                                 or work on something else without committing unfinished work.
@@ -292,7 +292,7 @@ public class Chapter2Curriculum {
                 ),
 
                 buildSection(
-                        "section-2-7", "Git Tags", 7, "section-2-6",
+                        "section-2-7", "Git Tags", 7,
                         """
                                 In Git, a **tag** marks a specific commit as important. \
                                 Tags are commonly used to mark **release versions** of your project.
@@ -336,17 +336,19 @@ public class Chapter2Curriculum {
         );
     }
 
-    private static Section buildSection(String id, String title, int order, String prerequisiteId,
-                                        String content, String advancedContent) {
+    private static Section buildSection(
+            String id,
+            String title,
+            int order,
+            String content,
+            String advancedContent
+    ) {
         Section s = new Section();
         s.setId(id);
         s.setTitle(title);
         s.setOrder(order);
-        s.setPrerequisiteId(prerequisiteId);
-        s.setLocked(prerequisiteId != null);
         s.setContent(content);
         s.setAdvancedContent(advancedContent);
         return s;
     }
 }
-*/
