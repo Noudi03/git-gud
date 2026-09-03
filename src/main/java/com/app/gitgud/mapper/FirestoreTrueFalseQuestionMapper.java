@@ -1,16 +1,17 @@
 package com.app.gitgud.mapper;
 
-import com.app.gitgud.model.TrueFalseTrial;
-import com.app.gitgud.model.TrialDifficulty;
+import com.app.gitgud.model.QuestionDifficulty;
+import com.app.gitgud.model.TrueFalseQuestion;
 import com.google.cloud.firestore.DocumentSnapshot;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class FirestoreTrueFalseTrialMapper {
+public class FirestoreTrueFalseQuestionMapper {
 
-    public TrueFalseTrial toModel(
+    public TrueFalseQuestion toModel(
             DocumentSnapshot document
     ) {
 
@@ -29,20 +30,19 @@ public class FirestoreTrueFalseTrialMapper {
 
         if (correctAnswer == null) {
             throw new IllegalArgumentException(
-                    "Missing correctAnswer for trial: " + id
+                    "Missing correctAnswer for question: " + id
             );
         }
 
-        String difficultyValue =
-                document.getString("difficulty");
-
-        TrialDifficulty difficulty =
-                TrialDifficulty.fromValue(
-                        difficultyValue
+        QuestionDifficulty difficulty =
+                QuestionDifficulty.fromValue(
+                        document.getString("difficulty")
                 );
 
         List<String> hints =
-                (List<String>) document.get("hints");
+                convertHints(
+                        document.get("hints")
+                );
 
         Long orderValue =
                 document.getLong("order");
@@ -52,7 +52,7 @@ public class FirestoreTrueFalseTrialMapper {
                         ? orderValue.intValue()
                         : 0;
 
-        return new TrueFalseTrial(
+        return new TrueFalseQuestion(
                 id,
                 text,
                 correctAnswer,
@@ -60,5 +60,28 @@ public class FirestoreTrueFalseTrialMapper {
                 hints,
                 order
         );
+    }
+
+    private List<String> convertHints(
+            Object value
+    ) {
+
+        if (!(value instanceof List<?> rawHints)) {
+            return new ArrayList<>();
+        }
+
+        List<String> hints =
+                new ArrayList<>();
+
+        for (Object hint : rawHints) {
+
+            if (hint != null) {
+                hints.add(
+                        hint.toString()
+                );
+            }
+        }
+
+        return hints;
     }
 }

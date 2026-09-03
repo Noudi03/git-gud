@@ -1,6 +1,6 @@
 package com.app.gitgud.mapper;
 
-import com.app.gitgud.model.TrialAttempt;
+import com.app.gitgud.model.QuestionAttempt;
 import com.google.cloud.firestore.DocumentSnapshot;
 import org.springframework.stereotype.Component;
 
@@ -8,10 +8,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class FirestoreTrialAttemptMapper {
+public class FirestoreQuestionAttemptMapper {
 
     public Map<String, Object> toData(
-            TrialAttempt attempt
+            QuestionAttempt attempt
     ) {
 
         Map<String, Object> data =
@@ -40,7 +40,7 @@ public class FirestoreTrialAttemptMapper {
         return data;
     }
 
-    public TrialAttempt toModel(
+    public QuestionAttempt toModel(
             DocumentSnapshot document
     ) {
 
@@ -63,7 +63,7 @@ public class FirestoreTrialAttemptMapper {
                         "skipCount"
                 );
 
-        return new TrialAttempt(
+        return new QuestionAttempt(
                 document.getId(),
                 Boolean.TRUE.equals(
                         document.getBoolean("correct")

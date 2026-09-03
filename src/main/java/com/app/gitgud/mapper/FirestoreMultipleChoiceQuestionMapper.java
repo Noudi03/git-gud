@@ -1,17 +1,19 @@
 package com.app.gitgud.mapper;
 
-import com.app.gitgud.model.FillInTheBlankTrial;
-import com.app.gitgud.model.TrialDifficulty;
+import com.app.gitgud.model.MultipleChoiceQuestion;
+import com.app.gitgud.model.QuestionDifficulty;
 import com.google.cloud.firestore.DocumentSnapshot;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Component
-public class FirestoreFillInTheBlankTrialMapper {
+public class FirestoreMultipleChoiceQuestionMapper {
 
-    public FillInTheBlankTrial toModel(
+    public MultipleChoiceQuestion toModel(
             DocumentSnapshot document
     ) {
 
@@ -25,13 +27,16 @@ public class FirestoreFillInTheBlankTrialMapper {
         String text =
                 document.getString("text");
 
-        String correctAnswer =
-                document.getString(
-                        "correctAnswer"
+        Map<String, String> options =
+                convertOptions(
+                        document.get("options")
                 );
 
-        TrialDifficulty difficulty =
-                TrialDifficulty.fromValue(
+        String correctAnswer =
+                document.getString("correctAnswer");
+
+        QuestionDifficulty difficulty =
+                QuestionDifficulty.fromValue(
                         document.getString("difficulty")
                 );
 
@@ -48,14 +53,46 @@ public class FirestoreFillInTheBlankTrialMapper {
                         ? orderValue.intValue()
                         : 0;
 
-        return new FillInTheBlankTrial(
+        return new MultipleChoiceQuestion(
                 id,
                 text,
+                options,
                 correctAnswer,
                 difficulty,
                 hints,
                 order
         );
+    }
+
+    private Map<String, String> convertOptions(
+            Object value
+    ) {
+
+        if (!(value instanceof Map<?, ?> rawOptions)) {
+            return new HashMap<>();
+        }
+
+        Map<String, String> options =
+                new HashMap<>();
+
+        for (
+                Map.Entry<?, ?> entry :
+                rawOptions.entrySet()
+        ) {
+
+            if (
+                    entry.getKey() instanceof String key
+                            && entry.getValue() != null
+            ) {
+
+                options.put(
+                        key,
+                        entry.getValue().toString()
+                );
+            }
+        }
+
+        return options;
     }
 
     private List<String> convertHints(

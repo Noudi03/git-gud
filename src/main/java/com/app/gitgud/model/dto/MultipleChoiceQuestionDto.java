@@ -1,28 +1,28 @@
 package com.app.gitgud.model.dto;
 
-import com.app.gitgud.model.TrialDifficulty;
-import com.app.gitgud.model.TrialType;
+import com.app.gitgud.model.QuestionDifficulty;
+import com.app.gitgud.model.QuestionType;
 
 import java.util.List;
 import java.util.Map;
 
-public class MultipleChoiceTrialDto
-        implements TrialDto {
+public class MultipleChoiceQuestionDto
+        implements QuestionDto {
 
     private final String id;
     private final String text;
     private final Map<String, String> options;
     private final String correctAnswer;
-    private final TrialDifficulty difficulty;
+    private final QuestionDifficulty difficulty;
     private final List<String> hints;
     private final int order;
 
-    public MultipleChoiceTrialDto(
+    public MultipleChoiceQuestionDto(
             String id,
             String text,
             Map<String, String> options,
             String correctAnswer,
-            TrialDifficulty difficulty,
+            QuestionDifficulty difficulty,
             List<String> hints,
             int order
     ) {
@@ -53,7 +53,7 @@ public class MultipleChoiceTrialDto
     }
 
     @Override
-    public TrialDifficulty getDifficulty() {
+    public QuestionDifficulty getDifficulty() {
         return difficulty;
     }
 
@@ -67,7 +67,7 @@ public class MultipleChoiceTrialDto
     }
 
     @Override
-    public TrialType getType() {
-        return TrialType.MULTIPLE_CHOICE;
+    public QuestionType getType() {
+        return QuestionType.MULTIPLE_CHOICE;
     }
 }

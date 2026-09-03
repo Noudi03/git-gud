@@ -1,30 +1,34 @@
 package com.app.gitgud.model;
 
 import java.util.List;
+import java.util.Map;
 
-public class TrueFalseTrial
-        implements Trial {
+public class MultipleChoiceQuestion
+        implements Question {
 
     private String id;
     private String text;
-    private boolean correctAnswer;
-    private TrialDifficulty difficulty;
+    private Map<String, String> options;
+    private String correctAnswer;
+    private QuestionDifficulty difficulty;
     private List<String> hints;
     private int order;
 
-    public TrueFalseTrial() {
+    public MultipleChoiceQuestion() {
     }
 
-    public TrueFalseTrial(
+    public MultipleChoiceQuestion(
             String id,
             String text,
-            boolean correctAnswer,
-            TrialDifficulty difficulty,
+            Map<String, String> options,
+            String correctAnswer,
+            QuestionDifficulty difficulty,
             List<String> hints,
             int order
     ) {
         this.id = id;
         this.text = text;
+        this.options = options;
         this.correctAnswer = correctAnswer;
         this.difficulty = difficulty;
         this.hints = hints;
@@ -52,28 +56,33 @@ public class TrueFalseTrial
         this.text = text;
     }
 
-    public boolean isCorrectAnswer() {
+    public Map<String, String> getOptions() {
+        return options;
+    }
+
+    public void setOptions(
+            Map<String, String> options
+    ) {
+        this.options = options;
+    }
+
+    public String getCorrectAnswer() {
         return correctAnswer;
     }
 
     public void setCorrectAnswer(
-            boolean correctAnswer
+            String correctAnswer
     ) {
         this.correctAnswer = correctAnswer;
     }
 
     @Override
-    public TrialType getType() {
-        return TrialType.TRUE_FALSE;
-    }
-
-    @Override
-    public TrialDifficulty getDifficulty() {
+    public QuestionDifficulty getDifficulty() {
         return difficulty;
     }
 
     public void setDifficulty(
-            TrialDifficulty difficulty
+            QuestionDifficulty difficulty
     ) {
         this.difficulty = difficulty;
     }
@@ -97,5 +106,10 @@ public class TrueFalseTrial
             int order
     ) {
         this.order = order;
+    }
+
+    @Override
+    public QuestionType getType() {
+        return QuestionType.MULTIPLE_CHOICE;
     }
 }

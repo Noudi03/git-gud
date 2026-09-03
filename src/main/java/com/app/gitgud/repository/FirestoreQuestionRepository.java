@@ -1,8 +1,8 @@
 package com.app.gitgud.repository;
 
-import com.app.gitgud.mapper.FirestoreTrialMapper;
+import com.app.gitgud.mapper.FirestoreQuestionMapper;
+import com.app.gitgud.model.Question;
 import com.app.gitgud.model.Quiz;
-import com.app.gitgud.model.Trial;
 import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.Firestore;
 import org.springframework.stereotype.Repository;
@@ -10,49 +10,49 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public class FirestoreTrialRepository {
+public class FirestoreQuestionRepository {
 
     private final Firestore db;
-    private final FirestoreTrialMapper mapper;
+    private final FirestoreQuestionMapper mapper;
 
-    public FirestoreTrialRepository(
+    public FirestoreQuestionRepository(
             Firestore db,
-            FirestoreTrialMapper mapper
+            FirestoreQuestionMapper mapper
     ) {
 
         this.db = db;
         this.mapper = mapper;
     }
 
-    public List<Trial> findTrials(
+    public List<Question> findQuestions(
             Quiz quiz
     ) throws Exception {
 
-        return getTrialsCollection(quiz)
+        return getQuestionsCollection(quiz)
                 .orderBy("order")
                 .get()
                 .get()
                 .getDocuments()
                 .stream()
                 .map(mapper::toModel)
-                .filter(trial -> trial != null)
+                .filter(question -> question != null)
                 .toList();
     }
 
-    public Trial findTrial(
+    public Question findQuestion(
             Quiz quiz,
-            String trialId
+            String questionId
     ) throws Exception {
 
         return mapper.toModel(
-                getTrialsCollection(quiz)
-                        .document(trialId)
+                getQuestionsCollection(quiz)
+                        .document(questionId)
                         .get()
                         .get()
         );
     }
 
-    private CollectionReference getTrialsCollection(
+    private CollectionReference getQuestionsCollection(
             Quiz quiz
     ) {
 
@@ -67,7 +67,7 @@ public class FirestoreTrialRepository {
 
         return getQuizCollectionPath(
                 quiz.getContext()
-        ) + "/" + quiz.getId() + "/trials";
+        ) + "/" + quiz.getId() + "/questions";
     }
 
     private String getQuizCollectionPath(

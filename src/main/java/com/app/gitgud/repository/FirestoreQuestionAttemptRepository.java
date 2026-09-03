@@ -1,7 +1,7 @@
 package com.app.gitgud.repository;
 
-import com.app.gitgud.mapper.FirestoreTrialAttemptMapper;
-import com.app.gitgud.model.TrialAttempt;
+import com.app.gitgud.mapper.FirestoreQuestionAttemptMapper;
+import com.app.gitgud.model.QuestionAttempt;
 import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.Firestore;
 import org.springframework.stereotype.Repository;
@@ -10,47 +10,47 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class FirestoreTrialAttemptRepository {
+public class FirestoreQuestionAttemptRepository {
 
     private final Firestore db;
-    private final FirestoreTrialAttemptMapper mapper;
+    private final FirestoreQuestionAttemptMapper mapper;
 
-    public FirestoreTrialAttemptRepository(
+    public FirestoreQuestionAttemptRepository(
             Firestore db,
-            FirestoreTrialAttemptMapper mapper
+            FirestoreQuestionAttemptMapper mapper
     ) {
 
         this.db = db;
         this.mapper = mapper;
     }
 
-    public void createTrialAttempt(
+    public void createQuestionAttempt(
             String userId,
             String attemptId,
-            TrialAttempt trialAttempt
+            QuestionAttempt questionAttempt
     ) throws Exception {
 
-        getTrialAttemptCollection(
+        getQuestionAttemptCollection(
                 userId,
                 attemptId
         )
-                .document(trialAttempt.getTrialId())
-                .set(mapper.toData(trialAttempt))
+                .document(questionAttempt.getQuestionId())
+                .set(mapper.toData(questionAttempt))
                 .get();
     }
 
-    public Optional<TrialAttempt> findTrialAttempt(
+    public Optional<QuestionAttempt> findQuestionAttempt(
             String userId,
             String attemptId,
-            String trialId
+            String questionId
     ) throws Exception {
 
         var document =
-                getTrialAttemptCollection(
+                getQuestionAttemptCollection(
                         userId,
                         attemptId
                 )
-                        .document(trialId)
+                        .document(questionId)
                         .get()
                         .get();
 
@@ -63,12 +63,12 @@ public class FirestoreTrialAttemptRepository {
         );
     }
 
-    public List<TrialAttempt> findTrialAttempts(
+    public List<QuestionAttempt> findQuestionAttempts(
             String userId,
             String attemptId
     ) throws Exception {
 
-        return getTrialAttemptCollection(
+        return getQuestionAttemptCollection(
                 userId,
                 attemptId
         )
@@ -81,7 +81,7 @@ public class FirestoreTrialAttemptRepository {
                 .toList();
     }
 
-    private CollectionReference getTrialAttemptCollection(
+    private CollectionReference getQuestionAttemptCollection(
             String userId,
             String attemptId
     ) {
@@ -90,6 +90,6 @@ public class FirestoreTrialAttemptRepository {
                 .document(userId)
                 .collection("quizAttempts")
                 .document(attemptId)
-                .collection("trialAttempts");
+                .collection("questionAttempts");
     }
 }

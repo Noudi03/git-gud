@@ -1,7 +1,7 @@
 package com.app.gitgud.seeder.data.chapter3;
 
 import com.app.gitgud.model.Chapter;
-import com.app.gitgud.model.MultipleChoiceTrial;
+import com.app.gitgud.model.MultipleChoiceQuestion;
 import com.app.gitgud.model.Section;
 import com.app.gitgud.seeder.ChapterData;
 
@@ -26,7 +26,7 @@ public class Chapter3Data implements ChapterData {
     }
 
     @Override
-    public Map<String, List<MultipleChoiceTrial>> getQuestions() {
+    public Map<String, List<MultipleChoiceQuestion>> getQuestions() {
         return Chapter3Questions.getQuestions();
     }
 }

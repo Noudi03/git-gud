@@ -1,9 +1,9 @@
 package com.app.gitgud.controller;
 
-import com.app.gitgud.model.TrialAttempt;
-import com.app.gitgud.model.dto.TrialAttemptRequestDto;
+import com.app.gitgud.model.QuestionAttempt;
+import com.app.gitgud.model.dto.QuestionAttemptRequestDto;
 import com.app.gitgud.service.CurrentUserService;
-import com.app.gitgud.service.TrialAttemptService;
+import com.app.gitgud.service.QuestionAttemptService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,29 +11,29 @@ import java.util.List;
 
 @RestController
 @RequestMapping(
-        "/api/quiz-attempts/{attemptId}/trial-attempts"
+        "/api/quiz-attempts/{attemptId}/question-attempts"
 )
-public class TrialAttemptController {
+public class QuestionAttemptController {
 
-    private final TrialAttemptService trialAttemptService;
+    private final QuestionAttemptService questionAttemptService;
     private final CurrentUserService currentUserService;
 
-    public TrialAttemptController(
-            TrialAttemptService trialAttemptService,
+    public QuestionAttemptController(
+            QuestionAttemptService questionAttemptService,
             CurrentUserService currentUserService
     ) {
 
-        this.trialAttemptService =
-                trialAttemptService;
+        this.questionAttemptService =
+                questionAttemptService;
 
         this.currentUserService =
                 currentUserService;
     }
 
     @PostMapping
-    public ResponseEntity<?> createTrialAttempt(
+    public ResponseEntity<?> createQuestionAttempt(
             @PathVariable String attemptId,
-            @RequestBody TrialAttemptRequestDto request
+            @RequestBody QuestionAttemptRequestDto request
     ) {
 
         String userId =
@@ -47,7 +47,7 @@ public class TrialAttemptController {
 
         try {
 
-            trialAttemptService.createTrialAttempt(
+            questionAttemptService.createQuestionAttempt(
                     userId,
                     attemptId,
                     request
@@ -68,13 +68,13 @@ public class TrialAttemptController {
             return ResponseEntity
                     .internalServerError()
                     .body(
-                            "Could not create trial attempt"
+                            "Could not create question attempt"
                     );
         }
     }
 
     @GetMapping
-    public ResponseEntity<?> getTrialAttempts(
+    public ResponseEntity<?> getQuestionAttempts(
             @PathVariable String attemptId
     ) {
 
@@ -89,9 +89,9 @@ public class TrialAttemptController {
 
         try {
 
-            List<TrialAttempt> attempts =
-                    trialAttemptService
-                            .getTrialAttempts(
+            List<QuestionAttempt> attempts =
+                    questionAttemptService
+                            .getQuestionAttempts(
                                     userId,
                                     attemptId
                             );
@@ -105,15 +105,15 @@ public class TrialAttemptController {
             return ResponseEntity
                     .internalServerError()
                     .body(
-                            "Could not get trial attempts"
+                            "Could not get question attempts"
                     );
         }
     }
 
-    @GetMapping("/{trialId}")
-    public ResponseEntity<?> getTrialAttempt(
+    @GetMapping("/{questionId}")
+    public ResponseEntity<?> getQuestionAttempt(
             @PathVariable String attemptId,
-            @PathVariable String trialId
+            @PathVariable String questionId
     ) {
 
         String userId =
@@ -127,12 +127,12 @@ public class TrialAttemptController {
 
         try {
 
-            TrialAttempt attempt =
-                    trialAttemptService
-                            .getTrialAttempt(
+            QuestionAttempt attempt =
+                    questionAttemptService
+                            .getQuestionAttempt(
                                     userId,
                                     attemptId,
-                                    trialId
+                                    questionId
                             );
 
             return ResponseEntity.ok(
@@ -150,7 +150,7 @@ public class TrialAttemptController {
             return ResponseEntity
                     .internalServerError()
                     .body(
-                            "Could not get trial attempt"
+                            "Could not get question attempt"
                     );
         }
     }

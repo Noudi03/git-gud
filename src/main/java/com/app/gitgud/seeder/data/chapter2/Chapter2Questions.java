@@ -1,7 +1,7 @@
 package com.app.gitgud.seeder.data.chapter2;
 
-import com.app.gitgud.model.MultipleChoiceTrial;
-import com.app.gitgud.model.TrialDifficulty;
+import com.app.gitgud.model.MultipleChoiceQuestion;
+import com.app.gitgud.model.QuestionDifficulty;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -13,8 +13,8 @@ import java.util.Map;
 
 public class Chapter2Questions {
 
-    public static Map<String, List<MultipleChoiceTrial>> getQuestions() {
-        Map<String, List<MultipleChoiceTrial>> map = new HashMap<>();
+    public static Map<String, List<MultipleChoiceQuestion>> getQuestions() {
+        Map<String, List<MultipleChoiceQuestion>> map = new HashMap<>();
         map.put("section-2-1", section21());
         map.put("section-2-2", section22());
         map.put("section-2-3", section23());
@@ -29,7 +29,7 @@ public class Chapter2Questions {
     // Section 2.1 — What is a branch?
     // -------------------------------------------------------------------------
 
-    private static List<MultipleChoiceTrial> section21() {
+    private static List<MultipleChoiceQuestion> section21() {
         return Arrays.asList(
 
                 build("q1",
@@ -71,7 +71,7 @@ public class Chapter2Questions {
     // Section 2.2 — Working on different branches (Git switch)
     // -------------------------------------------------------------------------
 
-    private static List<MultipleChoiceTrial> section22() {
+    private static List<MultipleChoiceQuestion> section22() {
         return Arrays.asList(
 
                 build("q1",
@@ -124,7 +124,7 @@ public class Chapter2Questions {
     // Section 2.3 — Git Merge
     // -------------------------------------------------------------------------
 
-    private static List<MultipleChoiceTrial> section23() {
+    private static List<MultipleChoiceQuestion> section23() {
         return Arrays.asList(
 
                 build("q1",
@@ -177,7 +177,7 @@ public class Chapter2Questions {
     // Section 2.4 — Merge Conflicts
     // -------------------------------------------------------------------------
 
-    private static List<MultipleChoiceTrial> section24() {
+    private static List<MultipleChoiceQuestion> section24() {
         return Arrays.asList(
 
                 build("q1",
@@ -230,7 +230,7 @@ public class Chapter2Questions {
     // Section 2.5 — Git Rebase
     // -------------------------------------------------------------------------
 
-    private static List<MultipleChoiceTrial> section25() {
+    private static List<MultipleChoiceQuestion> section25() {
         return Arrays.asList(
 
                 build("q1",
@@ -272,7 +272,7 @@ public class Chapter2Questions {
     // Section 2.6 — Git Stash
     // -------------------------------------------------------------------------
 
-    private static List<MultipleChoiceTrial> section26() {
+    private static List<MultipleChoiceQuestion> section26() {
         return Arrays.asList(
 
                 build("q1",
@@ -325,7 +325,7 @@ public class Chapter2Questions {
     // Section 2.7 — Git Tags
     // -------------------------------------------------------------------------
 
-    private static List<MultipleChoiceTrial> section27() {
+    private static List<MultipleChoiceQuestion> section27() {
         return Arrays.asList(
 
                 build("q1",
@@ -378,14 +378,14 @@ public class Chapter2Questions {
     // Builders
     // -------------------------------------------------------------------------
 
-    private static MultipleChoiceTrial build(String id, String text, Map<String, String> options,
-                                             String correctAnswer, String difficulty, String hint1, String hint2) {
-        MultipleChoiceTrial q = new MultipleChoiceTrial();
+    private static MultipleChoiceQuestion build(String id, String text, Map<String, String> options,
+                                                String correctAnswer, String difficulty, String hint1, String hint2) {
+        MultipleChoiceQuestion q = new MultipleChoiceQuestion();
         q.setId(id);
         q.setText(text);
         q.setOptions(options);
         q.setCorrectAnswer(correctAnswer);
-        q.setDifficulty(TrialDifficulty.fromValue(difficulty));
+        q.setDifficulty(QuestionDifficulty.fromValue(difficulty));
         q.setHints(Arrays.asList(hint1, hint2));
         return q;
     }

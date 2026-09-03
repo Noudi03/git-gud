@@ -1,11 +1,10 @@
 import {
-    renderTrial,
+    renderQuestion,
     renderAnswer,
     renderSkipped,
     renderEmptyQuiz,
     renderCompletion
 } from "./quiz-renderer.js";
-
 
 export class QuizSession {
 
@@ -20,19 +19,19 @@ export class QuizSession {
         this.attemptId =
             null;
 
-        this.currentTrialIndex =
+        this.currentQuestionIndex =
             0;
 
-        this.skippedTrials =
+        this.skippedQuestions =
             [];
 
-        this.answeredTrials =
+        this.answeredQuestions =
             new Set();
 
-        this.trialAttempts =
+        this.questionAttempts =
             new Map();
 
-        this.trialStartTime =
+        this.questionStartTime =
             null;
 
         this.isFinished =
@@ -41,7 +40,6 @@ export class QuizSession {
         this.isCancelled =
             false;
     }
-
 
     async load(quizUrl) {
 
@@ -66,19 +64,19 @@ export class QuizSession {
         this.attemptId =
             null;
 
-        this.currentTrialIndex =
+        this.currentQuestionIndex =
             0;
 
-        this.skippedTrials =
+        this.skippedQuestions =
             [];
 
-        this.answeredTrials =
+        this.answeredQuestions =
             new Set();
 
-        this.trialAttempts =
+        this.questionAttempts =
             new Map();
 
-        this.trialStartTime =
+        this.questionStartTime =
             null;
 
         this.isFinished =
@@ -89,7 +87,6 @@ export class QuizSession {
 
         return this.quizData;
     }
-
 
     start() {
 
@@ -107,7 +104,7 @@ export class QuizSession {
             this.quizData.quiz.title;
 
         if (
-            this.quizData.trials.length === 0
+            this.quizData.questions.length === 0
         ) {
 
             renderEmptyQuiz(
@@ -117,75 +114,72 @@ export class QuizSession {
             return;
         }
 
-        this.showCurrentTrial();
+        this.showCurrentQuestion();
     }
 
+    showCurrentQuestion() {
 
-    showCurrentTrial() {
-
-        const trial =
-            this.quizData.trials[
-                this.currentTrialIndex
+        const question =
+            this.quizData.questions[
+                this.currentQuestionIndex
                 ];
 
-        if (!trial) {
+        if (!question) {
             return;
         }
 
-        this.trialStartTime =
+        this.questionStartTime =
             Date.now();
 
-        renderTrial(
-            trial,
-            this.currentTrialIndex,
-            this.quizData.trials.length,
+        renderQuestion(
+            question,
+            this.currentQuestionIndex,
+            this.quizData.questions.length,
             this.elements,
             answer =>
                 this.answer(
-                    trial,
+                    question,
                     answer
                 ),
             this.canSkip()
         );
     }
 
+    showQuestion(question) {
 
-    showTrial(trial) {
-
-        const trialIndex =
-            this.quizData.trials.findIndex(
-                originalTrial =>
-                    originalTrial.id ===
-                    trial.id
+        const questionIndex =
+            this.quizData.questions.findIndex(
+                originalQuestion =>
+                    originalQuestion.id ===
+                    question.id
             );
 
-        if (trialIndex === -1) {
+        if (questionIndex === -1) {
             return;
         }
 
-        this.currentTrialIndex =
-            trialIndex;
+        this.currentQuestionIndex =
+            questionIndex;
 
-        this.trialStartTime =
+        this.questionStartTime =
             Date.now();
 
-        renderTrial(
-            trial,
-            trialIndex,
-            this.quizData.trials.length,
+        renderQuestion(
+            question,
+            questionIndex,
+            this.quizData.questions.length,
             this.elements,
             answer =>
                 this.answer(
-                    trial,
+                    question,
                     answer
                 ),
             this.canSkip()
         );
     }
 
-
     answer(
-        trial,
+        question,
         selectedAnswer
     ) {
 
@@ -201,23 +195,23 @@ export class QuizSession {
 
         const correct =
             this.isCorrect(
-                trial,
+                question,
                 selectedAnswer
             );
 
         const existingAttempt =
-            this.trialAttempts.get(
-                trial.id
+            this.questionAttempts.get(
+                question.id
             );
 
         const skipCount =
             existingAttempt?.skipCount ?? 0;
 
-        this.trialAttempts.set(
-            trial.id,
+        this.questionAttempts.set(
+            question.id,
             {
-                trialId:
-                trial.id,
+                questionId:
+                question.id,
 
                 selectedAnswer:
                 selectedAnswer,
@@ -238,29 +232,28 @@ export class QuizSession {
             }
         );
 
-        this.answeredTrials.add(
-            trial.id
+        this.answeredQuestions.add(
+            question.id
         );
 
-        this.skippedTrials =
-            this.skippedTrials.filter(
-                skippedTrial =>
-                    skippedTrial.id !==
-                    trial.id
+        this.skippedQuestions =
+            this.skippedQuestions.filter(
+                skippedQuestion =>
+                    skippedQuestion.id !==
+                    question.id
             );
 
         renderAnswer(
-            trial,
+            question,
             selectedAnswer,
             this.elements
         );
 
         this.elements.nextButton.textContent =
-            this.hasTrialsRemaining()
+            this.hasQuestionsRemaining()
                 ? "Next"
                 : "Finish";
     }
-
 
     skip() {
 
@@ -271,12 +264,12 @@ export class QuizSession {
             return;
         }
 
-        const trial =
-            this.quizData.trials[
-                this.currentTrialIndex
+        const question =
+            this.quizData.questions[
+                this.currentQuestionIndex
                 ];
 
-        if (!trial) {
+        if (!question) {
             return;
         }
 
@@ -284,8 +277,8 @@ export class QuizSession {
             this.getTimeSpent();
 
         const existingAttempt =
-            this.trialAttempts.get(
-                trial.id
+            this.questionAttempts.get(
+                question.id
             );
 
         const skipCount =
@@ -293,11 +286,11 @@ export class QuizSession {
                 existingAttempt?.skipCount ?? 0
             ) + 1;
 
-        this.trialAttempts.set(
-            trial.id,
+        this.questionAttempts.set(
+            question.id,
             {
-                trialId:
-                trial.id,
+                questionId:
+                question.id,
 
                 selectedAnswer:
                     existingAttempt?.selectedAnswer ?? null,
@@ -319,16 +312,16 @@ export class QuizSession {
         );
 
         const alreadySkipped =
-            this.skippedTrials.some(
-                skippedTrial =>
-                    skippedTrial.id ===
-                    trial.id
+            this.skippedQuestions.some(
+                skippedQuestion =>
+                    skippedQuestion.id ===
+                    question.id
             );
 
         if (!alreadySkipped) {
 
-            this.skippedTrials.push(
-                trial
+            this.skippedQuestions.push(
+                question
             );
         }
 
@@ -336,9 +329,8 @@ export class QuizSession {
             this.elements
         );
 
-        this.moveToNextTrial();
+        this.moveToNextQuestion();
     }
-
 
     next() {
 
@@ -350,47 +342,46 @@ export class QuizSession {
         }
 
         if (
-            this.isCurrentTrialAnswered()
+            this.isCurrentQuestionAnswered()
         ) {
 
-            this.moveToNextTrial();
+            this.moveToNextQuestion();
 
             return;
         }
 
         if (
-            this.isCurrentTrialSkipped()
+            this.isCurrentQuestionSkipped()
         ) {
 
-            this.moveToNextTrial();
+            this.moveToNextQuestion();
         }
     }
 
+    moveToNextQuestion() {
 
-    moveToNextTrial() {
+        const nextQuestionIndex =
+            this.findNextUnansweredQuestionIndex();
 
-        const nextTrialIndex =
-            this.findNextUnansweredTrialIndex();
+        if (nextQuestionIndex !== -1) {
 
-        if (nextTrialIndex !== -1) {
+            this.currentQuestionIndex =
+                nextQuestionIndex;
 
-            this.currentTrialIndex =
-                nextTrialIndex;
-
-            this.showCurrentTrial();
+            this.showCurrentQuestion();
 
             return;
         }
 
         if (
-            this.skippedTrials.length > 0
+            this.skippedQuestions.length > 0
         ) {
 
-            const skippedTrial =
-                this.skippedTrials.shift();
+            const skippedQuestion =
+                this.skippedQuestions.shift();
 
-            this.showTrial(
-                skippedTrial
+            this.showQuestion(
+                skippedQuestion
             );
 
             return;
@@ -399,27 +390,25 @@ export class QuizSession {
         this.finish();
     }
 
-
     canSkip() {
 
         return (
-            this.getRemainingTrialCount() > 1
+            this.getRemainingQuestionCount() > 1
         );
     }
 
-
-    getRemainingTrialCount() {
+    getRemainingQuestionCount() {
 
         let remaining = 0;
 
         for (
-            const trial of
-            this.quizData.trials
+            const question of
+            this.quizData.questions
             ) {
 
             if (
-                !this.answeredTrials.has(
-                    trial.id
+                !this.answeredQuestions.has(
+                    question.id
                 )
             ) {
 
@@ -430,28 +419,27 @@ export class QuizSession {
         return remaining;
     }
 
-
-    findNextUnansweredTrialIndex() {
+    findNextUnansweredQuestionIndex() {
 
         for (
             let i = 0;
-            i < this.quizData.trials.length;
+            i < this.quizData.questions.length;
             i++
         ) {
 
-            const trial =
-                this.quizData.trials[i];
+            const question =
+                this.quizData.questions[i];
 
             const answered =
-                this.answeredTrials.has(
-                    trial.id
+                this.answeredQuestions.has(
+                    question.id
                 );
 
             const skipped =
-                this.skippedTrials.some(
-                    skippedTrial =>
-                        skippedTrial.id ===
-                        trial.id
+                this.skippedQuestions.some(
+                    skippedQuestion =>
+                        skippedQuestion.id ===
+                        question.id
                 );
 
             if (!answered && !skipped) {
@@ -462,76 +450,71 @@ export class QuizSession {
         return -1;
     }
 
+    isCurrentQuestionAnswered() {
 
-    isCurrentTrialAnswered() {
-
-        const trial =
-            this.quizData.trials[
-                this.currentTrialIndex
+        const question =
+            this.quizData.questions[
+                this.currentQuestionIndex
                 ];
 
         return (
-            trial &&
-            this.answeredTrials.has(
-                trial.id
+            question &&
+            this.answeredQuestions.has(
+                question.id
             )
         );
     }
 
+    isCurrentQuestionSkipped() {
 
-    isCurrentTrialSkipped() {
-
-        const trial =
-            this.quizData.trials[
-                this.currentTrialIndex
+        const question =
+            this.quizData.questions[
+                this.currentQuestionIndex
                 ];
 
         return (
-            trial &&
-            this.skippedTrials.some(
-                skippedTrial =>
-                    skippedTrial.id ===
-                    trial.id
+            question &&
+            this.skippedQuestions.some(
+                skippedQuestion =>
+                    skippedQuestion.id ===
+                    question.id
             )
         );
     }
 
-
-    hasTrialsRemaining() {
+    hasQuestionsRemaining() {
 
         return (
-            this.findNextUnansweredTrialIndex()
+            this.findNextUnansweredQuestionIndex()
             !== -1 ||
-            this.skippedTrials.length > 0
+            this.skippedQuestions.length > 0
         );
     }
-
 
     getTimeSpent() {
 
         if (
-            this.trialStartTime === null
+            this.questionStartTime === null
         ) {
             return 0;
         }
 
         return Date.now() -
-            this.trialStartTime;
+            this.questionStartTime;
     }
 
-
     isCorrect(
-        trial,
+        question,
         answer
     ) {
 
-        switch (trial.type) {
+        switch (question.type) {
 
             case "MULTIPLE_CHOICE":
 
                 return (
                     answer ===
-                    trial.correctAnswer
+                    question.correctAnswer
                 );
 
             case "FILL_IN_THE_BLANK":
@@ -539,7 +522,7 @@ export class QuizSession {
                 return (
                     this.normalizeAnswer(answer) ===
                     this.normalizeAnswer(
-                        trial.correctAnswer
+                        question.correctAnswer
                     )
                 );
 
@@ -547,7 +530,7 @@ export class QuizSession {
 
                 return (
                     Boolean(answer) ===
-                    trial.correctAnswer
+                    question.correctAnswer
                 );
 
             default:
@@ -555,7 +538,6 @@ export class QuizSession {
                 return false;
         }
     }
-
 
     normalizeAnswer(
         answer
@@ -573,7 +555,6 @@ export class QuizSession {
             .toLowerCase();
     }
 
-
     async finish() {
 
         if (
@@ -589,7 +570,7 @@ export class QuizSession {
         renderCompletion(
             this.quizData,
             Array.from(
-                this.trialAttempts.values()
+                this.questionAttempts.values()
             ),
             this.elements
         );
@@ -598,7 +579,6 @@ export class QuizSession {
             "completed"
         );
     }
-
 
     async cancel() {
 
@@ -611,12 +591,12 @@ export class QuizSession {
         }
 
         if (
-            this.quizData.trials.length === 0
+            this.quizData.questions.length === 0
         ) {
             return;
         }
 
-        this.recordCurrentTrialTime();
+        this.recordCurrentQuestionTime();
 
         this.isCancelled =
             true;
@@ -626,17 +606,16 @@ export class QuizSession {
         );
     }
 
+    recordCurrentQuestionTime() {
 
-    recordCurrentTrialTime() {
-
-        const trial =
-            this.quizData?.trials?.[
-                this.currentTrialIndex
+        const question =
+            this.quizData?.questions?.[
+                this.currentQuestionIndex
                 ];
 
         if (
-            !trial ||
-            this.trialStartTime === null
+            !question ||
+            this.questionStartTime === null
         ) {
             return;
         }
@@ -649,15 +628,15 @@ export class QuizSession {
         }
 
         const existingAttempt =
-            this.trialAttempts.get(
-                trial.id
+            this.questionAttempts.get(
+                question.id
             );
 
-        this.trialAttempts.set(
-            trial.id,
+        this.questionAttempts.set(
+            question.id,
             {
-                trialId:
-                trial.id,
+                questionId:
+                question.id,
 
                 selectedAnswer:
                     existingAttempt?.selectedAnswer ?? null,
@@ -678,10 +657,9 @@ export class QuizSession {
             }
         );
 
-        this.trialStartTime =
+        this.questionStartTime =
             null;
     }
-
 
     async submitAttempt(status) {
 
@@ -699,7 +677,7 @@ export class QuizSession {
             this.attemptId =
                 attempt.id;
 
-            await this.createTrialAttempts();
+            await this.createQuestionAttempts();
 
         } catch (error) {
 
@@ -709,7 +687,6 @@ export class QuizSession {
             );
         }
     }
-
 
     async createQuizAttempt(status) {
 
@@ -748,8 +725,7 @@ export class QuizSession {
         return response.json();
     }
 
-
-    async createTrialAttempts() {
+    async createQuestionAttempts() {
 
         if (!this.attemptId) {
             throw new Error(
@@ -757,18 +733,18 @@ export class QuizSession {
             );
         }
 
-        const trialAttempts =
-            this.quizData.trials.map(
-                trial => {
+        const questionAttempts =
+            this.quizData.questions.map(
+                question => {
 
                     const attempt =
-                        this.trialAttempts.get(
-                            trial.id
+                        this.questionAttempts.get(
+                            question.id
                         );
 
                     return {
-                        trialId:
-                        trial.id,
+                        questionId:
+                        question.id,
 
                         correct:
                             attempt?.correct ?? false,
@@ -786,23 +762,22 @@ export class QuizSession {
             );
 
         await Promise.all(
-            trialAttempts.map(
-                trialAttempt =>
-                    this.createTrialAttempt(
-                        trialAttempt
+            questionAttempts.map(
+                questionAttempt =>
+                    this.createQuestionAttempt(
+                        questionAttempt
                     )
             )
         );
     }
 
-
-    async createTrialAttempt(
-        trialAttempt
+    async createQuestionAttempt(
+        questionAttempt
     ) {
 
         const response =
             await fetch(
-                `/api/quiz-attempts/${this.attemptId}/trial-attempts`,
+                `/api/quiz-attempts/${this.attemptId}/question-attempts`,
                 {
                     method: "POST",
 
@@ -813,7 +788,7 @@ export class QuizSession {
 
                     body:
                         JSON.stringify(
-                            trialAttempt
+                            questionAttempt
                         )
                 }
             );
@@ -821,7 +796,7 @@ export class QuizSession {
         if (!response.ok) {
 
             throw new Error(
-                `Failed to save trial attempt (${response.status})`
+                `Failed to save question attempt (${response.status})`
             );
         }
     }

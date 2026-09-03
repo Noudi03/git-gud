@@ -1,6 +1,6 @@
 package com.app.gitgud.model;
 
-public enum TrialType {
+public enum QuestionType {
 
     MULTIPLE_CHOICE("multipleChoice"),
     FILL_IN_THE_BLANK("fillInTheBlank"),
@@ -8,7 +8,9 @@ public enum TrialType {
 
     private final String value;
 
-    TrialType(String value) {
+    QuestionType(
+            String value
+    ) {
         this.value = value;
     }
 
@@ -16,11 +18,11 @@ public enum TrialType {
         return value;
     }
 
-    public static TrialType fromValue(
+    public static QuestionType fromValue(
             String value
     ) {
 
-        for (TrialType type : values()) {
+        for (QuestionType type : values()) {
 
             if (type.value.equalsIgnoreCase(value)) {
                 return type;
@@ -28,7 +30,7 @@ public enum TrialType {
         }
 
         throw new IllegalArgumentException(
-                "Unknown trial type: " + value
+                "Unknown question type: " + value
         );
     }
 }

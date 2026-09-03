@@ -1,7 +1,7 @@
-export function renderMultipleChoiceTrial(
-    trial,
+export function renderMultipleChoiceQuestion(
+    question,
     currentIndex,
-    totalTrials,
+    totalQuestions,
     elements,
     onAnswer,
     canSkip
@@ -16,10 +16,10 @@ export function renderMultipleChoiceTrial(
     } = elements;
 
     progress.textContent =
-        `Trial ${currentIndex + 1} / ${totalTrials}`;
+        `Question ${currentIndex + 1} / ${totalQuestions}`;
 
     questionText.textContent =
-        trial.text;
+        question.text;
 
     optionsContainer.innerHTML = "";
 
@@ -32,7 +32,7 @@ export function renderMultipleChoiceTrial(
 
     nextButton.hidden = true;
 
-    Object.entries(trial.options)
+    Object.entries(question.options)
         .forEach(([key, text]) => {
 
             const button =
@@ -66,11 +66,10 @@ export function renderMultipleChoiceTrial(
         });
 }
 
-
-export function renderFillInTheBlankTrial(
-    trial,
+export function renderFillInTheBlankQuestion(
+    question,
     currentIndex,
-    totalTrials,
+    totalQuestions,
     elements,
     onAnswer,
     canSkip
@@ -85,10 +84,10 @@ export function renderFillInTheBlankTrial(
     } = elements;
 
     progress.textContent =
-        `Trial ${currentIndex + 1} / ${totalTrials}`;
+        `Question ${currentIndex + 1} / ${totalQuestions}`;
 
     questionText.textContent =
-        trial.text;
+        question.text;
 
     optionsContainer.innerHTML = "";
 
@@ -142,11 +141,10 @@ export function renderFillInTheBlankTrial(
     input.focus();
 }
 
-
-export function renderTrueFalseTrial(
-    trial,
+export function renderTrueFalseQuestion(
+    question,
     currentIndex,
-    totalTrials,
+    totalQuestions,
     elements,
     onAnswer,
     canSkip
@@ -161,10 +159,10 @@ export function renderTrueFalseTrial(
     } = elements;
 
     progress.textContent =
-        `Trial ${currentIndex + 1} / ${totalTrials}`;
+        `Question ${currentIndex + 1} / ${totalQuestions}`;
 
     questionText.textContent =
-        trial.text;
+        question.text;
 
     optionsContainer.innerHTML = "";
 
@@ -219,23 +217,22 @@ export function renderTrueFalseTrial(
     });
 }
 
-
-export function renderTrial(
-    trial,
+export function renderQuestion(
+    question,
     currentIndex,
-    totalTrials,
+    totalQuestions,
     elements,
     onAnswer,
     canSkip
 ) {
-    switch (trial.type) {
+    switch (question.type) {
 
         case "MULTIPLE_CHOICE":
 
-            renderMultipleChoiceTrial(
-                trial,
+            renderMultipleChoiceQuestion(
+                question,
                 currentIndex,
-                totalTrials,
+                totalQuestions,
                 elements,
                 onAnswer,
                 canSkip
@@ -245,10 +242,10 @@ export function renderTrial(
 
         case "FILL_IN_THE_BLANK":
 
-            renderFillInTheBlankTrial(
-                trial,
+            renderFillInTheBlankQuestion(
+                question,
                 currentIndex,
-                totalTrials,
+                totalQuestions,
                 elements,
                 onAnswer,
                 canSkip
@@ -258,10 +255,10 @@ export function renderTrial(
 
         case "TRUE_FALSE":
 
-            renderTrueFalseTrial(
-                trial,
+            renderTrueFalseQuestion(
+                question,
                 currentIndex,
-                totalTrials,
+                totalQuestions,
                 elements,
                 onAnswer,
                 canSkip
@@ -272,14 +269,13 @@ export function renderTrial(
         default:
 
             throw new Error(
-                `Unsupported trial type: ${trial.type}`
+                `Unsupported question type: ${question.type}`
             );
     }
 }
 
-
 export function renderAnswer(
-    trial,
+    question,
     selectedAnswer,
     elements
 ) {
@@ -291,8 +287,8 @@ export function renderAnswer(
     } = elements;
 
     if (
-        trial.type === "MULTIPLE_CHOICE" ||
-        trial.type === "TRUE_FALSE"
+        question.type === "MULTIPLE_CHOICE" ||
+        question.type === "TRUE_FALSE"
     ) {
 
         const optionButtons =
@@ -322,7 +318,7 @@ export function renderAnswer(
         });
 
     } else if (
-        trial.type === "FILL_IN_THE_BLANK"
+        question.type === "FILL_IN_THE_BLANK"
     ) {
 
         const input =
@@ -346,7 +342,6 @@ export function renderAnswer(
     skipButton.hidden = true;
     nextButton.hidden = false;
 }
-
 
 export function renderSkipped(
     elements
@@ -377,7 +372,7 @@ export function renderSkipped(
     }
 
     feedback.textContent =
-        "Trial skipped. You can return to it later.";
+        "Question skipped. You can return to it later.";
 
     feedback.className =
         "quiz-feedback";
@@ -387,7 +382,6 @@ export function renderSkipped(
     skipButton.hidden = true;
     nextButton.hidden = false;
 }
-
 
 export function renderEmptyQuiz(
     elements
@@ -404,7 +398,7 @@ export function renderEmptyQuiz(
     progress.textContent = "";
 
     questionText.textContent =
-        "This quiz has no trials.";
+        "This quiz has no questions.";
 
     optionsContainer.innerHTML = "";
 
@@ -415,10 +409,9 @@ export function renderEmptyQuiz(
     nextButton.hidden = true;
 }
 
-
 export function renderCompletion(
     quizData,
-    trialResults,
+    questionResults,
     elements
 ) {
     const {
@@ -441,16 +434,16 @@ export function renderCompletion(
     let answeredCount = 0;
     let skippedCount = 0;
 
-    trialResults.forEach(result => {
+    questionResults.forEach(result => {
 
-        const trial =
-            quizData.trials.find(
+        const question =
+            quizData.questions.find(
                 item =>
                     item.id ===
-                    result.trialId
+                    result.questionId
             );
 
-        if (!trial) {
+        if (!question) {
             return;
         }
 
@@ -461,18 +454,20 @@ export function renderCompletion(
             "quiz-result"
         );
 
-        const trialTextElement =
+        const questionTextElement =
             document.createElement("p");
 
-        trialTextElement.classList.add(
+        questionTextElement.classList.add(
             "quiz-result-question"
         );
 
-        trialTextElement.textContent =
-            getTrialDisplayText(trial);
+        questionTextElement.textContent =
+            getQuestionDisplayText(
+                question
+            );
 
         container.appendChild(
-            trialTextElement
+            questionTextElement
         );
 
         const selectedAnswer =
@@ -549,8 +544,8 @@ export function renderCompletion(
         } else {
 
             const selectedText =
-                getTrialAnswerText(
-                    trial,
+                getQuestionAnswerText(
+                    question,
                     selectedAnswer
                 );
 
@@ -571,8 +566,8 @@ export function renderCompletion(
         );
 
         const correctText =
-            getTrialCorrectAnswerText(
-                trial
+            getQuestionCorrectAnswerText(
+                question
             );
 
         if (correctText) {
@@ -596,7 +591,7 @@ export function renderCompletion(
 
         summary =
             `You got ${correctCount} / ${answeredCount} answered correctly. `
-            + `${skippedCount} trial`
+            + `${skippedCount} question`
             + `${skippedCount === 1 ? "" : "s"} skipped.`;
 
     } else {
@@ -617,24 +612,22 @@ export function renderCompletion(
     nextButton.hidden = true;
 }
 
-
-function getTrialDisplayText(
-    trial
+function getQuestionDisplayText(
+    question
 ) {
-    return trial.text;
+    return question.text;
 }
 
-
-function getTrialAnswerText(
-    trial,
+function getQuestionAnswerText(
+    question,
     answer
 ) {
-    switch (trial.type) {
+    switch (question.type) {
 
         case "MULTIPLE_CHOICE":
             return (
                 `${answer}. ` +
-                (trial.options?.[answer] ?? answer)
+                (question.options?.[answer] ?? answer)
             );
 
         case "FILL_IN_THE_BLANK":
@@ -650,28 +643,27 @@ function getTrialAnswerText(
     }
 }
 
-
-function getTrialCorrectAnswerText(
-    trial
+function getQuestionCorrectAnswerText(
+    question
 ) {
-    switch (trial.type) {
+    switch (question.type) {
 
         case "MULTIPLE_CHOICE": {
 
             const answer =
-                trial.correctAnswer;
+                question.correctAnswer;
 
             const text =
-                trial.options?.[answer] ?? answer;
+                question.options?.[answer] ?? answer;
 
             return `${answer}. ${text}`;
         }
 
         case "FILL_IN_THE_BLANK":
-            return trial.correctAnswer;
+            return question.correctAnswer;
 
         case "TRUE_FALSE":
-            return trial.correctAnswer
+            return question.correctAnswer
                 ? "True"
                 : "False";
 

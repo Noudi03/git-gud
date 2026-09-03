@@ -2,24 +2,24 @@ package com.app.gitgud.model;
 
 import java.util.List;
 
-public class FillInTheBlankTrial
-        implements Trial {
+public class TrueFalseQuestion
+        implements Question {
 
     private String id;
     private String text;
-    private String correctAnswer;
-    private TrialDifficulty difficulty;
+    private boolean correctAnswer;
+    private QuestionDifficulty difficulty;
     private List<String> hints;
     private int order;
 
-    public FillInTheBlankTrial() {
+    public TrueFalseQuestion() {
     }
 
-    public FillInTheBlankTrial(
+    public TrueFalseQuestion(
             String id,
             String text,
-            String correctAnswer,
-            TrialDifficulty difficulty,
+            boolean correctAnswer,
+            QuestionDifficulty difficulty,
             List<String> hints,
             int order
     ) {
@@ -52,23 +52,28 @@ public class FillInTheBlankTrial
         this.text = text;
     }
 
-    public String getCorrectAnswer() {
+    public boolean isCorrectAnswer() {
         return correctAnswer;
     }
 
     public void setCorrectAnswer(
-            String correctAnswer
+            boolean correctAnswer
     ) {
         this.correctAnswer = correctAnswer;
     }
 
     @Override
-    public TrialDifficulty getDifficulty() {
+    public QuestionType getType() {
+        return QuestionType.TRUE_FALSE;
+    }
+
+    @Override
+    public QuestionDifficulty getDifficulty() {
         return difficulty;
     }
 
     public void setDifficulty(
-            TrialDifficulty difficulty
+            QuestionDifficulty difficulty
     ) {
         this.difficulty = difficulty;
     }
@@ -92,10 +97,5 @@ public class FillInTheBlankTrial
             int order
     ) {
         this.order = order;
-    }
-
-    @Override
-    public TrialType getType() {
-        return TrialType.FILL_IN_THE_BLANK;
     }
 }

@@ -1,25 +1,25 @@
 package com.app.gitgud.model.dto;
 
-import com.app.gitgud.model.TrialDifficulty;
-import com.app.gitgud.model.TrialType;
+import com.app.gitgud.model.QuestionDifficulty;
+import com.app.gitgud.model.QuestionType;
 
 import java.util.List;
 
-public class FillInTheBlankTrialDto
-        implements TrialDto {
+public class TrueFalseQuestionDto
+        implements QuestionDto {
 
     private final String id;
     private final String text;
-    private final String correctAnswer;
-    private final TrialDifficulty difficulty;
+    private final boolean correctAnswer;
+    private final QuestionDifficulty difficulty;
     private final List<String> hints;
     private final int order;
 
-    public FillInTheBlankTrialDto(
+    public TrueFalseQuestionDto(
             String id,
             String text,
-            String correctAnswer,
-            TrialDifficulty difficulty,
+            boolean correctAnswer,
+            QuestionDifficulty difficulty,
             List<String> hints,
             int order
     ) {
@@ -40,12 +40,17 @@ public class FillInTheBlankTrialDto
         return text;
     }
 
-    public String getCorrectAnswer() {
+    public boolean isCorrectAnswer() {
         return correctAnswer;
     }
 
     @Override
-    public TrialDifficulty getDifficulty() {
+    public QuestionType getType() {
+        return QuestionType.TRUE_FALSE;
+    }
+
+    @Override
+    public QuestionDifficulty getDifficulty() {
         return difficulty;
     }
 
@@ -56,10 +61,5 @@ public class FillInTheBlankTrialDto
     @Override
     public int getOrder() {
         return order;
-    }
-
-    @Override
-    public TrialType getType() {
-        return TrialType.FILL_IN_THE_BLANK;
     }
 }

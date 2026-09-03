@@ -1,11 +1,11 @@
 package com.app.gitgud.service;
 
+import com.app.gitgud.mapper.QuestionMapper;
 import com.app.gitgud.mapper.QuizMapper;
-import com.app.gitgud.mapper.TrialMapper;
+import com.app.gitgud.model.Question;
 import com.app.gitgud.model.Quiz;
-import com.app.gitgud.model.Trial;
+import com.app.gitgud.model.dto.QuestionDto;
 import com.app.gitgud.model.dto.QuizPageDto;
-import com.app.gitgud.model.dto.TrialDto;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,28 +14,28 @@ import java.util.List;
 public class QuizPageService {
 
     private final QuizService quizService;
-    private final TrialService trialService;
+    private final QuestionService questionService;
     private final QuizMapper quizMapper;
-    private final TrialMapper trialMapper;
+    private final QuestionMapper questionMapper;
 
     public QuizPageService(
             QuizService quizService,
-            TrialService trialService,
+            QuestionService questionService,
             QuizMapper quizMapper,
-            TrialMapper trialMapper
+            QuestionMapper questionMapper
     ) {
 
         this.quizService =
                 quizService;
 
-        this.trialService =
-                trialService;
+        this.questionService =
+                questionService;
 
         this.quizMapper =
                 quizMapper;
 
-        this.trialMapper =
-                trialMapper;
+        this.questionMapper =
+                questionMapper;
     }
 
     public QuizPageDto getSectionQuiz(
@@ -88,19 +88,19 @@ public class QuizPageService {
             return null;
         }
 
-        List<Trial> trials =
-                trialService.getQuizTrials(
+        List<Question> questions =
+                questionService.getQuizQuestions(
                         quiz
                 );
 
-        List<TrialDto> trialDtos =
-                trials.stream()
-                        .map(trialMapper::toDto)
+        List<QuestionDto> questionDtos =
+                questions.stream()
+                        .map(questionMapper::toDto)
                         .toList();
 
         return new QuizPageDto(
                 quizMapper.toDto(quiz),
-                trialDtos
+                questionDtos
         );
     }
 }

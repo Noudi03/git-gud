@@ -1,33 +1,30 @@
 package com.app.gitgud.model;
 
 import java.util.List;
-import java.util.Map;
 
-public class MultipleChoiceTrial implements Trial {
+public class FillInTheBlankQuestion
+        implements Question {
 
     private String id;
     private String text;
-    private Map<String, String> options;
     private String correctAnswer;
-    private TrialDifficulty difficulty;
+    private QuestionDifficulty difficulty;
     private List<String> hints;
     private int order;
 
-    public MultipleChoiceTrial() {
+    public FillInTheBlankQuestion() {
     }
 
-    public MultipleChoiceTrial(
+    public FillInTheBlankQuestion(
             String id,
             String text,
-            Map<String, String> options,
             String correctAnswer,
-            TrialDifficulty difficulty,
+            QuestionDifficulty difficulty,
             List<String> hints,
             int order
     ) {
         this.id = id;
         this.text = text;
-        this.options = options;
         this.correctAnswer = correctAnswer;
         this.difficulty = difficulty;
         this.hints = hints;
@@ -55,16 +52,6 @@ public class MultipleChoiceTrial implements Trial {
         this.text = text;
     }
 
-    public Map<String, String> getOptions() {
-        return options;
-    }
-
-    public void setOptions(
-            Map<String, String> options
-    ) {
-        this.options = options;
-    }
-
     public String getCorrectAnswer() {
         return correctAnswer;
     }
@@ -76,12 +63,12 @@ public class MultipleChoiceTrial implements Trial {
     }
 
     @Override
-    public TrialDifficulty getDifficulty() {
+    public QuestionDifficulty getDifficulty() {
         return difficulty;
     }
 
     public void setDifficulty(
-            TrialDifficulty difficulty
+            QuestionDifficulty difficulty
     ) {
         this.difficulty = difficulty;
     }
@@ -108,7 +95,7 @@ public class MultipleChoiceTrial implements Trial {
     }
 
     @Override
-    public TrialType getType() {
-        return TrialType.MULTIPLE_CHOICE;
+    public QuestionType getType() {
+        return QuestionType.FILL_IN_THE_BLANK;
     }
 }
