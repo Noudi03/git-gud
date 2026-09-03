@@ -3,6 +3,7 @@ package com.app.gitgud.seeder;
 import com.app.gitgud.model.*;
 import com.app.gitgud.seeder.data.chapter1.Chapter1Data;
 import com.app.gitgud.seeder.data.chapter2.Chapter2Data;
+import com.app.gitgud.seeder.data.chapter3.Chapter3Data;
 import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.Firestore;
@@ -47,8 +48,8 @@ public class ContentSeeder implements CommandLineRunner {
 
         List<ChapterData> chapters = Arrays.asList(
                 new Chapter1Data(),
-                new Chapter2Data()
-                // new Chapter3Data()
+                new Chapter2Data(),
+                new Chapter3Data()
         );
 
         for (ChapterData data : chapters) {
