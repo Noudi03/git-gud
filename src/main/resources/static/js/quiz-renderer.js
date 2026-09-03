@@ -143,6 +143,83 @@ export function renderFillInTheBlankTrial(
 }
 
 
+export function renderTrueFalseTrial(
+    trial,
+    currentIndex,
+    totalTrials,
+    elements,
+    onAnswer,
+    canSkip
+) {
+    const {
+        progress,
+        questionText,
+        optionsContainer,
+        feedback,
+        skipButton,
+        nextButton
+    } = elements;
+
+    progress.textContent =
+        `Trial ${currentIndex + 1} / ${totalTrials}`;
+
+    questionText.textContent =
+        trial.text;
+
+    optionsContainer.innerHTML = "";
+
+    feedback.textContent = "";
+    feedback.hidden = true;
+    feedback.className = "quiz-feedback";
+
+    skipButton.hidden =
+        !canSkip;
+
+    nextButton.hidden = true;
+
+    [
+        {
+            value: true,
+            label: "True"
+        },
+        {
+            value: false,
+            label: "False"
+        }
+    ].forEach(option => {
+
+        const button =
+            document.createElement("button");
+
+        button.type = "button";
+
+        button.classList.add(
+            "quiz-option"
+        );
+
+        button.dataset.answer =
+            String(option.value);
+
+        button.setAttribute(
+            "aria-pressed",
+            "false"
+        );
+
+        button.textContent =
+            option.label;
+
+        button.addEventListener(
+            "click",
+            () => onAnswer(option.value)
+        );
+
+        optionsContainer.appendChild(
+            button
+        );
+    });
+}
+
+
 export function renderTrial(
     trial,
     currentIndex,
@@ -179,6 +256,19 @@ export function renderTrial(
 
             break;
 
+        case "TRUE_FALSE":
+
+            renderTrueFalseTrial(
+                trial,
+                currentIndex,
+                totalTrials,
+                elements,
+                onAnswer,
+                canSkip
+            );
+
+            break;
+
         default:
 
             throw new Error(
@@ -200,7 +290,10 @@ export function renderAnswer(
         nextButton
     } = elements;
 
-    if (trial.type === "QUESTION") {
+    if (
+        trial.type === "QUESTION" ||
+        trial.type === "TRUE_FALSE"
+    ) {
 
         const optionButtons =
             optionsContainer.querySelectorAll(
@@ -213,7 +306,7 @@ export function renderAnswer(
 
             const selected =
                 button.dataset.answer ===
-                selectedAnswer;
+                String(selectedAnswer);
 
             button.setAttribute(
                 "aria-pressed",
@@ -547,6 +640,11 @@ function getTrialAnswerText(
         case "FILL_IN_THE_BLANK":
             return answer;
 
+        case "TRUE_FALSE":
+            return String(answer) === "true"
+                ? "True"
+                : "False";
+
         default:
             return answer;
     }
@@ -571,6 +669,11 @@ function getTrialCorrectAnswerText(
 
         case "FILL_IN_THE_BLANK":
             return trial.correctAnswer;
+
+        case "TRUE_FALSE":
+            return trial.correctAnswer
+                ? "True"
+                : "False";
 
         default:
             return null;

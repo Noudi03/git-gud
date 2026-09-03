@@ -543,6 +543,13 @@ export class QuizSession {
                     )
                 );
 
+            case "TRUE_FALSE":
+
+                return (
+                    Boolean(answer) ===
+                    trial.correctAnswer
+                );
+
             default:
 
                 return false;

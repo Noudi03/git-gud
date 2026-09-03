@@ -2,6 +2,7 @@ package com.app.gitgud.factory;
 
 import com.app.gitgud.mapper.FirestoreFillInTheBlankTrialMapper;
 import com.app.gitgud.mapper.FirestoreQuestionTrialMapper;
+import com.app.gitgud.mapper.FirestoreTrueFalseTrialMapper;
 import com.app.gitgud.model.Trial;
 import com.app.gitgud.model.TrialType;
 import com.google.cloud.firestore.DocumentSnapshot;
@@ -12,10 +13,12 @@ public class TrialFactory {
 
     private final FirestoreQuestionTrialMapper questionTrialMapper;
     private final FirestoreFillInTheBlankTrialMapper fillInTheBlankTrialMapper;
+    private final FirestoreTrueFalseTrialMapper trueFalseTrialMapper;
 
     public TrialFactory(
             FirestoreQuestionTrialMapper questionTrialMapper,
-            FirestoreFillInTheBlankTrialMapper fillInTheBlankTrialMapper
+            FirestoreFillInTheBlankTrialMapper fillInTheBlankTrialMapper,
+            FirestoreTrueFalseTrialMapper trueFalseTrialMapper
     ) {
 
         this.questionTrialMapper =
@@ -23,6 +26,9 @@ public class TrialFactory {
 
         this.fillInTheBlankTrialMapper =
                 fillInTheBlankTrialMapper;
+
+        this.trueFalseTrialMapper =
+                trueFalseTrialMapper;
     }
 
     public Trial create(
@@ -47,6 +53,11 @@ public class TrialFactory {
 
             case FILL_IN_THE_BLANK ->
                     fillInTheBlankTrialMapper.toModel(
+                            document
+                    );
+
+            case TRUE_FALSE ->
+                    trueFalseTrialMapper.toModel(
                             document
                     );
         };
