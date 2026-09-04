@@ -16,10 +16,12 @@ public class QuestionAttemptController {
     private final QuestionAttemptService questionAttemptService;
     private final CurrentUserService currentUserService;
 
+
     public QuestionAttemptController(
             QuestionAttemptService questionAttemptService,
             CurrentUserService currentUserService
     ) {
+
         this.questionAttemptService =
                 questionAttemptService;
 
@@ -27,11 +29,13 @@ public class QuestionAttemptController {
                 currentUserService;
     }
 
+
     @PostMapping
     public ResponseEntity<?> createQuestionAttempt(
             @PathVariable String attemptId,
             @RequestBody QuestionAttemptRequestDto request
     ) {
+
         String userId =
                 currentUserService.getUserId();
 
@@ -57,6 +61,12 @@ public class QuestionAttemptController {
                     .badRequest()
                     .body(e.getMessage());
 
+        } catch (IllegalStateException e) {
+
+            return ResponseEntity
+                    .status(409)
+                    .body(e.getMessage());
+
         } catch (Exception e) {
 
             return ResponseEntity
@@ -67,10 +77,12 @@ public class QuestionAttemptController {
         }
     }
 
+
     @GetMapping
     public ResponseEntity<?> getQuestionAttempts(
             @PathVariable String attemptId
     ) {
+
         String userId =
                 currentUserService.getUserId();
 
@@ -103,11 +115,13 @@ public class QuestionAttemptController {
         }
     }
 
+
     @GetMapping("/{questionId}")
     public ResponseEntity<?> getQuestionAttempt(
             @PathVariable String attemptId,
             @PathVariable String questionId
     ) {
+
         String userId =
                 currentUserService.getUserId();
 

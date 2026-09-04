@@ -5,8 +5,8 @@ import com.app.gitgud.model.Quiz;
 import com.app.gitgud.model.QuizAttempt;
 import com.app.gitgud.model.QuizAttemptStatus;
 import com.app.gitgud.model.QuizGrade;
-import com.app.gitgud.model.Section;
 import com.app.gitgud.model.QuizType;
+import com.app.gitgud.model.Section;
 import com.app.gitgud.repository.FirestoreChapterRepository;
 import com.app.gitgud.repository.FirestoreSectionRepository;
 import org.springframework.stereotype.Service;
@@ -117,28 +117,9 @@ public class CurriculumAccessService {
                         chapterIndex - 1
                 );
 
-        List<Section> previousSections =
-                sectionRepository.findSections(
-                        previousChapter.getId()
-                );
-
-        if (previousSections.isEmpty()) {
-
-            return hasPassedChapterQuiz(
-                    userId,
-                    previousChapter.getId()
-            );
-        }
-
-        Section lastSection =
-                previousSections.get(
-                        previousSections.size() - 1
-                );
-
-        return hasPassedSectionQuiz(
+        return hasPassedChapterQuiz(
                 userId,
-                previousChapter.getId(),
-                lastSection.getId()
+                previousChapter.getId()
         );
     }
 
@@ -182,10 +163,73 @@ public class CurriculumAccessService {
     }
 
 
+    public boolean isChapterQuizUnlocked(
+            String userId,
+            String chapterId
+    ) throws Exception {
+
+        if (
+                !isChapterUnlocked(
+                        userId,
+                        chapterId
+                )
+        ) {
+            return false;
+        }
+
+        List<Section> sections =
+                sectionRepository.findSections(
+                        chapterId
+                );
+
+        for (Section section : sections) {
+
+            if (
+                    !hasPassedSectionQuiz(
+                            userId,
+                            chapterId,
+                            section.getId()
+                    )
+            ) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+
+    public boolean isCurriculumComplete(
+            String userId
+    ) throws Exception {
+
+        List<Chapter> chapters =
+                chapterRepository.findChapters();
+
+        if (chapters.isEmpty()) {
+            return true;
+        }
+
+        Chapter lastChapter =
+                chapters.get(
+                        chapters.size() - 1
+                );
+
+        return hasPassedChapterQuiz(
+                userId,
+                lastChapter.getId()
+        );
+    }
+
+
     public boolean hasPassedQuiz(
             String userId,
             Quiz quiz
     ) throws Exception {
+
+        if (quiz == null) {
+            return false;
+        }
 
         List<QuizAttempt> attempts =
                 quizAttemptService.getAttempts(
@@ -194,9 +238,10 @@ public class CurriculumAccessService {
 
         for (QuizAttempt attempt : attempts) {
 
-            if (!attempt.getQuizId().equals(
-                    quiz.getId()
-            )) {
+            if (
+                    !attempt.getQuizId()
+                            .equals(quiz.getId())
+            ) {
                 continue;
             }
 
@@ -215,12 +260,54 @@ public class CurriculumAccessService {
                             )
                             .getGrade();
 
-            if (grade != QuizGrade.FAILURE) {
+            if (
+                    grade != QuizGrade.FAILURE
+            ) {
                 return true;
             }
         }
 
         return false;
+    }
+
+
+    public boolean hasAttemptForQuiz(
+            String userId,
+            Quiz quiz
+    ) throws Exception {
+
+        List<QuizAttempt> attempts =
+                quizAttemptService.getAttempts(
+                        userId
+                );
+
+        return attempts.stream()
+                .anyMatch(attempt ->
+                        attempt.getQuizId()
+                                .equals(quiz.getId())
+                );
+    }
+
+
+    public boolean hasPreviousAttemptForQuiz(
+            String userId,
+            Quiz quiz,
+            String currentAttemptId
+    ) throws Exception {
+
+        List<QuizAttempt> attempts =
+                quizAttemptService.getAttempts(
+                        userId
+                );
+
+        return attempts.stream()
+                .anyMatch(attempt ->
+                        !attempt.getId().equals(
+                                currentAttemptId
+                        )
+                                && attempt.getQuizId()
+                                .equals(quiz.getId())
+                );
     }
 
 
@@ -231,21 +318,19 @@ public class CurriculumAccessService {
         List<Quiz> quizzes =
                 quizService.getGlobalQuizzes();
 
-        for (Quiz quiz : quizzes) {
+        Quiz introductoryQuiz =
+                quizzes.stream()
+                        .filter(quiz ->
+                                quiz.getType()
+                                        == QuizType.INTRODUCTORY
+                        )
+                        .findFirst()
+                        .orElse(null);
 
-            if (
-                    quiz.getType()
-                            == QuizType.INTRODUCTORY
-            ) {
-
-                return hasPassedQuiz(
-                        userId,
-                        quiz
-                );
-            }
-        }
-
-        return false;
+        return hasPassedQuiz(
+                userId,
+                introductoryQuiz
+        );
     }
 
 
@@ -297,7 +382,6 @@ public class CurriculumAccessService {
                 );
 
         if (quizzes.size() != 1) {
-
             throw new IllegalStateException(
                     "Expected exactly one quiz for "
                             + "chapter "
@@ -307,7 +391,16 @@ public class CurriculumAccessService {
             );
         }
 
-        return quizzes.get(0);
+        Quiz quiz =
+                quizzes.get(0);
+
+        if (quiz.getType() != null) {
+            throw new IllegalStateException(
+                    "Curriculum quiz must not have a quiz type"
+            );
+        }
+
+        return quiz;
     }
 
 
@@ -321,14 +414,22 @@ public class CurriculumAccessService {
                 );
 
         if (quizzes.size() != 1) {
-
             throw new IllegalStateException(
                     "Expected exactly one quiz for chapter "
                             + chapterId
             );
         }
 
-        return quizzes.get(0);
+        Quiz quiz =
+                quizzes.get(0);
+
+        if (quiz.getType() != null) {
+            throw new IllegalStateException(
+                    "Curriculum quiz must not have a quiz type"
+            );
+        }
+
+        return quiz;
     }
 
 

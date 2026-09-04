@@ -14,16 +14,20 @@ import com.app.gitgud.repository.FirestoreQuestionRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class RatingService {
+
+    private static final double NEUTRAL_PERFORMANCE = 0.5;
 
     private final UserService userService;
     private final QuestionAttemptService questionAttemptService;
     private final FirestoreQuestionRepository questionRepository;
     private final QuizAttemptService quizAttemptService;
-    private final QuizResultService quizResultService;
+    private final CurriculumAccessService curriculumAccessService;
 
     private final int kFactor;
 
@@ -33,7 +37,7 @@ public class RatingService {
             QuestionAttemptService questionAttemptService,
             FirestoreQuestionRepository questionRepository,
             QuizAttemptService quizAttemptService,
-            QuizResultService quizResultService,
+            CurriculumAccessService curriculumAccessService,
 
             @Value("${gitgud.rating.k-factor}")
             int kFactor
@@ -51,8 +55,8 @@ public class RatingService {
         this.quizAttemptService =
                 quizAttemptService;
 
-        this.quizResultService =
-                quizResultService;
+        this.curriculumAccessService =
+                curriculumAccessService;
 
         this.kFactor =
                 kFactor;
@@ -65,6 +69,27 @@ public class RatingService {
             Quiz quiz,
             QuizResult result
     ) throws Exception {
+
+        if (
+                attempt.getStatus()
+                        != QuizAttemptStatus.COMPLETED
+                        && attempt.getStatus()
+                        != QuizAttemptStatus.CANCELLED
+        ) {
+            throw new IllegalStateException(
+                    "Cannot apply rating to in-progress attempt"
+            );
+        }
+
+        boolean claimed =
+                quizAttemptService.markOutcomeProcessed(
+                        userId,
+                        attempt.getId()
+                );
+
+        if (!claimed) {
+            return;
+        }
 
         User user =
                 userService.getUser(
@@ -83,9 +108,7 @@ public class RatingService {
         ) {
 
             applyIntroductoryRating(
-                    userId,
                     user,
-                    attempt,
                     result
             );
 
@@ -98,7 +121,6 @@ public class RatingService {
         ) {
 
             applyPerformanceRating(
-                    userId,
                     user,
                     attempt,
                     quiz
@@ -111,26 +133,15 @@ public class RatingService {
                 userId,
                 user,
                 attempt,
-                quiz,
-                result
+                quiz
         );
     }
 
 
     private void applyIntroductoryRating(
-            String userId,
             User user,
-            QuizAttempt attempt,
             QuizResult result
     ) throws Exception {
-
-        if (
-                hasAnyIntroductoryAttempt(
-                        userId
-                )
-        ) {
-            return;
-        }
 
         int rating =
                 switch (result.getGrade()) {
@@ -148,7 +159,7 @@ public class RatingService {
                             2600;
                 };
 
-        userService.updateRating(
+        userService.setRating(
                 user.getId(),
                 rating
         );
@@ -159,22 +170,22 @@ public class RatingService {
             String userId,
             User user,
             QuizAttempt attempt,
-            Quiz quiz,
-            QuizResult result
+            Quiz quiz
     ) throws Exception {
 
         if (
-                hasPreviousPassingAttempt(
-                        userId,
-                        quiz,
-                        attempt.getId()
-                )
+                curriculumAccessService
+                        .hasPreviousAttemptForQuiz(
+                                userId,
+                                quiz,
+                                attempt.getId()
+                        )
         ) {
+
             return;
         }
 
         applyPerformanceRating(
-                userId,
                 user,
                 attempt,
                 quiz
@@ -183,25 +194,17 @@ public class RatingService {
 
 
     private void applyPerformanceRating(
-            String userId,
             User user,
             QuizAttempt attempt,
             Quiz quiz
     ) throws Exception {
-
-        List<QuestionAttempt> questionAttempts =
-                questionAttemptService
-                        .getQuestionAttempts(
-                                userId,
-                                attempt.getId()
-                        );
 
         if (
                 attempt.getStatus()
                         == QuizAttemptStatus.CANCELLED
         ) {
 
-            updateRating(
+            changeRating(
                     user,
                     -kFactor / 2
             );
@@ -209,24 +212,38 @@ public class RatingService {
             return;
         }
 
-        List<Question> questions =
-                questionAttempts.stream()
-                        .map(questionAttempt -> {
+        List<QuestionAttempt> questionAttempts =
+                questionAttemptService
+                        .getQuestionAttempts(
+                                user.getId(),
+                                attempt.getId()
+                        );
 
-                            try {
-                                return questionRepository
-                                        .findQuestion(
-                                                quiz,
-                                                questionAttempt
-                                                        .getQuestionId()
-                                        );
-                            } catch (Exception e) {
-                                throw new RuntimeException(e);
-                            }
+        Map<String, Question> questions =
+                new HashMap<>();
 
-                        })
-                        .filter(question -> question != null)
-                        .toList();
+        for (
+                QuestionAttempt questionAttempt
+                : questionAttempts
+        ) {
+
+            Question question =
+                    questionRepository.findQuestion(
+                            quiz,
+                            questionAttempt.getQuestionId()
+                    );
+
+            if (question == null) {
+                throw new IllegalStateException(
+                        "Question does not belong to quiz"
+                );
+            }
+
+            questions.put(
+                    question.getId(),
+                    question
+            );
+        }
 
         double performance =
                 calculateWeightedPerformance(
@@ -237,10 +254,13 @@ public class RatingService {
         int ratingChange =
                 (int) Math.round(
                         kFactor
-                                * (performance - 0.5)
+                                * (
+                                performance
+                                        - NEUTRAL_PERFORMANCE
+                        )
                 );
 
-        updateRating(
+        changeRating(
                 user,
                 ratingChange
         );
@@ -249,7 +269,7 @@ public class RatingService {
 
     private double calculateWeightedPerformance(
             List<QuestionAttempt> questionAttempts,
-            List<Question> questions
+            Map<String, Question> questions
     ) {
 
         double earnedWeight =
@@ -258,7 +278,15 @@ public class RatingService {
         double possibleWeight =
                 0.0;
 
-        for (Question question : questions) {
+        for (
+                QuestionAttempt questionAttempt
+                : questionAttempts
+        ) {
+
+            Question question =
+                    questions.get(
+                            questionAttempt.getQuestionId()
+                    );
 
             double weight =
                     getDifficultyWeight(
@@ -268,19 +296,7 @@ public class RatingService {
             possibleWeight +=
                     weight;
 
-            boolean correct =
-                    questionAttempts.stream()
-                            .filter(attempt ->
-                                    attempt.getQuestionId()
-                                            .equals(
-                                                    question.getId()
-                                            )
-                            )
-                            .anyMatch(
-                                    QuestionAttempt::isCorrect
-                            );
-
-            if (correct) {
+            if (questionAttempt.isCorrect()) {
                 earnedWeight += weight;
             }
         }
@@ -299,113 +315,21 @@ public class RatingService {
 
         return switch (difficulty) {
 
-            case EASY ->
-                    1.0;
-
-            case MEDIUM ->
-                    2.0;
-
-            case HARD ->
-                    3.0;
+            case EASY -> 1.0;
+            case MEDIUM -> 2.0;
+            case HARD -> 3.0;
         };
     }
 
 
-    private boolean hasPreviousPassingAttempt(
-            String userId,
-            Quiz quiz,
-            String currentAttemptId
-    ) throws Exception {
-
-        List<QuizAttempt> attempts =
-                quizAttemptService.getAttempts(
-                        userId
-                );
-
-        for (QuizAttempt attempt : attempts) {
-
-            if (
-                    attempt.getId()
-                            .equals(currentAttemptId)
-            ) {
-                continue;
-            }
-
-            if (
-                    !attempt.getQuizId()
-                            .equals(quiz.getId())
-            ) {
-                continue;
-            }
-
-            if (
-                    attempt.getStatus()
-                            != QuizAttemptStatus.COMPLETED
-            ) {
-                continue;
-            }
-
-            QuizResult result =
-                    quizResultService.getResult(
-                            userId,
-                            attempt.getId()
-                    );
-
-            if (
-                    result.getGrade()
-                            != QuizGrade.FAILURE
-            ) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-
-    private boolean hasAnyIntroductoryAttempt(
-            String userId
-    ) throws Exception {
-
-        List<QuizAttempt> attempts =
-                quizAttemptService.getAttempts(
-                        userId
-                );
-
-        for (QuizAttempt attempt : attempts) {
-
-            Quiz quiz =
-                    quizAttemptService.getQuiz(
-                            attempt
-                    );
-
-            if (
-                    quiz.getType()
-                            == QuizType.INTRODUCTORY
-            ) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-
-    private void updateRating(
+    private void changeRating(
             User user,
             int ratingChange
     ) throws Exception {
 
-        int newRating =
-                Math.max(
-                        0,
-                        user.getRating()
-                                + ratingChange
-                );
-
-        userService.updateRating(
+        userService.changeRating(
                 user.getId(),
-                newRating
+                ratingChange
         );
     }
 }

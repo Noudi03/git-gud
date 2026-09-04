@@ -542,9 +542,23 @@ export class QuizSession {
             this.elements
         );
 
-        await this.submitAttempt(
-            "completed"
-        );
+        try {
+
+            await this.startAttempt();
+
+            await this.createQuestionAttempts();
+
+            await this.finalizeAttempt(
+                "completed"
+            );
+
+        } catch (error) {
+
+            console.error(
+                "Could not save completed quiz:",
+                error
+            );
+        }
     }
 
     async cancel() {
@@ -567,9 +581,69 @@ export class QuizSession {
 
         this.isCancelled = true;
 
-        await this.submitAttempt(
-            "cancelled"
-        );
+        try {
+
+            await this.startAttempt();
+
+            await this.createQuestionAttempts();
+
+            await this.finalizeAttempt(
+                "cancelled"
+            );
+
+        } catch (error) {
+
+            console.error(
+                "Could not save cancelled quiz:",
+                error
+            );
+        }
+    }
+
+    async startAttempt() {
+
+        const attempt =
+            await this.createQuizAttempt(
+                "in_progress"
+            );
+
+        this.attemptId =
+            attempt.id;
+
+        return attempt;
+    }
+
+    async finalizeAttempt(status) {
+
+        if (!this.attemptId) {
+            throw new Error(
+                "Missing quiz attempt ID."
+            );
+        }
+
+        const response =
+            await fetch(
+                `/api/quiz-attempts/${this.attemptId}/finalize`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+                    body:
+                        JSON.stringify({
+                            status: status
+                        })
+                }
+            );
+
+        if (!response.ok) {
+            throw new Error(
+                `Failed to finalize quiz attempt (${response.status})`
+            );
+        }
+
+        return response.json();
     }
 
     recordCurrentQuestionTime() {

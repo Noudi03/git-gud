@@ -3,9 +3,9 @@ package com.app.gitgud.mapper;
 import com.app.gitgud.model.ChapterQuizContext;
 import com.app.gitgud.model.GlobalQuizContext;
 import com.app.gitgud.model.QuizAttempt;
+import com.app.gitgud.model.QuizAttemptStatus;
 import com.app.gitgud.model.QuizContext;
 import com.app.gitgud.model.SectionQuizContext;
-import com.app.gitgud.model.QuizAttemptStatus;
 import com.google.cloud.firestore.DocumentSnapshot;
 import org.springframework.stereotype.Component;
 
@@ -18,6 +18,7 @@ public class FirestoreQuizAttemptMapper {
     public Map<String, Object> toData(
             QuizAttempt attempt
     ) {
+
         Map<String, Object> data =
                 new HashMap<>();
 
@@ -31,10 +32,17 @@ public class FirestoreQuizAttemptMapper {
                 attempt.getStatus().getValue()
         );
 
+        data.put(
+                "outcomeProcessed",
+                attempt.isOutcomeProcessed()
+        );
+
         QuizContext context =
                 attempt.getContext();
 
-        if (context instanceof SectionQuizContext sectionContext) {
+        if (
+                context instanceof SectionQuizContext sectionContext
+        ) {
 
             data.put(
                     "contextType",
@@ -51,7 +59,9 @@ public class FirestoreQuizAttemptMapper {
                     sectionContext.getSectionId()
             );
 
-        } else if (context instanceof ChapterQuizContext chapterContext) {
+        } else if (
+                context instanceof ChapterQuizContext chapterContext
+        ) {
 
             data.put(
                     "contextType",
@@ -63,7 +73,9 @@ public class FirestoreQuizAttemptMapper {
                     chapterContext.getChapterId()
             );
 
-        } else if (context instanceof GlobalQuizContext) {
+        } else if (
+                context instanceof GlobalQuizContext
+        ) {
 
             data.put(
                     "contextType",
@@ -71,6 +83,7 @@ public class FirestoreQuizAttemptMapper {
             );
 
         } else {
+
             throw new IllegalArgumentException(
                     "Unsupported quiz context: "
                             + context.getClass().getName()
@@ -80,9 +93,11 @@ public class FirestoreQuizAttemptMapper {
         return data;
     }
 
+
     public QuizAttempt toModel(
             DocumentSnapshot document
     ) {
+
         if (!document.exists()) {
             return null;
         }
@@ -121,13 +136,20 @@ public class FirestoreQuizAttemptMapper {
                 );
         }
 
+        Boolean outcomeProcessed =
+                document.getBoolean(
+                        "outcomeProcessed"
+                );
+
         return new QuizAttempt(
                 document.getId(),
                 document.getString("quizId"),
                 QuizAttemptStatus.fromValue(
                         document.getString("status")
                 ),
-                context
+                context,
+                outcomeProcessed != null
+                        && outcomeProcessed
         );
     }
 }

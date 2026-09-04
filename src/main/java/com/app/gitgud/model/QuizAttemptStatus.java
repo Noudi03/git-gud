@@ -2,6 +2,7 @@ package com.app.gitgud.model;
 
 public enum QuizAttemptStatus {
 
+    IN_PROGRESS("in_progress"),
     COMPLETED("completed"),
     CANCELLED("cancelled");
 

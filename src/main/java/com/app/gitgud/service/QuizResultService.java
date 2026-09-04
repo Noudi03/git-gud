@@ -12,10 +12,14 @@ import com.app.gitgud.repository.FirestoreQuestionRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class QuizResultService {
+
+    private static final int REQUIRED_QUESTION_COUNT = 5;
 
     private final QuizAttemptService quizAttemptService;
     private final QuestionAttemptService questionAttemptService;
@@ -88,6 +92,15 @@ public class QuizResultService {
 
         if (
                 attempt.getStatus()
+                        == QuizAttemptStatus.IN_PROGRESS
+        ) {
+            throw new IllegalStateException(
+                    "Quiz attempt is still in progress"
+            );
+        }
+
+        if (
+                attempt.getStatus()
                         == QuizAttemptStatus.CANCELLED
         ) {
 
@@ -110,10 +123,50 @@ public class QuizResultService {
                                 attemptId
                         );
 
+        validateCompletedAttempt(
+                questionAttempts
+        );
+
         return calculateResult(
                 quiz,
                 questionAttempts
         );
+    }
+
+
+    private void validateCompletedAttempt(
+            List<QuestionAttempt> questionAttempts
+    ) {
+
+        if (
+                questionAttempts.size()
+                        != REQUIRED_QUESTION_COUNT
+        ) {
+            throw new IllegalStateException(
+                    "Completed quiz must contain exactly "
+                            + REQUIRED_QUESTION_COUNT
+                            + " question attempts"
+            );
+        }
+
+        Set<String> questionIds =
+                new HashSet<>();
+
+        for (
+                QuestionAttempt attempt
+                : questionAttempts
+        ) {
+
+            if (
+                    !questionIds.add(
+                            attempt.getQuestionId()
+                    )
+            ) {
+                throw new IllegalStateException(
+                        "Completed quiz cannot contain duplicate question attempts"
+                );
+            }
+        }
     }
 
 
@@ -143,7 +196,9 @@ public class QuizResultService {
                     );
 
             if (question == null) {
-                continue;
+                throw new IllegalStateException(
+                        "Question does not belong to quiz"
+                );
             }
 
             totalSkips +=
@@ -240,14 +295,9 @@ public class QuizResultService {
 
         return switch (difficulty) {
 
-            case EASY ->
-                    2;
-
-            case MEDIUM ->
-                    3;
-
-            case HARD ->
-                    4;
+            case EASY -> 2;
+            case MEDIUM -> 3;
+            case HARD -> 4;
         };
     }
 
@@ -258,17 +308,10 @@ public class QuizResultService {
 
         return switch (correctCount) {
 
-            case 5 ->
-                    QuizGrade.PERFECT;
-
-            case 4 ->
-                    QuizGrade.EXCELLENT;
-
-            case 3 ->
-                    QuizGrade.PASSING;
-
-            default ->
-                    QuizGrade.FAILURE;
+            case 5 -> QuizGrade.PERFECT;
+            case 4 -> QuizGrade.EXCELLENT;
+            case 3 -> QuizGrade.PASSING;
+            default -> QuizGrade.FAILURE;
         };
     }
 }

@@ -12,8 +12,13 @@ public interface UserRepository {
             String userId
     ) throws Exception;
 
-    void updateRating(
+    void setRating(
             String userId,
             int rating
+    ) throws Exception;
+
+    void changeRating(
+            String userId,
+            int ratingChange
     ) throws Exception;
 }

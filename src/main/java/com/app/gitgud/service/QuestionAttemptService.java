@@ -9,6 +9,7 @@ import com.app.gitgud.model.Question;
 import com.app.gitgud.model.QuestionAttempt;
 import com.app.gitgud.model.Quiz;
 import com.app.gitgud.model.QuizAttempt;
+import com.app.gitgud.model.QuizAttemptStatus;
 import com.app.gitgud.model.QuizContext;
 import com.app.gitgud.model.SectionQuizContext;
 import com.app.gitgud.model.TrueFalseQuestion;
@@ -36,20 +37,11 @@ public class QuestionAttemptService {
             QuizService quizService,
             FirestoreQuestionRepository questionRepository
     ) {
-        this.questionAttemptRepository =
-                questionAttemptRepository;
-
-        this.questionAttemptMapper =
-                questionAttemptMapper;
-
-        this.quizAttemptService =
-                quizAttemptService;
-
-        this.quizService =
-                quizService;
-
-        this.questionRepository =
-                questionRepository;
+        this.questionAttemptRepository = questionAttemptRepository;
+        this.questionAttemptMapper = questionAttemptMapper;
+        this.quizAttemptService = quizAttemptService;
+        this.quizService = quizService;
+        this.questionRepository = questionRepository;
     }
 
     public void createQuestionAttempt(
@@ -57,6 +49,12 @@ public class QuestionAttemptService {
             String attemptId,
             QuestionAttemptRequestDto request
     ) throws Exception {
+
+        if (request == null) {
+            throw new IllegalArgumentException(
+                    "Question attempt request is required"
+            );
+        }
 
         if (request.getQuestionId() == null) {
             throw new IllegalArgumentException(
@@ -70,10 +68,19 @@ public class QuestionAttemptService {
                         attemptId
                 );
 
-        Quiz quiz =
-                getQuiz(
-                        quizAttempt
-                );
+        if (quizAttempt == null) {
+            throw new IllegalArgumentException(
+                    "Quiz attempt not found"
+            );
+        }
+
+        if (quizAttempt.getStatus() != QuizAttemptStatus.IN_PROGRESS) {
+            throw new IllegalStateException(
+                    "Quiz attempt is already finished"
+            );
+        }
+
+        Quiz quiz = getQuiz(quizAttempt);
 
         Question question =
                 questionRepository.findQuestion(
@@ -84,6 +91,19 @@ public class QuestionAttemptService {
         if (question == null) {
             throw new IllegalArgumentException(
                     "Question not found"
+            );
+        }
+
+        if (questionAttemptRepository
+                .findQuestionAttempt(
+                        userId,
+                        attemptId,
+                        request.getQuestionId()
+                )
+                .isPresent()) {
+
+            throw new IllegalStateException(
+                    "Question has already been submitted"
             );
         }
 
@@ -114,11 +134,10 @@ public class QuestionAttemptService {
             String userId,
             String attemptId
     ) throws Exception {
-        return questionAttemptRepository
-                .findQuestionAttempts(
-                        userId,
-                        attemptId
-                );
+        return questionAttemptRepository.findQuestionAttempts(
+                userId,
+                attemptId
+        );
     }
 
     public QuestionAttempt getQuestionAttempt(
@@ -155,30 +174,24 @@ public class QuestionAttemptService {
         }
 
         if (question instanceof FillInTheBlankQuestion fillInTheBlank) {
-            return normalizeAnswer(
-                    selectedAnswer
-            ).equals(
-                    normalizeAnswer(
-                            fillInTheBlank.getCorrectAnswer()
-                    )
-            );
+            return normalizeAnswer(selectedAnswer)
+                    .equals(
+                            normalizeAnswer(
+                                    fillInTheBlank.getCorrectAnswer()
+                            )
+                    );
         }
 
         if (question instanceof TrueFalseQuestion trueFalse) {
-            if (!(selectedAnswer instanceof Boolean)) {
-                return false;
-            }
-
-            return (Boolean) selectedAnswer
+            return selectedAnswer instanceof Boolean
+                    && (Boolean) selectedAnswer
                     == trueFalse.isCorrectAnswer();
         }
 
         return false;
     }
 
-    private String normalizeAnswer(
-            Object answer
-    ) {
+    private String normalizeAnswer(Object answer) {
         return String.valueOf(answer)
                 .trim()
                 .toLowerCase();
@@ -188,8 +201,7 @@ public class QuestionAttemptService {
             QuizAttempt attempt
     ) throws Exception {
 
-        QuizContext context =
-                attempt.getContext();
+        QuizContext context = attempt.getContext();
 
         if (context instanceof SectionQuizContext sectionContext) {
             return quizService.getSectionQuiz(

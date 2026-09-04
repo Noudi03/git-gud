@@ -2,6 +2,7 @@ package com.app.gitgud.repository;
 
 import com.app.gitgud.model.User;
 import com.google.cloud.firestore.DocumentSnapshot;
+import com.google.cloud.firestore.FieldValue;
 import com.google.cloud.firestore.Firestore;
 import org.springframework.stereotype.Repository;
 
@@ -43,15 +44,12 @@ public class FirestoreUserRepository
                         .get()
                         .get();
 
-
         if (!document.exists()) {
             return null;
         }
 
-
         Long rating =
                 document.getLong("rating");
-
 
         if (rating == null) {
 
@@ -61,7 +59,6 @@ public class FirestoreUserRepository
                     document.getString("username")
             );
         }
-
 
         return new User(
                 document.getId(),
@@ -73,14 +70,38 @@ public class FirestoreUserRepository
 
 
     @Override
-    public void updateRating(
+    public void setRating(
             String userId,
             int rating
     ) throws Exception {
 
         db.collection("users")
                 .document(userId)
-                .update("rating", rating)
+                .update(
+                        "rating",
+                        Math.max(
+                                0,
+                                rating
+                        )
+                )
+                .get();
+    }
+
+
+    @Override
+    public void changeRating(
+            String userId,
+            int ratingChange
+    ) throws Exception {
+
+        db.collection("users")
+                .document(userId)
+                .update(
+                        "rating",
+                        FieldValue.increment(
+                                ratingChange
+                        )
+                )
                 .get();
     }
 }

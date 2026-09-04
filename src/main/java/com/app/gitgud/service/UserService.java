@@ -39,14 +39,26 @@ public class UserService {
     }
 
 
-    public void updateRating(
+    public void setRating(
             String userId,
             int rating
     ) throws Exception {
 
-        userRepository.updateRating(
+        userRepository.setRating(
                 userId,
                 rating
+        );
+    }
+
+
+    public void changeRating(
+            String userId,
+            int ratingChange
+    ) throws Exception {
+
+        userRepository.changeRating(
+                userId,
+                ratingChange
         );
     }
 }
