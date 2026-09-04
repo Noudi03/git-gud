@@ -28,9 +28,9 @@ public class FirestoreQuizMapper {
                 document.getString("type");
 
         QuizType type =
-                QuizType.fromValue(
-                        typeValue
-                );
+                typeValue != null
+                        ? QuizType.fromValue(typeValue)
+                        : null;
 
         Long orderValue =
                 document.getLong("order");

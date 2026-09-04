@@ -1,17 +1,13 @@
 package com.app.gitgud.service;
 
-import com.app.gitgud.model.ChapterQuizContext;
-import com.app.gitgud.model.GlobalQuizContext;
 import com.app.gitgud.model.Question;
 import com.app.gitgud.model.QuestionAttempt;
 import com.app.gitgud.model.QuestionDifficulty;
 import com.app.gitgud.model.Quiz;
 import com.app.gitgud.model.QuizAttempt;
 import com.app.gitgud.model.QuizAttemptStatus;
-import com.app.gitgud.model.QuizContext;
 import com.app.gitgud.model.QuizGrade;
 import com.app.gitgud.model.QuizResult;
-import com.app.gitgud.model.SectionQuizContext;
 import com.app.gitgud.repository.FirestoreQuestionRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -23,7 +19,6 @@ public class QuizResultService {
 
     private final QuizAttemptService quizAttemptService;
     private final QuestionAttemptService questionAttemptService;
-    private final QuizService quizService;
     private final FirestoreQuestionRepository questionRepository;
 
     private final int basePoints;
@@ -32,10 +27,10 @@ public class QuizResultService {
     private final int freeTimeSeconds;
     private final int skipPenalty;
 
+
     public QuizResultService(
             QuizAttemptService quizAttemptService,
             QuestionAttemptService questionAttemptService,
-            QuizService quizService,
             FirestoreQuestionRepository questionRepository,
 
             @Value("${gitgud.quiz-scoring.base-points}")
@@ -53,14 +48,12 @@ public class QuizResultService {
             @Value("${gitgud.quiz-scoring.skip-penalty}")
             int skipPenalty
     ) {
+
         this.quizAttemptService =
                 quizAttemptService;
 
         this.questionAttemptService =
                 questionAttemptService;
-
-        this.quizService =
-                quizService;
 
         this.questionRepository =
                 questionRepository;
@@ -81,6 +74,7 @@ public class QuizResultService {
                 skipPenalty;
     }
 
+
     public QuizResult getResult(
             String userId,
             String attemptId
@@ -96,6 +90,7 @@ public class QuizResultService {
                 attempt.getStatus()
                         == QuizAttemptStatus.CANCELLED
         ) {
+
             return new QuizResult(
                     0,
                     QuizGrade.FAILURE,
@@ -104,7 +99,9 @@ public class QuizResultService {
         }
 
         Quiz quiz =
-                getQuiz(attempt);
+                quizAttemptService.getQuiz(
+                        attempt
+                );
 
         List<QuestionAttempt> questionAttempts =
                 questionAttemptService
@@ -118,6 +115,7 @@ public class QuizResultService {
                 questionAttempts
         );
     }
+
 
     private QuizResult calculateResult(
             Quiz quiz,
@@ -186,6 +184,7 @@ public class QuizResultService {
         );
     }
 
+
     private int calculateQuestionScore(
             Question question,
             QuestionAttempt attempt
@@ -234,6 +233,7 @@ public class QuizResultService {
         );
     }
 
+
     private int getDifficultyMultiplier(
             QuestionDifficulty difficulty
     ) {
@@ -250,6 +250,7 @@ public class QuizResultService {
                     4;
         };
     }
+
 
     private QuizGrade calculateGrade(
             int correctCount
@@ -269,42 +270,5 @@ public class QuizResultService {
             default ->
                     QuizGrade.FAILURE;
         };
-    }
-
-    private Quiz getQuiz(
-            QuizAttempt attempt
-    ) throws Exception {
-
-        QuizContext context =
-                attempt.getContext();
-
-        if (context instanceof SectionQuizContext sectionContext) {
-
-            return quizService.getSectionQuiz(
-                    sectionContext.getChapterId(),
-                    sectionContext.getSectionId(),
-                    attempt.getQuizId()
-            );
-        }
-
-        if (context instanceof ChapterQuizContext chapterContext) {
-
-            return quizService.getChapterQuiz(
-                    chapterContext.getChapterId(),
-                    attempt.getQuizId()
-            );
-        }
-
-        if (context instanceof GlobalQuizContext) {
-
-            return quizService.getGlobalQuiz(
-                    attempt.getQuizId()
-            );
-        }
-
-        throw new IllegalArgumentException(
-                "Unsupported quiz context: "
-                        + context.getClass().getName()
-        );
     }
 }

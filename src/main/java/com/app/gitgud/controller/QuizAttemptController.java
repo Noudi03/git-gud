@@ -6,6 +6,7 @@ import com.app.gitgud.model.QuizResult;
 import com.app.gitgud.model.dto.QuizAttemptRequestDto;
 import com.app.gitgud.service.CurrentUserService;
 import com.app.gitgud.service.QuizAttemptService;
+import com.app.gitgud.service.QuizOutcomeService;
 import com.app.gitgud.service.QuizResultService;
 import com.app.gitgud.service.QuizService;
 import org.springframework.http.ResponseEntity;
@@ -19,20 +20,27 @@ public class QuizAttemptController {
 
     private final QuizAttemptService quizAttemptService;
     private final QuizResultService quizResultService;
+    private final QuizOutcomeService quizOutcomeService;
     private final QuizService quizService;
     private final CurrentUserService currentUserService;
+
 
     public QuizAttemptController(
             QuizAttemptService quizAttemptService,
             QuizResultService quizResultService,
+            QuizOutcomeService quizOutcomeService,
             QuizService quizService,
             CurrentUserService currentUserService
     ) {
+
         this.quizAttemptService =
                 quizAttemptService;
 
         this.quizResultService =
                 quizResultService;
+
+        this.quizOutcomeService =
+                quizOutcomeService;
 
         this.quizService =
                 quizService;
@@ -41,6 +49,7 @@ public class QuizAttemptController {
                 currentUserService;
     }
 
+
     @PostMapping("/sections/{chapterId}/{sectionId}/{quizId}")
     public ResponseEntity<?> createSectionAttempt(
             @PathVariable String chapterId,
@@ -48,6 +57,7 @@ public class QuizAttemptController {
             @PathVariable String quizId,
             @RequestBody QuizAttemptRequestDto request
     ) {
+
         return createAttempt(
                 request,
                 () -> quizService.getSectionQuiz(
@@ -58,12 +68,14 @@ public class QuizAttemptController {
         );
     }
 
+
     @PostMapping("/chapters/{chapterId}/{quizId}")
     public ResponseEntity<?> createChapterAttempt(
             @PathVariable String chapterId,
             @PathVariable String quizId,
             @RequestBody QuizAttemptRequestDto request
     ) {
+
         return createAttempt(
                 request,
                 () -> quizService.getChapterQuiz(
@@ -73,11 +85,13 @@ public class QuizAttemptController {
         );
     }
 
+
     @PostMapping("/{quizId}")
     public ResponseEntity<?> createGlobalAttempt(
             @PathVariable String quizId,
             @RequestBody QuizAttemptRequestDto request
     ) {
+
         return createAttempt(
                 request,
                 () -> quizService.getGlobalQuiz(
@@ -85,6 +99,7 @@ public class QuizAttemptController {
                 )
         );
     }
+
 
     @GetMapping
     public ResponseEntity<?> getAttempts() {
@@ -118,6 +133,7 @@ public class QuizAttemptController {
                     );
         }
     }
+
 
     @GetMapping("/{attemptId}")
     public ResponseEntity<?> getAttempt(
@@ -161,6 +177,7 @@ public class QuizAttemptController {
         }
     }
 
+
     @GetMapping("/{attemptId}/result")
     public ResponseEntity<?> getResult(
             @PathVariable String attemptId
@@ -203,6 +220,7 @@ public class QuizAttemptController {
         }
     }
 
+
     private ResponseEntity<?> createAttempt(
             QuizAttemptRequestDto request,
             QuizSupplier quizSupplier
@@ -229,6 +247,12 @@ public class QuizAttemptController {
                             request
                     );
 
+            quizOutcomeService.process(
+                    userId,
+                    attempt,
+                    quiz
+            );
+
             return ResponseEntity.ok(
                     attempt
             );
@@ -250,6 +274,7 @@ public class QuizAttemptController {
                     );
         }
     }
+
 
     @FunctionalInterface
     private interface QuizSupplier {
