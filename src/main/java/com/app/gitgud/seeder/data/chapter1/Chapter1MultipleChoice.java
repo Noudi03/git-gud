@@ -95,7 +95,7 @@ public class Chapter1MultipleChoice {
 
                 build("mc3",
                         "Which configuration level overrides the global settings for a single project?",
-                        opts("--system", "--local", "--global", "--project"),
+                        opts("`--system`", "`--local`", "`--global`", "`--project`"),
                         "B", "advanced",
                         "There are 3 levels: system, global, local. Which one is the most specific?",
                         "The more specific the level, the higher its priority over broader settings."
@@ -112,7 +112,7 @@ public class Chapter1MultipleChoice {
 
                 build("mc1",
                         "Which folder is created after running the command `git init`?",
-                        opts(".github", ".gitconfig", "refs", ".git"),
+                        opts("`.github`", "`.gitconfig`", "`refs`", "`.git`"),
                         "D", "beginner",
                         "Git creates a hidden folder. Hidden folders start with a dot.",
                         "The folder name is related to the tool itself."
@@ -131,7 +131,7 @@ public class Chapter1MultipleChoice {
 
                 build("mc3",
                         "Which file inside the .git directory points to your current branch?",
-                        opts("HEAD", "refs", "objects", "config"),
+                        opts("`HEAD`", "`refs`", "`objects`", "`config`"),
                         "A", "advanced",
                         "'You are here'. Which file in .git tells git where you currently are?",
                         "Think about what HEAD means — it is a common term in navigation."
@@ -157,7 +157,7 @@ public class Chapter1MultipleChoice {
 
                 build("mc2",
                         "Which command stages all changed files at once?",
-                        opts("git stage --all", "git add --all", "git add .", "git stage all"),
+                        opts("`git stage --all`", "`git add --all`", "`git add .`", "`git stage all`"),
                         "C", "intermediate",
                         "In the terminal, '.' usually refers to the current directory.",
                         "You want to add everything in the current folder."
@@ -176,10 +176,10 @@ public class Chapter1MultipleChoice {
 
                 build("mc4",
                         "Which flag allows you to stage specific parts of a file?",
-                        opts("git add --section", "git add -p", "git add --chunk", "git add --select"),
+                        opts("`git add --section`", "`git add -p`", "`git add --chunk`", "`git add --select`"),
                         "B", "advanced",
                         "The flag stands for 'patch'.",
-                        "The flag is a single letter — think about the first letter of 'patch'."
+                        "The flag is a single letter, think about the first letter of 'patch'."
                 )
         );
     }
@@ -283,10 +283,10 @@ public class Chapter1MultipleChoice {
 
                 build("mc5",
                         "Which command shows a visual graph of all branches in the terminal?",
-                        opts("git log --oneline --graph --all",
-                                "git log --tree",
-                                "git log --visual --all",
-                                "git branch --show --graph"),
+                        opts("`git log --oneline --graph --all`",
+                                "`git log --tree`",
+                                "`git log --visual --all`",
+                                "`git branch --show --graph`"),
                         "A", "advanced",
                         "You need 3 arguments combined.",
                         "1st argument for compact view, 2nd for graph, 3rd for all branches."
@@ -314,7 +314,7 @@ public class Chapter1MultipleChoice {
 
                 build("mc2",
                         "Which of the following files belongs in the `.gitignore` file?",
-                        opts("index.html", "README.md", ".env", "style.css"),
+                        opts("`index.html`", "`README.md`", "`.env`", "`style.css`"),
                         "C", "intermediate",
                         "Think about sensitive information that should never be shared publicly.",
                         "Files containing passwords, API keys or secrets should be ignored. Which file usually contains those?"
@@ -322,10 +322,10 @@ public class Chapter1MultipleChoice {
 
                 build("mc3",
                         "What does `*.log` inside a `.gitignore` file mean?",
-                        opts("Ignore only the file named log",
-                                "Ignore the folder named log",
-                                "Ignore files starting with log",
-                                "Ignore all files ending in .log"),
+                        opts("Ignore only the file named `log`",
+                                "Ignore the folder named `log`",
+                                "Ignore files starting with ``log`",
+                                "Ignore all files ending in `.log`"),
                         "D", "intermediate",
                         "* is a wildcard — it matches anything.",
                         "It means any filename combined with a .log extension."
@@ -333,10 +333,10 @@ public class Chapter1MultipleChoice {
 
                 build("mc4",
                         "Which command untracks a file without deleting it from your computer?",
-                        opts("git remove --now filename",
-                                "git rm --cached filename",
-                                "git untrack filename",
-                                "git ignore filename"),
+                        opts("`git remove --now filename`",
+                                "`git rm --cached filename`",
+                                "`git untrack filename`",
+                                "`git ignore filename`"),
                         "B", "advanced",
                         "You want to remove it from git's memory, not from your computer.",
                         "The command uses 'rm' with a special flag that affects only the cache, not the actual file."

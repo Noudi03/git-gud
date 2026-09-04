@@ -45,10 +45,10 @@ public class Chapter2MultipleChoice {
 
                 build("mc2",
                         "What is the default branch git creates called?",
-                        opts("master or main",
-                                "root",
-                                "dev",
-                                "feature"),
+                        opts("`master` or `main`",
+                                "`root`",
+                                "`dev`",
+                                "`feature`"),
                         "A", "intermediate",
                         "What is the main stable version of a project usually called?",
                         "Git gives 2 possible names for that branch."
@@ -76,10 +76,10 @@ public class Chapter2MultipleChoice {
 
                 build("mc1",
                         "What does `git switch main` do?",
-                        opts("Moves you to the main branch",
-                                "Creates a branch named main",
-                                "Merges your current branch into main",
-                                "Renames the current branch to main"),
+                        opts("Moves you to the `main` branch",
+                                "Creates a branch named `main`",
+                                "Merges your current branch into `main`",
+                                "Renames the current branch to `main`"),
                         "A", "beginner",
                         "What does switch refer to in everyday language?",
                         "Your files update to reflect the state of the branch you switch to."
@@ -87,12 +87,12 @@ public class Chapter2MultipleChoice {
 
                 build("mc2",
                         "Which command creates a new branch and switches to it?",
-                        opts("git branch -c feature",
-                                "git switch --branch feature",
-                                "git switch --new feature",
-                                "git switch -c feature"),
+                        opts("`git branch -c feature`",
+                                "`git switch --branch feature`",
+                                "`git switch --new feature`",
+                                "`git switch -c feature`"),
                         "D", "intermediate",
-                        "You need a flag. What does the flag -c stand for?",
+                        "You need a flag. What does the flag `-c` stand for?",
                         "The flag stands for create."
                 ),
 
@@ -109,10 +109,10 @@ public class Chapter2MultipleChoice {
 
                 build("mc4",
                         "Why was `git switch` introduced as a replacement for `git checkout`?",
-                        opts("Because git checkout was too slow",
-                                "Because git checkout required an internet connection",
-                                "Because git checkout was taking up too many resources",
-                                "Because git checkout was doing too many unrelated things"),
+                        opts("Because `git checkout` was too slow",
+                                "Because `git checkout` required an internet connection",
+                                "Because `git checkout` was taking up too many resources",
+                                "Because `git checkout` was doing too many unrelated things"),
                         "D", "advanced",
                         "Git checkout can switch branches, restore files and detach HEAD.",
                         "Having one command do many unrelated things is considered bad design."
@@ -130,9 +130,9 @@ public class Chapter2MultipleChoice {
                 build("mc1",
                         "What does `git merge feature` do when run from main?",
                         opts("Deletes the feature branch",
-                                "Brings the changes from feature to main",
-                                "Brings the changes from main to feature",
-                                "Moves all commits from main to feature"),
+                                "Brings the changes from `feature` to `main`",
+                                "Brings the changes from `main` to `feature`",
+                                "Moves all commits from main to `feature`"),
                         "B", "beginner",
                         "Think about the direction: you are on main and merging feature into it.",
                         "The branch you run it from is the one that receives the changes."
@@ -140,17 +140,17 @@ public class Chapter2MultipleChoice {
 
                 build("mc2",
                         "Which command deletes a branch after merging?",
-                        opts("git branch --remove feature",
-                                "git delete feature",
-                                "git branch -d feature",
-                                "git merge --delete feature"),
+                        opts("`git branch --remove feature`",
+                                "`git delete feature`",
+                                "`git branch -d feature`",
+                                "`git merge --delete feature`"),
                         "C", "intermediate",
                         "The command starts with `git branch`.",
                         "The flag stands for delete."
                 ),
 
                 build("mc3",
-                        "After merging a feature branch into main, what happens to the feature branch?",
+                        "After merging a `feature` branch into `main`, what happens to the `feature branch`?",
                         opts("It is automatically deleted",
                                 "It still exists until you manually delete it",
                                 "It is renamed to merged",
@@ -215,10 +215,10 @@ public class Chapter2MultipleChoice {
 
                 build("mc4",
                         "Which command cancels a merge and returns to the state before it started?",
-                        opts("git merge --abort",
-                                "git merge --cancel",
-                                "git reset merge",
-                                "git merge --revert"),
+                        opts("`git merge --abort`",
+                                "`git merge --cancel`",
+                                "`git reset merge`",
+                                "`git merge --revert`"),
                         "A", "advanced",
                         "What happens when something goes wrong and you want to undo the merge attempt?",
                         "The flag means you stop any operation that goes wrong."
@@ -288,10 +288,10 @@ public class Chapter2MultipleChoice {
 
                 build("mc2",
                         "Which command restores the most recently stashed changes?",
-                        opts("git stash restore",
-                                "git stash apply",
-                                "git stash pop",
-                                "git stash get"),
+                        opts("`git stash restore`",
+                                "`git stash apply`",
+                                "`git stash pop`",
+                                "`git stash get`"),
                         "C", "intermediate",
                         "Think about what happens to a stack.",
                         "Pop removes the stash from the list after restoring it."
@@ -310,10 +310,10 @@ public class Chapter2MultipleChoice {
 
                 build("mc4",
                         "Which command stashes changes including untracked files?",
-                        opts("git stash -u",
-                                "git stash --all",
-                                "git untracked --stash",
-                                "git stash -f"),
+                        opts("`git stash -u`",
+                                "`git stash --all`",
+                                "`git untracked --stash`",
+                                "`git stash -f`"),
                         "A", "advanced",
                         "Untracked files are not included by default.",
                         "The flag is a single letter."

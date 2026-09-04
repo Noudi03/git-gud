@@ -129,10 +129,10 @@ public class Chapter3MultipleChoice {
 
                 build("mc5",
                         "`git pull` is effectively two commands in one. After `git fetch origin`, what command merges the changes?",
-                        opts("git merge origin/main",
-                                "git merge origin main",
-                                "git push origin main",
-                                "git commit"),
+                        opts("`git merge origin/main`",
+                                "`git merge origin main`",
+                                "`git push origin main`",
+                                "`git commit`"),
                         "A", "advanced",
                         "Git pull uses fetch and merge.",
                         "The fetched remote branch is merged into your current branch with `git merge origin/main`."
@@ -150,9 +150,9 @@ public class Chapter3MultipleChoice {
                 build("mc1",
                         "What does `git fetch` do differently from `git pull`?",
                         opts("Fetch is faster than pull, but they do the exact same thing",
-                                "Fetch downloads changes but does not merge them",
-                                "Fetch only works with branches, pull works with files",
-                                "Fetch deletes remote branches, pull creates them"),
+                                "`Fetch` downloads changes but does not merge them",
+                                "`Fetch` only works with branches, pull works with files",
+                                "`Fetch` deletes remote branches, pull creates them"),
                         "B", "beginner",
                         "Think about the word 'fetch', you retrieve something but do not use it yet.",
                         "After fetching, your local branch remains unchanged until you merge the changes manually."
