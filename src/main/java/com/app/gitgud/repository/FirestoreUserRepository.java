@@ -49,10 +49,38 @@ public class FirestoreUserRepository
         }
 
 
+        Long rating =
+                document.getLong("rating");
+
+
+        if (rating == null) {
+
+            return new User(
+                    document.getId(),
+                    document.getString("email"),
+                    document.getString("username")
+            );
+        }
+
+
         return new User(
                 document.getId(),
                 document.getString("email"),
-                document.getString("username")
+                document.getString("username"),
+                rating.intValue()
         );
+    }
+
+
+    @Override
+    public void updateRating(
+            String userId,
+            int rating
+    ) throws Exception {
+
+        db.collection("users")
+                .document(userId)
+                .update("rating", rating)
+                .get();
     }
 }

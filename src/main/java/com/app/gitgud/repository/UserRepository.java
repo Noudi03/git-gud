@@ -11,4 +11,9 @@ public interface UserRepository {
     User getUser(
             String userId
     ) throws Exception;
+
+    void updateRating(
+            String userId,
+            int rating
+    ) throws Exception;
 }

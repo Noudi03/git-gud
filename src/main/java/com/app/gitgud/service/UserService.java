@@ -37,4 +37,16 @@ public class UserService {
                 userId
         );
     }
+
+
+    public void updateRating(
+            String userId,
+            int rating
+    ) throws Exception {
+
+        userRepository.updateRating(
+                userId,
+                rating
+        );
+    }
 }

@@ -2,10 +2,11 @@ package com.app.gitgud.model;
 
 public class User {
 
+    public static final int DEFAULT_RATING = 1000;
+
     private final String id;
     private final String email;
     private final String username;
-    private int progression;
     private int rating;
 
     public User(
@@ -18,8 +19,7 @@ public class User {
                 id,
                 email,
                 username,
-                0,
-                1000
+                DEFAULT_RATING
         );
     }
 
@@ -27,14 +27,12 @@ public class User {
             String id,
             String email,
             String username,
-            int progression,
             int rating
     ) {
 
         this.id = id;
         this.email = email;
         this.username = username;
-        this.progression = progression;
         this.rating = rating;
     }
 
@@ -48,17 +46,6 @@ public class User {
 
     public String getUsername() {
         return username;
-    }
-
-    public int getProgression() {
-        return progression;
-    }
-
-    public void setProgression(
-            int progression
-    ) {
-
-        this.progression = progression;
     }
 
     public int getRating() {

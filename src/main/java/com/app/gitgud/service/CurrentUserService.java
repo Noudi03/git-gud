@@ -67,32 +67,6 @@ public class CurrentUserService {
     }
 
 
-    public String getEmail() throws Exception {
-
-        User user =
-                getUser();
-
-        if (user == null) {
-            return null;
-        }
-
-        return user.getEmail();
-    }
-
-
-    public String getUsername() throws Exception {
-
-        User user =
-                getUser();
-
-        if (user == null) {
-            return null;
-        }
-
-        return user.getUsername();
-    }
-
-
     public boolean isAuthenticated() {
 
         return getUserId() != null;
