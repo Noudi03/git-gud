@@ -20,8 +20,7 @@ public class TrueFalseQuestionMapper {
                 question.getText(),
                 question.isCorrectAnswer(),
                 question.getDifficulty(),
-                question.getHints(),
-                question.getOrder()
+                question.getHints()
         );
     }
 }

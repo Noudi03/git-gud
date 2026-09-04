@@ -1,15 +1,17 @@
 package com.app.gitgud.model;
 
 public enum QuizType {
+
     INTRODUCTORY("introductory"),
     PRACTICE("practice"),
-    MASTER("master"),
     FINAL("final"),
     REVIEW("review");
 
     private final String value;
 
-    QuizType(String value) {
+    QuizType(
+            String value
+    ) {
         this.value = value;
     }
 
@@ -17,9 +19,12 @@ public enum QuizType {
         return value;
     }
 
-    public static QuizType fromValue(String value) {
+    public static QuizType fromValue(
+            String value
+    ) {
 
         for (QuizType type : values()) {
+
             if (type.value.equalsIgnoreCase(value)) {
                 return type;
             }

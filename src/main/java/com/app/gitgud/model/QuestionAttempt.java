@@ -2,6 +2,7 @@ package com.app.gitgud.model;
 
 public class QuestionAttempt {
 
+    private final String id;
     private final String questionId;
     private final boolean correct;
     private final long timeSpentMillis;
@@ -9,17 +10,24 @@ public class QuestionAttempt {
     private final int skipCount;
 
     public QuestionAttempt(
+            String id,
             String questionId,
             boolean correct,
             long timeSpentMillis,
             int hintsUsed,
             int skipCount
     ) {
+
+        this.id = id;
         this.questionId = questionId;
         this.correct = correct;
         this.timeSpentMillis = timeSpentMillis;
         this.hintsUsed = hintsUsed;
         this.skipCount = skipCount;
+    }
+
+    public String getId() {
+        return id;
     }
 
     public String getQuestionId() {

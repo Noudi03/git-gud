@@ -7,6 +7,4 @@ public interface Question {
     QuestionType getType();
 
     QuestionDifficulty getDifficulty();
-
-    int getOrder();
 }

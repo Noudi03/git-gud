@@ -34,7 +34,7 @@ public class FirestoreQuestionAttemptRepository {
                 userId,
                 attemptId
         )
-                .document(questionAttempt.getQuestionId())
+                .document(questionAttempt.getId())
                 .set(mapper.toData(questionAttempt))
                 .get();
     }
@@ -45,21 +45,28 @@ public class FirestoreQuestionAttemptRepository {
             String questionId
     ) throws Exception {
 
-        var document =
+        var documents =
                 getQuestionAttemptCollection(
                         userId,
                         attemptId
                 )
-                        .document(questionId)
+                        .whereEqualTo(
+                                "questionId",
+                                questionId
+                        )
+                        .limit(1)
                         .get()
-                        .get();
+                        .get()
+                        .getDocuments();
 
-        if (!document.exists()) {
+        if (documents.isEmpty()) {
             return Optional.empty();
         }
 
         return Optional.of(
-                mapper.toModel(document)
+                mapper.toModel(
+                        documents.get(0)
+                )
         );
     }
 

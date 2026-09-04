@@ -5,15 +5,18 @@ public class QuizAttempt {
     private final String id;
     private final String quizId;
     private final QuizAttemptStatus status;
+    private final QuizContext context;
 
     public QuizAttempt(
             String id,
             String quizId,
-            QuizAttemptStatus status
+            QuizAttemptStatus status,
+            QuizContext context
     ) {
         this.id = id;
         this.quizId = quizId;
         this.status = status;
+        this.context = context;
     }
 
     public String getId() {
@@ -26,5 +29,9 @@ public class QuizAttempt {
 
     public QuizAttemptStatus getStatus() {
         return status;
+    }
+
+    public QuizContext getContext() {
+        return context;
     }
 }

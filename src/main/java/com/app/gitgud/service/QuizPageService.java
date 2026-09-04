@@ -4,6 +4,7 @@ import com.app.gitgud.mapper.QuestionMapper;
 import com.app.gitgud.mapper.QuizMapper;
 import com.app.gitgud.model.Question;
 import com.app.gitgud.model.Quiz;
+import com.app.gitgud.model.User;
 import com.app.gitgud.model.dto.QuestionDto;
 import com.app.gitgud.model.dto.QuizPageDto;
 import org.springframework.stereotype.Service;
@@ -14,13 +15,13 @@ import java.util.List;
 public class QuizPageService {
 
     private final QuizService quizService;
-    private final QuestionService questionService;
+    private final QuestionSelectionService questionSelectionService;
     private final QuizMapper quizMapper;
     private final QuestionMapper questionMapper;
 
     public QuizPageService(
             QuizService quizService,
-            QuestionService questionService,
+            QuestionSelectionService questionSelectionService,
             QuizMapper quizMapper,
             QuestionMapper questionMapper
     ) {
@@ -28,8 +29,8 @@ public class QuizPageService {
         this.quizService =
                 quizService;
 
-        this.questionService =
-                questionService;
+        this.questionSelectionService =
+                questionSelectionService;
 
         this.quizMapper =
                 quizMapper;
@@ -41,7 +42,8 @@ public class QuizPageService {
     public QuizPageDto getSectionQuiz(
             String chapterId,
             String sectionId,
-            String quizId
+            String quizId,
+            User user
     ) throws Exception {
 
         Quiz quiz =
@@ -51,12 +53,16 @@ public class QuizPageService {
                         quizId
                 );
 
-        return buildQuizPage(quiz);
+        return buildQuizPage(
+                quiz,
+                user
+        );
     }
 
     public QuizPageDto getChapterQuiz(
             String chapterId,
-            String quizId
+            String quizId,
+            User user
     ) throws Exception {
 
         Quiz quiz =
@@ -65,11 +71,15 @@ public class QuizPageService {
                         quizId
                 );
 
-        return buildQuizPage(quiz);
+        return buildQuizPage(
+                quiz,
+                user
+        );
     }
 
     public QuizPageDto getGlobalQuiz(
-            String quizId
+            String quizId,
+            User user
     ) throws Exception {
 
         Quiz quiz =
@@ -77,19 +87,30 @@ public class QuizPageService {
                         quizId
                 );
 
-        return buildQuizPage(quiz);
+        return buildQuizPage(
+                quiz,
+                user
+        );
     }
 
     private QuizPageDto buildQuizPage(
-            Quiz quiz
+            Quiz quiz,
+            User user
     ) throws Exception {
 
         if (quiz == null) {
             return null;
         }
 
+        if (user == null) {
+            throw new IllegalArgumentException(
+                    "User not found"
+            );
+        }
+
         List<Question> questions =
-                questionService.getQuizQuestions(
+                questionSelectionService.selectQuestions(
+                        user,
                         quiz
                 );
 

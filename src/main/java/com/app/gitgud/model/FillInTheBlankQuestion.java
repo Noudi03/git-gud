@@ -10,7 +10,6 @@ public class FillInTheBlankQuestion
     private String correctAnswer;
     private QuestionDifficulty difficulty;
     private List<String> hints;
-    private int order;
 
     public FillInTheBlankQuestion() {
     }
@@ -20,15 +19,14 @@ public class FillInTheBlankQuestion
             String text,
             String correctAnswer,
             QuestionDifficulty difficulty,
-            List<String> hints,
-            int order
+            List<String> hints
     ) {
+
         this.id = id;
         this.text = text;
         this.correctAnswer = correctAnswer;
         this.difficulty = difficulty;
         this.hints = hints;
-        this.order = order;
     }
 
     @Override
@@ -39,6 +37,7 @@ public class FillInTheBlankQuestion
     public void setId(
             String id
     ) {
+
         this.id = id;
     }
 
@@ -49,6 +48,7 @@ public class FillInTheBlankQuestion
     public void setText(
             String text
     ) {
+
         this.text = text;
     }
 
@@ -59,6 +59,7 @@ public class FillInTheBlankQuestion
     public void setCorrectAnswer(
             String correctAnswer
     ) {
+
         this.correctAnswer = correctAnswer;
     }
 
@@ -70,6 +71,7 @@ public class FillInTheBlankQuestion
     public void setDifficulty(
             QuestionDifficulty difficulty
     ) {
+
         this.difficulty = difficulty;
     }
 
@@ -80,18 +82,8 @@ public class FillInTheBlankQuestion
     public void setHints(
             List<String> hints
     ) {
+
         this.hints = hints;
-    }
-
-    @Override
-    public int getOrder() {
-        return order;
-    }
-
-    public void setOrder(
-            int order
-    ) {
-        this.order = order;
     }
 
     @Override

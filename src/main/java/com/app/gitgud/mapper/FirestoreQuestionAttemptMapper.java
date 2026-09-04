@@ -18,6 +18,11 @@ public class FirestoreQuestionAttemptMapper {
                 new HashMap<>();
 
         data.put(
+                "questionId",
+                attempt.getQuestionId()
+        );
+
+        data.put(
                 "correct",
                 attempt.isCorrect()
         );
@@ -48,6 +53,9 @@ public class FirestoreQuestionAttemptMapper {
             return null;
         }
 
+        String questionId =
+                document.getString("questionId");
+
         Long timeSpentMillis =
                 document.getLong(
                         "timeSpentMillis"
@@ -65,6 +73,7 @@ public class FirestoreQuestionAttemptMapper {
 
         return new QuestionAttempt(
                 document.getId(),
+                questionId,
                 Boolean.TRUE.equals(
                         document.getBoolean("correct")
                 ),

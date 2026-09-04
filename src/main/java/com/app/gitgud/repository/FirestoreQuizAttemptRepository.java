@@ -19,6 +19,7 @@ public class FirestoreQuizAttemptRepository {
             Firestore db,
             FirestoreQuizAttemptMapper mapper
     ) {
+
         this.db = db;
         this.mapper = mapper;
     }
@@ -64,12 +65,14 @@ public class FirestoreQuizAttemptRepository {
                 .getDocuments()
                 .stream()
                 .map(mapper::toModel)
+                .filter(attempt -> attempt != null)
                 .toList();
     }
 
     private CollectionReference getAttemptCollection(
             String userId
     ) {
+
         return db.collection("users")
                 .document(userId)
                 .collection("quizAttempts");

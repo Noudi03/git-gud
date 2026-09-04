@@ -7,6 +7,7 @@ import com.app.gitgud.repository.FirestoreQuestionAttemptRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class QuestionAttemptService {
@@ -32,8 +33,12 @@ public class QuestionAttemptService {
             QuestionAttemptRequestDto request
     ) throws Exception {
 
+        String questionAttemptId =
+                UUID.randomUUID().toString();
+
         QuestionAttempt questionAttempt =
                 questionAttemptMapper.toModel(
+                        questionAttemptId,
                         request
                 );
 

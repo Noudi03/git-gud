@@ -12,7 +12,6 @@ public class MultipleChoiceQuestion
     private String correctAnswer;
     private QuestionDifficulty difficulty;
     private List<String> hints;
-    private int order;
 
     public MultipleChoiceQuestion() {
     }
@@ -23,16 +22,15 @@ public class MultipleChoiceQuestion
             Map<String, String> options,
             String correctAnswer,
             QuestionDifficulty difficulty,
-            List<String> hints,
-            int order
+            List<String> hints
     ) {
+
         this.id = id;
         this.text = text;
         this.options = options;
         this.correctAnswer = correctAnswer;
         this.difficulty = difficulty;
         this.hints = hints;
-        this.order = order;
     }
 
     @Override
@@ -43,6 +41,7 @@ public class MultipleChoiceQuestion
     public void setId(
             String id
     ) {
+
         this.id = id;
     }
 
@@ -53,6 +52,7 @@ public class MultipleChoiceQuestion
     public void setText(
             String text
     ) {
+
         this.text = text;
     }
 
@@ -63,6 +63,7 @@ public class MultipleChoiceQuestion
     public void setOptions(
             Map<String, String> options
     ) {
+
         this.options = options;
     }
 
@@ -73,6 +74,7 @@ public class MultipleChoiceQuestion
     public void setCorrectAnswer(
             String correctAnswer
     ) {
+
         this.correctAnswer = correctAnswer;
     }
 
@@ -84,6 +86,7 @@ public class MultipleChoiceQuestion
     public void setDifficulty(
             QuestionDifficulty difficulty
     ) {
+
         this.difficulty = difficulty;
     }
 
@@ -94,18 +97,8 @@ public class MultipleChoiceQuestion
     public void setHints(
             List<String> hints
     ) {
+
         this.hints = hints;
-    }
-
-    @Override
-    public int getOrder() {
-        return order;
-    }
-
-    public void setOrder(
-            int order
-    ) {
-        this.order = order;
     }
 
     @Override

@@ -8,10 +8,12 @@ import org.springframework.stereotype.Component;
 public class QuestionAttemptMapper {
 
     public QuestionAttempt toModel(
+            String id,
             QuestionAttemptRequestDto request
     ) {
 
         return new QuestionAttempt(
+                id,
                 request.getQuestionId(),
                 request.isCorrect(),
                 request.getTimeSpentMillis(),

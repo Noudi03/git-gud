@@ -13,22 +13,20 @@ public class TrueFalseQuestionDto
     private final boolean correctAnswer;
     private final QuestionDifficulty difficulty;
     private final List<String> hints;
-    private final int order;
 
     public TrueFalseQuestionDto(
             String id,
             String text,
             boolean correctAnswer,
             QuestionDifficulty difficulty,
-            List<String> hints,
-            int order
+            List<String> hints
     ) {
+
         this.id = id;
         this.text = text;
         this.correctAnswer = correctAnswer;
         this.difficulty = difficulty;
         this.hints = hints;
-        this.order = order;
     }
 
     @Override
@@ -56,10 +54,5 @@ public class TrueFalseQuestionDto
 
     public List<String> getHints() {
         return hints;
-    }
-
-    @Override
-    public int getOrder() {
-        return order;
     }
 }

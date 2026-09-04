@@ -20,8 +20,7 @@ public class FillInTheBlankQuestionMapper {
                 question.getText(),
                 question.getCorrectAnswer(),
                 question.getDifficulty(),
-                question.getHints(),
-                question.getOrder()
+                question.getHints()
         );
     }
 }

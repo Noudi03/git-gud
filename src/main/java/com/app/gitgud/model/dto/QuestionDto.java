@@ -10,6 +10,4 @@ public interface QuestionDto {
     QuestionType getType();
 
     QuestionDifficulty getDifficulty();
-
-    int getOrder();
 }

@@ -21,8 +21,7 @@ public class MultipleChoiceQuestionMapper {
                 question.getOptions(),
                 question.getCorrectAnswer(),
                 question.getDifficulty(),
-                question.getHints(),
-                question.getOrder()
+                question.getHints()
         );
     }
 }

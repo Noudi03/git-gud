@@ -40,21 +40,12 @@ public class FirestoreFillInTheBlankQuestionMapper {
                         document.get("hints")
                 );
 
-        Long orderValue =
-                document.getLong("order");
-
-        int order =
-                orderValue != null
-                        ? orderValue.intValue()
-                        : 0;
-
         return new FillInTheBlankQuestion(
                 id,
                 text,
                 correctAnswer,
                 difficulty,
-                hints,
-                order
+                hints
         );
     }
 

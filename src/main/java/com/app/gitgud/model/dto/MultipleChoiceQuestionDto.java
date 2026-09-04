@@ -15,7 +15,6 @@ public class MultipleChoiceQuestionDto
     private final String correctAnswer;
     private final QuestionDifficulty difficulty;
     private final List<String> hints;
-    private final int order;
 
     public MultipleChoiceQuestionDto(
             String id,
@@ -23,16 +22,15 @@ public class MultipleChoiceQuestionDto
             Map<String, String> options,
             String correctAnswer,
             QuestionDifficulty difficulty,
-            List<String> hints,
-            int order
+            List<String> hints
     ) {
+
         this.id = id;
         this.text = text;
         this.options = options;
         this.correctAnswer = correctAnswer;
         this.difficulty = difficulty;
         this.hints = hints;
-        this.order = order;
     }
 
     @Override
@@ -59,11 +57,6 @@ public class MultipleChoiceQuestionDto
 
     public List<String> getHints() {
         return hints;
-    }
-
-    @Override
-    public int getOrder() {
-        return order;
     }
 
     @Override

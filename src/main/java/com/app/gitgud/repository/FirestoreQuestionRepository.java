@@ -3,9 +3,10 @@ package com.app.gitgud.repository;
 import com.app.gitgud.mapper.FirestoreQuestionMapper;
 import com.app.gitgud.model.Question;
 import com.app.gitgud.model.Quiz;
+import org.springframework.stereotype.Repository;
+
 import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.Firestore;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -29,7 +30,6 @@ public class FirestoreQuestionRepository {
     ) throws Exception {
 
         return getQuestionsCollection(quiz)
-                .orderBy("order")
                 .get()
                 .get()
                 .getDocuments()

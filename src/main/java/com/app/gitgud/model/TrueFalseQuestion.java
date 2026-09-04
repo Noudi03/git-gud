@@ -10,7 +10,6 @@ public class TrueFalseQuestion
     private boolean correctAnswer;
     private QuestionDifficulty difficulty;
     private List<String> hints;
-    private int order;
 
     public TrueFalseQuestion() {
     }
@@ -20,15 +19,14 @@ public class TrueFalseQuestion
             String text,
             boolean correctAnswer,
             QuestionDifficulty difficulty,
-            List<String> hints,
-            int order
+            List<String> hints
     ) {
+
         this.id = id;
         this.text = text;
         this.correctAnswer = correctAnswer;
         this.difficulty = difficulty;
         this.hints = hints;
-        this.order = order;
     }
 
     @Override
@@ -39,6 +37,7 @@ public class TrueFalseQuestion
     public void setId(
             String id
     ) {
+
         this.id = id;
     }
 
@@ -49,6 +48,7 @@ public class TrueFalseQuestion
     public void setText(
             String text
     ) {
+
         this.text = text;
     }
 
@@ -59,6 +59,7 @@ public class TrueFalseQuestion
     public void setCorrectAnswer(
             boolean correctAnswer
     ) {
+
         this.correctAnswer = correctAnswer;
     }
 
@@ -75,6 +76,7 @@ public class TrueFalseQuestion
     public void setDifficulty(
             QuestionDifficulty difficulty
     ) {
+
         this.difficulty = difficulty;
     }
 
@@ -85,17 +87,7 @@ public class TrueFalseQuestion
     public void setHints(
             List<String> hints
     ) {
+
         this.hints = hints;
-    }
-
-    @Override
-    public int getOrder() {
-        return order;
-    }
-
-    public void setOrder(
-            int order
-    ) {
-        this.order = order;
     }
 }

@@ -44,21 +44,12 @@ public class FirestoreTrueFalseQuestionMapper {
                         document.get("hints")
                 );
 
-        Long orderValue =
-                document.getLong("order");
-
-        int order =
-                orderValue != null
-                        ? orderValue.intValue()
-                        : 0;
-
         return new TrueFalseQuestion(
                 id,
                 text,
                 correctAnswer,
                 difficulty,
-                hints,
-                order
+                hints
         );
     }
 

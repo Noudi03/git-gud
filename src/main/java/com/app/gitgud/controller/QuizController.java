@@ -1,6 +1,7 @@
 package com.app.gitgud.controller;
 
 import com.app.gitgud.model.dto.QuizPageDto;
+import com.app.gitgud.service.CurrentUserService;
 import com.app.gitgud.service.QuizPageService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,12 +11,18 @@ import org.springframework.web.bind.annotation.*;
 public class QuizController {
 
     private final QuizPageService quizPageService;
+    private final CurrentUserService currentUserService;
 
     public QuizController(
-            QuizPageService quizPageService
+            QuizPageService quizPageService,
+            CurrentUserService currentUserService
     ) {
+
         this.quizPageService =
                 quizPageService;
+
+        this.currentUserService =
+                currentUserService;
     }
 
     @GetMapping(
@@ -28,11 +35,13 @@ public class QuizController {
     ) {
 
         try {
+
             QuizPageDto page =
                     quizPageService.getSectionQuiz(
                             chapterId,
                             sectionId,
-                            quizId
+                            quizId,
+                            currentUserService.getUser()
                     );
 
             if (page == null) {
@@ -41,17 +50,13 @@ public class QuizController {
                         .build();
             }
 
-            return ResponseEntity.ok(
-                    page
-            );
+            return ResponseEntity.ok(page);
 
         } catch (Exception e) {
 
             return ResponseEntity
                     .internalServerError()
-                    .body(
-                            "Could not get quiz"
-                    );
+                    .body("Could not get quiz");
         }
     }
 
@@ -64,10 +69,12 @@ public class QuizController {
     ) {
 
         try {
+
             QuizPageDto page =
                     quizPageService.getChapterQuiz(
                             chapterId,
-                            quizId
+                            quizId,
+                            currentUserService.getUser()
                     );
 
             if (page == null) {
@@ -76,17 +83,13 @@ public class QuizController {
                         .build();
             }
 
-            return ResponseEntity.ok(
-                    page
-            );
+            return ResponseEntity.ok(page);
 
         } catch (Exception e) {
 
             return ResponseEntity
                     .internalServerError()
-                    .body(
-                            "Could not get quiz"
-                    );
+                    .body("Could not get quiz");
         }
     }
 
@@ -96,9 +99,11 @@ public class QuizController {
     ) {
 
         try {
+
             QuizPageDto page =
                     quizPageService.getGlobalQuiz(
-                            quizId
+                            quizId,
+                            currentUserService.getUser()
                     );
 
             if (page == null) {
@@ -107,17 +112,13 @@ public class QuizController {
                         .build();
             }
 
-            return ResponseEntity.ok(
-                    page
-            );
+            return ResponseEntity.ok(page);
 
         } catch (Exception e) {
 
             return ResponseEntity
                     .internalServerError()
-                    .body(
-                            "Could not get quiz"
-                    );
+                    .body("Could not get quiz");
         }
     }
 }

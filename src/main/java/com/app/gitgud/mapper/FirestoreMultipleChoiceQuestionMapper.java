@@ -45,22 +45,13 @@ public class FirestoreMultipleChoiceQuestionMapper {
                         document.get("hints")
                 );
 
-        Long orderValue =
-                document.getLong("order");
-
-        int order =
-                orderValue != null
-                        ? orderValue.intValue()
-                        : 0;
-
         return new MultipleChoiceQuestion(
                 id,
                 text,
                 options,
                 correctAnswer,
                 difficulty,
-                hints,
-                order
+                hints
         );
     }
 
