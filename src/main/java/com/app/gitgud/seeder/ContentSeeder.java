@@ -76,11 +76,17 @@ public class ContentSeeder implements CommandLineRunner {
             DocumentReference sectionRef = chapterRef.collection("sections").document(section.getId());
             sectionRef.set(section).get();
 
-            // Section-level practice quiz (multiple choice)
+            // Section-level practice quiz
             List<MultipleChoiceQuestion> mcqQuestions =
                     allMcq.getOrDefault(section.getId(), List.of());
 
-            if (!mcqQuestions.isEmpty()) {
+            List<TrueFalseQuestion> tfQuestions =
+                    allTf.getOrDefault(section.getId(), List.of());
+
+            List<FillInTheBlankQuestion> fibQuestions =
+                    allFib.getOrDefault(section.getId(), List.of());
+
+            if (!mcqQuestions.isEmpty() || !tfQuestions.isEmpty() || !fibQuestions.isEmpty()) {
                 String quizId = "quiz-practice";
 
                 Quiz practiceQuiz = new Quiz();
@@ -91,6 +97,7 @@ public class ContentSeeder implements CommandLineRunner {
 
                 sectionRef.collection("quizzes").document(quizId).set(practiceQuiz).get();
 
+                // Multiple choice questions
                 for (MultipleChoiceQuestion q : mcqQuestions) {
                     sectionRef.collection("quizzes")
                             .document(quizId)
@@ -99,23 +106,8 @@ public class ContentSeeder implements CommandLineRunner {
                             .set(toMcqData(q))
                             .get();
                 }
-            }
 
-            // Section-level true/false quiz
-            List<TrueFalseQuestion> tfQuestions =
-                    allTf.getOrDefault(section.getId(), List.of());
-
-            if (!tfQuestions.isEmpty()) {
-                String quizId = "quiz-truefalse";
-
-                Quiz tfQuiz = new Quiz();
-                tfQuiz.setId(quizId);
-                tfQuiz.setTitle("True or False");
-                tfQuiz.setType(QuizType.PRACTICE);
-                tfQuiz.setOrder(2);
-
-                sectionRef.collection("quizzes").document(quizId).set(tfQuiz).get();
-
+                // True/false questions
                 for (TrueFalseQuestion q : tfQuestions) {
                     sectionRef.collection("quizzes")
                             .document(quizId)
@@ -124,23 +116,8 @@ public class ContentSeeder implements CommandLineRunner {
                             .set(toTrueFalseData(q))
                             .get();
                 }
-            }
 
-            // Section-level fill-in-the-blank quiz
-            List<FillInTheBlankQuestion> fibQuestions =
-                    allFib.getOrDefault(section.getId(), List.of());
-
-            if (!fibQuestions.isEmpty()) {
-                String quizId = "quiz-fillblanks";
-
-                Quiz fibQuiz = new Quiz();
-                fibQuiz.setId(quizId);
-                fibQuiz.setTitle("Fill in the Blank");
-                fibQuiz.setType(QuizType.PRACTICE);
-                fibQuiz.setOrder(3);
-
-                sectionRef.collection("quizzes").document(quizId).set(fibQuiz).get();
-
+                // Fill-in-the-blank questions
                 for (FillInTheBlankQuestion q : fibQuestions) {
                     sectionRef.collection("quizzes")
                             .document(quizId)
