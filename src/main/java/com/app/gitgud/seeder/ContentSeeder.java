@@ -76,9 +76,11 @@ public class ContentSeeder implements CommandLineRunner {
             DocumentReference sectionRef = chapterRef.collection("sections").document(section.getId());
             sectionRef.set(section).get();
 
-            //  Section-level practice quiz (multiple choice)
-            List<MultipleChoiceQuestion> mcqTrials = allMcq.getOrDefault(section.getId(), List.of());
-            if (!mcqTrials.isEmpty()) {
+            // Section-level practice quiz (multiple choice)
+            List<MultipleChoiceQuestion> mcqQuestions =
+                    allMcq.getOrDefault(section.getId(), List.of());
+
+            if (!mcqQuestions.isEmpty()) {
                 String quizId = "quiz-practice";
 
                 Quiz practiceQuiz = new Quiz();
@@ -89,7 +91,7 @@ public class ContentSeeder implements CommandLineRunner {
 
                 sectionRef.collection("quizzes").document(quizId).set(practiceQuiz).get();
 
-                for (MultipleChoiceQuestion q : mcqTrials) {
+                for (MultipleChoiceQuestion q : mcqQuestions) {
                     sectionRef.collection("quizzes")
                             .document(quizId)
                             .collection("questions")
@@ -99,9 +101,11 @@ public class ContentSeeder implements CommandLineRunner {
                 }
             }
 
-            //Section-level true/false quiz
-            List<TrueFalseQuestion> tfTrials = allTf.getOrDefault(section.getId(), List.of());
-            if (!tfTrials.isEmpty()) {
+            // Section-level true/false quiz
+            List<TrueFalseQuestion> tfQuestions =
+                    allTf.getOrDefault(section.getId(), List.of());
+
+            if (!tfQuestions.isEmpty()) {
                 String quizId = "quiz-truefalse";
 
                 Quiz tfQuiz = new Quiz();
@@ -112,7 +116,7 @@ public class ContentSeeder implements CommandLineRunner {
 
                 sectionRef.collection("quizzes").document(quizId).set(tfQuiz).get();
 
-                for (TrueFalseQuestion q : tfTrials) {
+                for (TrueFalseQuestion q : tfQuestions) {
                     sectionRef.collection("quizzes")
                             .document(quizId)
                             .collection("questions")
@@ -122,9 +126,11 @@ public class ContentSeeder implements CommandLineRunner {
                 }
             }
 
-            //Section-level fill-in-the-blank quiz
-            List<FillInTheBlankQuestion> fibTrials = allFib.getOrDefault(section.getId(), List.of());
-            if (!fibTrials.isEmpty()) {
+            // Section-level fill-in-the-blank quiz
+            List<FillInTheBlankQuestion> fibQuestions =
+                    allFib.getOrDefault(section.getId(), List.of());
+
+            if (!fibQuestions.isEmpty()) {
                 String quizId = "quiz-fillblanks";
 
                 Quiz fibQuiz = new Quiz();
@@ -135,7 +141,7 @@ public class ContentSeeder implements CommandLineRunner {
 
                 sectionRef.collection("quizzes").document(quizId).set(fibQuiz).get();
 
-                for (FillInTheBlankQuestion q : fibTrials) {
+                for (FillInTheBlankQuestion q : fibQuestions) {
                     sectionRef.collection("quizzes")
                             .document(quizId)
                             .collection("questions")
@@ -148,9 +154,10 @@ public class ContentSeeder implements CommandLineRunner {
 
         // todo: make it skill based
         // Chapter-level final quiz: one MCQ per section
-        List<MultipleChoiceQuestion> finalMcqTrials = data.getSections().stream()
+        List<MultipleChoiceQuestion> finalMcqQuestions = data.getSections().stream()
                 .map(section -> {
-                    List<MultipleChoiceQuestion> qs = allMcq.getOrDefault(section.getId(), List.of());
+                    List<MultipleChoiceQuestion> qs =
+                            allMcq.getOrDefault(section.getId(), List.of());
                     return qs.isEmpty() ? null : qs.getFirst();
                 })
                 .filter(Objects::nonNull)
@@ -166,7 +173,7 @@ public class ContentSeeder implements CommandLineRunner {
 
         chapterRef.collection("quizzes").document(finalQuizId).set(finalQuiz).get();
 
-        for (MultipleChoiceQuestion q : finalMcqTrials) {
+        for (MultipleChoiceQuestion q : finalMcqQuestions) {
             chapterRef.collection("quizzes")
                     .document(finalQuizId)
                     .collection("questions")
@@ -177,13 +184,16 @@ public class ContentSeeder implements CommandLineRunner {
     }
 
     // todo: make it skill based
-    // global review quiz,one MCQ per chapter
+    // global review quiz, one MCQ per chapter
     private void seedReviewQuiz(Firestore db, List<ChapterData> chapters) throws Exception {
 
-        List<MultipleChoiceQuestion> reviewMcqTrials = chapters.stream()
+        List<MultipleChoiceQuestion> reviewMcqQuestions = chapters.stream()
                 .map(data -> {
                     List<MultipleChoiceQuestion> qs = data.getQuestions()
-                            .getOrDefault(data.getSections().getFirst().getId(), List.of());
+                            .getOrDefault(
+                                    data.getSections().getFirst().getId(),
+                                    List.of()
+                            );
                     return qs.isEmpty() ? null : qs.getFirst();
                 })
                 .filter(Objects::nonNull)
@@ -199,7 +209,7 @@ public class ContentSeeder implements CommandLineRunner {
 
         db.collection("quizzes").document(reviewQuizId).set(reviewQuiz).get();
 
-        for (MultipleChoiceQuestion q : reviewMcqTrials) {
+        for (MultipleChoiceQuestion q : reviewMcqQuestions) {
             db.collection("quizzes")
                     .document(reviewQuizId)
                     .collection("questions")
