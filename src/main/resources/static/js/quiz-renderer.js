@@ -18,7 +18,7 @@ export function renderMultipleChoiceQuestion(
     progress.textContent =
         `Question ${currentIndex + 1} / ${totalQuestions}`;
 
-    questionText.textContent =
+    questionText.innerHTML =
         question.text;
 
     optionsContainer.innerHTML = "";
@@ -52,7 +52,7 @@ export function renderMultipleChoiceQuestion(
                 "false"
             );
 
-            button.textContent =
+            button.innerHTML =
                 `${key}. ${text}`;
 
             button.addEventListener(
@@ -65,6 +65,7 @@ export function renderMultipleChoiceQuestion(
             );
         });
 }
+
 
 export function renderFillInTheBlankQuestion(
     question,
@@ -86,7 +87,7 @@ export function renderFillInTheBlankQuestion(
     progress.textContent =
         `Question ${currentIndex + 1} / ${totalQuestions}`;
 
-    questionText.textContent =
+    questionText.innerHTML =
         question.text;
 
     optionsContainer.innerHTML = "";
@@ -141,6 +142,7 @@ export function renderFillInTheBlankQuestion(
     input.focus();
 }
 
+
 export function renderTrueFalseQuestion(
     question,
     currentIndex,
@@ -161,7 +163,7 @@ export function renderTrueFalseQuestion(
     progress.textContent =
         `Question ${currentIndex + 1} / ${totalQuestions}`;
 
-    questionText.textContent =
+    questionText.innerHTML =
         question.text;
 
     optionsContainer.innerHTML = "";
@@ -461,7 +463,7 @@ export function renderCompletion(
             "quiz-result-question"
         );
 
-        questionTextElement.textContent =
+        questionTextElement.innerHTML =
             getQuestionDisplayText(
                 question
             );
@@ -549,7 +551,7 @@ export function renderCompletion(
                     selectedAnswer
                 );
 
-            selectedAnswerElement.textContent =
+            selectedAnswerElement.innerHTML =
                 `Your answer: ${selectedText}`;
         }
 
@@ -572,7 +574,7 @@ export function renderCompletion(
 
         if (correctText) {
 
-            correctAnswerElement.textContent =
+            correctAnswerElement.innerHTML =
                 `Correct answer: ${correctText}`;
 
             container.appendChild(
