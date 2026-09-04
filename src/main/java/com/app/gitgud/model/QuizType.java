@@ -3,8 +3,6 @@ package com.app.gitgud.model;
 public enum QuizType {
 
     INTRODUCTORY("introductory"),
-    PRACTICE("practice"),
-    FINAL("final"),
     REVIEW("review");
 
     private final String value;
