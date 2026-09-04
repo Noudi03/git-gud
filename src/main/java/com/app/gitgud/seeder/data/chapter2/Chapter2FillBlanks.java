@@ -35,14 +35,14 @@ public class Chapter2FillBlanks {
                 build("fb1",
                         "A branch is a ___ to a commit, not a copy of your project files.",
                         "pointer", "beginner",
-                        "Think about what Git actually creates when you branch.",
-                        "Creating a branch is fast because Git only creates this lightweight reference."
+                        "Think about what `Git` actually creates when you branch.",
+                        "Creating a branch is fast because `Git` only creates this lightweight reference."
                 ),
 
                 build("fb2",
                         "To create a new branch named `feature`, you run `git branch ___`.",
                         "feature", "beginner",
-                        "Think about what argument the branch command takes.",
+                        "Think about what argument the `branch` command takes.",
                         "You simply pass the name of the branch you want to create."
                 ),
 
@@ -65,7 +65,7 @@ public class Chapter2FillBlanks {
                 build("fb1",
                         "To switch to an existing branch called `main`, you run `git switch ___`.",
                         "main", "beginner",
-                        "Think about what argument switch takes.",
+                        "Think about what argument `switch` takes.",
                         "You pass the name of the branch you want to move to."
                 ),
 
@@ -79,7 +79,7 @@ public class Chapter2FillBlanks {
                 build("fb3",
                         "`git switch` was introduced as a clearer alternative to `git ___`, which performed too many unrelated actions.",
                         "checkout", "advanced",
-                        "Think about the older command that handled branching, file restoring, and detaching HEAD.",
+                        "Think about the older command that handled branching, file restoring, and detaching `HEAD`.",
                         "This command still works but is considered confusing due to its multiple responsibilities."
                 )
         );
@@ -95,7 +95,7 @@ public class Chapter2FillBlanks {
                 build("fb1",
                         "To merge a branch named `feature` into your current branch, you run `git merge ___`.",
                         "feature", "beginner",
-                        "Think about what argument merge takes.",
+                        "Think about what argument `merge` takes.",
                         "You pass the name of the branch whose changes you want to bring in."
                 ),
 
@@ -103,11 +103,11 @@ public class Chapter2FillBlanks {
                         "To delete a branch after merging, you run `git branch ___ feature`.",
                         "-d", "intermediate",
                         "Think about the flag that stands for delete.",
-                        "It is a single letter flag."
+                        "It is a single-letter flag."
                 ),
 
                 build("fb3",
-                        "A ___ merge happens when the target branch has not moved since the feature branch was created, allowing Git to simply move the pointer forward.",
+                        "A ___ merge happens when the target branch has not moved since the feature branch was created, allowing `Git` to simply move the pointer forward.",
                         "fast-forward", "advanced",
                         "Think about the merge strategy that produces no merge commit.",
                         "The name describes how the pointer jumps ahead without needing a new commit."
@@ -126,21 +126,21 @@ public class Chapter2FillBlanks {
                         "In conflict markers, the `=======` line separates your branch's version from the ___ branch's version.",
                         "incoming", "beginner",
                         "Think about what is above and below the divider.",
-                        "Above is your version (HEAD), below is the version coming in from the other branch."
+                        "Above is your version (`HEAD`), below is the version coming in from the other branch."
                 ),
 
                 build("fb2",
                         "The correct order to resolve a merge conflict is: edit the file, then `git ___`, then `git commit`.",
                         "add", "intermediate",
-                        "Think about the standard Git workflow after editing a file.",
-                        "You must stage the resolved file before Git knows the conflict is fixed."
+                        "Think about the standard `Git` workflow after editing a file.",
+                        "You must stage the resolved file before `Git` knows the conflict is fixed."
                 ),
 
                 build("fb3",
                         "To cancel a merge in progress and return to the previous state, you run `git merge ___`.",
                         "--abort", "advanced",
-                        "Think about the flag that stops any ongoing Git operation.",
-                        "This flag tells Git to give up on the merge entirely."
+                        "Think about the flag that stops any ongoing `Git` operation.",
+                        "This flag tells `Git` to give up on the merge entirely."
                 )
         );
     }
@@ -170,7 +170,7 @@ public class Chapter2FillBlanks {
                         "To interactively edit the last 3 commits, you run `git rebase -i ___`.",
                         "HEAD~3", "advanced",
                         "Think about how to reference the last 3 commits relative to the current position.",
-                        "The ~ symbol followed by a number steps back that many commits from HEAD."
+                        "The `~` symbol followed by a number steps back that many commits from `HEAD`."
                 )
         );
     }
@@ -213,7 +213,7 @@ public class Chapter2FillBlanks {
         return Arrays.asList(
 
                 build("fb1",
-                        "Tags are commonly used to mark ___ versions of a project, such as v1.0.",
+                        "Tags are commonly used to mark ___ versions of a project, such as `v1.0`.",
                         "release", "beginner",
                         "Think about when developers create tags in a project's lifecycle.",
                         "A tag typically marks a stable, published version of the software."
@@ -229,8 +229,8 @@ public class Chapter2FillBlanks {
                 build("fb3",
                         "To push all local tags to a remote, you run `git push origin ___`.",
                         "--tags", "advanced",
-                        "Think about the flag that tells Git to include tags in the push.",
-                        "Without this flag, git push ignores tags entirely."
+                        "Think about the flag that tells `Git` to include tags in the push.",
+                        "Without this flag, `git push` ignores tags entirely."
                 )
         );
     }

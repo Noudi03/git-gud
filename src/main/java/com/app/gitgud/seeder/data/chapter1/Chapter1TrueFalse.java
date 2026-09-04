@@ -33,17 +33,17 @@ public class Chapter1TrueFalse {
         return Arrays.asList(
 
                 build("tf1",
-                        "Git is a version control system that tracks changes in your files over time.",
+                        "`Git` is a version control system that tracks changes in your files over time.",
                         true, "beginner",
                         "Think about what 'version control' means.",
-                        "That is exactly the core purpose of Git."
+                        "That is exactly the core purpose of `Git`."
                 ),
 
                 build("tf2",
-                        "Git requires a constant internet connection to save your work.",
+                        "`Git` requires a constant internet connection to save your work.",
                         false, "intermediate",
-                        "Think about whether Git is centralized or distributed.",
-                        "Git is distributed, you can commit, branch, and view history entirely offline."
+                        "Think about whether `Git` is centralized or distributed.",
+                        "`Git` is distributed, you can commit, branch, and view history entirely offline."
                 ),
 
                 build("tf3",
@@ -63,17 +63,17 @@ public class Chapter1TrueFalse {
         return Arrays.asList(
 
                 build("tf1",
-                        "Git attaches your name and email to every commit you make.",
+                        "`Git` attaches your name and email to every commit you make.",
                         true, "beginner",
                         "Think about why identity matters when collaborating.",
-                        "Git records author metadata on each commit so collaborators know who made each change."
+                        "`Git` records author metadata on each commit so collaborators know who made each change."
                 ),
 
                 build("tf2",
-                        "The --global flag applies your Git configuration only to the current project.",
+                        "The `--global` flag applies your `Git` configuration only to the current project.",
                         false, "intermediate",
                         "Think about what 'global' means versus 'local'.",
-                        "--global applies to all projects for your user on the machine; --local is project-specific."
+                        "`--global` applies to all projects for your user on the machine; `--local` is project-specific."
                 ),
 
                 build("tf3",
@@ -95,22 +95,22 @@ public class Chapter1TrueFalse {
                 build("tf1",
                         "Running `git init` creates a hidden folder called `.git` inside your project.",
                         true, "beginner",
-                        "Think about what Git needs to store its history.",
-                        "The `.git` folder is Git's internal database for the repository."
+                        "Think about what `Git` needs to store its history.",
+                        "The `.git` folder is `Git`'s internal database for the repository."
                 ),
 
                 build("tf2",
                         "Deleting the `.git` folder also deletes your project files.",
                         false, "intermediate",
                         "Think about what `.git` contains versus your working files.",
-                        "Deleting `.git` removes Git tracking and history, but your actual project files remain intact."
+                        "Deleting `.git` removes `Git` tracking and history, but your actual project files remain intact."
                 ),
 
                 build("tf3",
-                        "The HEAD file inside `.git` points to the current branch or commit.",
+                        "The `HEAD` file inside `.git` points to the current branch or commit.",
                         true, "advanced",
-                        "Think about what HEAD is used for during navigation.",
-                        "HEAD tells Git where you currently are in the repository history."
+                        "Think about what `HEAD` is used for during navigation.",
+                        "`HEAD` tells `Git` where you currently are in the repository history."
                 )
         );
     }
@@ -123,24 +123,24 @@ public class Chapter1TrueFalse {
         return Arrays.asList(
 
                 build("tf1",
-                        "`git add` permanently saves your changes into Git's history.",
+                        "`git add` permanently saves your changes into `Git`'s history.",
                         false, "beginner",
-                        "Think about the step that comes after git add.",
-                        "git add only moves files to the staging area. A commit is required to save them permanently."
+                        "Think about the step that comes after `git add`.",
+                        "`git add` only moves files to the staging area. A commit is required to save them permanently."
                 ),
 
                 build("tf2",
                         "If you modify a file after running `git add` but before committing, the commit will contain the version that was staged, not the latest version.",
                         true, "intermediate",
                         "Think about when the snapshot is taken.",
-                        "git add captures the file at that exact moment. Later edits are not included unless you run git add again."
+                        "`git add` captures the file at that exact moment. Later edits are not included unless you run `git add` again."
                 ),
 
                 build("tf3",
                         "`git add -p` lets you stage specific parts of a file rather than the whole file.",
                         true, "advanced",
-                        "Think about what the -p flag stands for.",
-                        "The -p (patch) flag opens an interactive mode where you can choose which hunks to stage."
+                        "Think about what the `-p` flag stands for.",
+                        "The `-p` (patch) flag opens an interactive mode where you can choose which hunks to stage."
                 )
         );
     }
@@ -155,22 +155,22 @@ public class Chapter1TrueFalse {
                 build("tf1",
                         "`git commit` uploads your changes to GitHub.",
                         false, "beginner",
-                        "Think about what git commit does versus git push.",
-                        "git commit saves changes locally into Git's history. git push is what sends them to a remote."
+                        "Think about what `git commit` does versus `git push`.",
+                        "`git commit` saves changes locally into `Git`'s history. `git push` is what sends them to a remote."
                 ),
 
                 build("tf2",
                         "`git commit --amend` can be safely used on commits that have already been pushed to a shared repository.",
                         false, "intermediate",
-                        "Think about what amend does to the commit.",
+                        "Think about what `amend` does to the commit.",
                         "Amending rewrites the commit and its hash. This causes problems for teammates who already have the original."
                 ),
 
                 build("tf3",
-                        "Every commit in Git is identified by a unique SHA-1 hash.",
+                        "Every commit in `Git` is identified by a unique SHA-1 hash.",
                         true, "advanced",
-                        "Think about how Git uniquely identifies each snapshot.",
-                        "Git generates a 40-character hexadecimal SHA-1 hash for every commit."
+                        "Think about how `Git` uniquely identifies each snapshot.",
+                        "`Git` generates a 40-character hexadecimal SHA-1 hash for every commit."
                 )
         );
     }
@@ -186,21 +186,21 @@ public class Chapter1TrueFalse {
                         "`git log` shows the current status of your working directory.",
                         false, "beginner",
                         "Think about the difference between history and current state.",
-                        "git log shows the commit history. git status shows the current state of your working directory."
+                        "`git log` shows the commit history. `git status` shows the current state of your working directory."
                 ),
 
                 build("tf2",
                         "In `git diff` output, lines starting with `+` represent additions and lines starting with `-` represent deletions.",
                         true, "intermediate",
-                        "Think about the mathematical meaning of + and -.",
-                        "This is the unified diff format: + for added lines, - for removed lines."
+                        "Think about the mathematical meaning of `+` and `-`.",
+                        "This is the unified diff format: `+` for added lines, `-` for removed lines."
                 ),
 
                 build("tf3",
                         "`git diff --staged` shows changes that have not yet been staged.",
                         false, "advanced",
-                        "Think about what --staged refers to.",
-                        "--staged (or --cached) shows changes already in the staging area, not unstaged ones."
+                        "Think about what `--staged` refers to.",
+                        "`--staged` (or `--cached`) shows changes already in the staging area, not unstaged ones."
                 )
         );
     }
@@ -213,24 +213,24 @@ public class Chapter1TrueFalse {
         return Arrays.asList(
 
                 build("tf1",
-                        "Adding a file to `.gitignore` automatically removes it from Git tracking if it was already committed.",
+                        "Adding a file to `.gitignore` automatically removes it from `Git` tracking if it was already committed.",
                         false, "beginner",
-                        "Think about what happens to files already tracked by Git.",
-                        "Git continues tracking already-committed files. You must run `git rm --cached` to untrack them first."
+                        "Think about what happens to files already tracked by `Git`.",
+                        "`Git` continues tracking already-committed files. You must run `git rm --cached` to untrack them first."
                 ),
 
                 build("tf2",
                         "The pattern `*.log` in a `.gitignore` file ignores all files with a `.log` extension.",
                         true, "intermediate",
-                        "Think about what the * wildcard matches.",
-                        "* matches any sequence of characters, so *.log catches any filename ending in .log."
+                        "Think about what the `*` wildcard matches.",
+                        "`*` matches any sequence of characters, so `*.log` catches any filename ending in `.log`."
                 ),
 
                 build("tf3",
                         "You can use `git add -f` to force-stage a file that is listed in `.gitignore`.",
                         true, "advanced",
-                        "Think about what the -f flag stands for.",
-                        "The --force (-f) flag tells Git to stage the file even though it matches an ignore rule."
+                        "Think about what the `-f` flag stands for.",
+                        "The `--force` (`-f`) flag tells `Git` to stage the file even though it matches an ignore rule."
                 )
         );
     }
