@@ -715,8 +715,8 @@ export class QuizSession {
                         questionId:
                         question.id,
 
-                        correct:
-                            attempt?.correct ?? false,
+                        selectedAnswer:
+                            attempt?.selectedAnswer ?? null,
 
                         timeSpentMillis:
                             attempt?.timeSpentMillis ?? 0,

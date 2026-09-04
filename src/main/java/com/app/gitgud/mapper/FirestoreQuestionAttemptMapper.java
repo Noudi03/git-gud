@@ -13,7 +13,6 @@ public class FirestoreQuestionAttemptMapper {
     public Map<String, Object> toData(
             QuestionAttempt attempt
     ) {
-
         Map<String, Object> data =
                 new HashMap<>();
 
@@ -48,7 +47,6 @@ public class FirestoreQuestionAttemptMapper {
     public QuestionAttempt toModel(
             DocumentSnapshot document
     ) {
-
         if (!document.exists()) {
             return null;
         }
@@ -57,19 +55,13 @@ public class FirestoreQuestionAttemptMapper {
                 document.getString("questionId");
 
         Long timeSpentMillis =
-                document.getLong(
-                        "timeSpentMillis"
-                );
+                document.getLong("timeSpentMillis");
 
         Long hintsUsed =
-                document.getLong(
-                        "hintsUsed"
-                );
+                document.getLong("hintsUsed");
 
         Long skipCount =
-                document.getLong(
-                        "skipCount"
-                );
+                document.getLong("skipCount");
 
         return new QuestionAttempt(
                 document.getId(),

@@ -9,13 +9,13 @@ public class QuestionAttemptMapper {
 
     public QuestionAttempt toModel(
             String id,
-            QuestionAttemptRequestDto request
+            QuestionAttemptRequestDto request,
+            boolean correct
     ) {
-
         return new QuestionAttempt(
                 id,
                 request.getQuestionId(),
-                request.isCorrect(),
+                correct,
                 request.getTimeSpentMillis(),
                 request.getHintsUsed(),
                 request.getSkipCount()

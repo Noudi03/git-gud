@@ -3,7 +3,7 @@ package com.app.gitgud.model.dto;
 public class QuestionAttemptRequestDto {
 
     private String questionId;
-    private boolean correct;
+    private Object selectedAnswer;
     private long timeSpentMillis;
     private int hintsUsed;
     private int skipCount;
@@ -21,14 +21,14 @@ public class QuestionAttemptRequestDto {
         this.questionId = questionId;
     }
 
-    public boolean isCorrect() {
-        return correct;
+    public Object getSelectedAnswer() {
+        return selectedAnswer;
     }
 
-    public void setCorrect(
-            boolean correct
+    public void setSelectedAnswer(
+            Object selectedAnswer
     ) {
-        this.correct = correct;
+        this.selectedAnswer = selectedAnswer;
     }
 
     public long getTimeSpentMillis() {

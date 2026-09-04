@@ -10,9 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(
-        "/api/quiz-attempts/{attemptId}/question-attempts"
-)
+@RequestMapping("/api/quiz-attempts/{attemptId}/question-attempts")
 public class QuestionAttemptController {
 
     private final QuestionAttemptService questionAttemptService;
@@ -22,7 +20,6 @@ public class QuestionAttemptController {
             QuestionAttemptService questionAttemptService,
             CurrentUserService currentUserService
     ) {
-
         this.questionAttemptService =
                 questionAttemptService;
 
@@ -35,7 +32,6 @@ public class QuestionAttemptController {
             @PathVariable String attemptId,
             @RequestBody QuestionAttemptRequestDto request
     ) {
-
         String userId =
                 currentUserService.getUserId();
 
@@ -53,9 +49,7 @@ public class QuestionAttemptController {
                     request
             );
 
-            return ResponseEntity
-                    .ok()
-                    .build();
+            return ResponseEntity.ok().build();
 
         } catch (IllegalArgumentException e) {
 
@@ -77,7 +71,6 @@ public class QuestionAttemptController {
     public ResponseEntity<?> getQuestionAttempts(
             @PathVariable String attemptId
     ) {
-
         String userId =
                 currentUserService.getUserId();
 
@@ -115,7 +108,6 @@ public class QuestionAttemptController {
             @PathVariable String attemptId,
             @PathVariable String questionId
     ) {
-
         String userId =
                 currentUserService.getUserId();
 

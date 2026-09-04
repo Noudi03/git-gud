@@ -17,7 +17,6 @@ public class QuestionAttempt {
             int hintsUsed,
             int skipCount
     ) {
-
         this.id = id;
         this.questionId = questionId;
         this.correct = correct;
