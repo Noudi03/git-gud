@@ -28,7 +28,7 @@ public class Chapter3Data implements ChapterData {
 
     @Override
     public Map<String, List<MultipleChoiceQuestion>> getQuestions() {
-        return Chapter3Questions.getQuestions();
+        return Chapter3MultipleChoice.getQuestions();
     }
 
     @Override

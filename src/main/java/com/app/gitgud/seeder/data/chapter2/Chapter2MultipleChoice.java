@@ -11,7 +11,7 @@ import java.util.Map;
 // The initial form of this file, more specifically the getQuestions() and sectionXX() parts, was generated using Claude LLM.
 // All the curriculum and questions were written by hand in the Obsidian notetaking app
 
-public class Chapter2Questions {
+public class Chapter2MultipleChoice {
 
     public static Map<String, List<MultipleChoiceQuestion>> getQuestions() {
         Map<String, List<MultipleChoiceQuestion>> map = new HashMap<>();
@@ -32,7 +32,7 @@ public class Chapter2Questions {
     private static List<MultipleChoiceQuestion> section21() {
         return Arrays.asList(
 
-                build("q1",
+                build("mc1",
                         "What is a branch?",
                         opts("A copy of the entire project on a different computer",
                                 "An independent line of development",
@@ -43,7 +43,7 @@ public class Chapter2Questions {
                         "A branch lets you work on a new feature without touching the main code."
                 ),
 
-                build("q2",
+                build("mc2",
                         "What is the default branch git creates called?",
                         opts("master or main",
                                 "root",
@@ -54,7 +54,7 @@ public class Chapter2Questions {
                         "Git gives 2 possible names for that branch."
                 ),
 
-                build("q3",
+                build("mc3",
                         "In technical terms, what is a branch in git?",
                         opts("A full copy of the repository",
                                 "A pointer to a commit",
@@ -74,7 +74,7 @@ public class Chapter2Questions {
     private static List<MultipleChoiceQuestion> section22() {
         return Arrays.asList(
 
-                build("q1",
+                build("mc1",
                         "What does `git switch main` do?",
                         opts("Moves you to the main branch",
                                 "Creates a branch named main",
@@ -85,7 +85,7 @@ public class Chapter2Questions {
                         "Your files update to reflect the state of the branch you switch to."
                 ),
 
-                build("q2",
+                build("mc2",
                         "Which command creates a new branch and switches to it?",
                         opts("git branch -c feature",
                                 "git switch --branch feature",
@@ -96,7 +96,7 @@ public class Chapter2Questions {
                         "The flag stands for create."
                 ),
 
-                build("q3",
+                build("mc3",
                         "What happens to your files when you switch branches?",
                         opts("They are deleted and redownloaded",
                                 "Nothing changes until you commit a change",
@@ -107,7 +107,7 @@ public class Chapter2Questions {
                         "Each branch holds its own version of the project."
                 ),
 
-                build("q4",
+                build("mc4",
                         "Why was `git switch` introduced as a replacement for `git checkout`?",
                         opts("Because git checkout was too slow",
                                 "Because git checkout required an internet connection",
@@ -127,7 +127,7 @@ public class Chapter2Questions {
     private static List<MultipleChoiceQuestion> section23() {
         return Arrays.asList(
 
-                build("q1",
+                build("mc1",
                         "What does `git merge feature` do when run from main?",
                         opts("Deletes the feature branch",
                                 "Brings the changes from feature to main",
@@ -138,7 +138,7 @@ public class Chapter2Questions {
                         "The branch you run it from is the one that receives the changes."
                 ),
 
-                build("q2",
+                build("mc2",
                         "Which command deletes a branch after merging?",
                         opts("git branch --remove feature",
                                 "git delete feature",
@@ -149,7 +149,7 @@ public class Chapter2Questions {
                         "The flag stands for delete."
                 ),
 
-                build("q3",
+                build("mc3",
                         "After merging a feature branch into main, what happens to the feature branch?",
                         opts("It is automatically deleted",
                                 "It still exists until you manually delete it",
@@ -160,7 +160,7 @@ public class Chapter2Questions {
                         "You need a separate command to delete a branch."
                 ),
 
-                build("q4",
+                build("mc4",
                         "What is a fast-forward merge?",
                         opts("A merge that skips conflict resolution automatically",
                                 "A merge where git moves the pointer forward without creating a merge commit",
@@ -180,7 +180,7 @@ public class Chapter2Questions {
     private static List<MultipleChoiceQuestion> section24() {
         return Arrays.asList(
 
-                build("q1",
+                build("mc1",
                         "When does a merge conflict happen?",
                         opts("When trying to merge a branch that doesn't exist",
                                 "When two branches have a change at the same part of a file",
@@ -191,7 +191,7 @@ public class Chapter2Questions {
                         "If both branches changed different files, git can merge them automatically."
                 ),
 
-                build("q2",
+                build("mc2",
                         "In a conflict marker, what does the `=======` line separate?",
                         opts("The old and new version",
                                 "The file name from its content",
@@ -202,7 +202,7 @@ public class Chapter2Questions {
                         "The ======= is the dividing line between the two versions."
                 ),
 
-                build("q3",
+                build("mc3",
                         "What is the correct order for resolving a merge conflict?",
                         opts("commit -> add -> edit the file",
                                 "edit the file -> commit -> add",
@@ -213,7 +213,7 @@ public class Chapter2Questions {
                         "You need to stage the resolved file before git knows the conflict is fixed."
                 ),
 
-                build("q4",
+                build("mc4",
                         "Which command cancels a merge and returns to the state before it started?",
                         opts("git merge --abort",
                                 "git merge --cancel",
@@ -233,7 +233,7 @@ public class Chapter2Questions {
     private static List<MultipleChoiceQuestion> section25() {
         return Arrays.asList(
 
-                build("q1",
+                build("mc1",
                         "What does `git rebase main` do when run from a feature branch?",
                         opts("Merges main into feature creating a merge commit",
                                 "Moves the feature branch commits on top of the latest main commit",
@@ -244,7 +244,7 @@ public class Chapter2Questions {
                         "The result is a linear history."
                 ),
 
-                build("q2",
+                build("mc2",
                         "Why should you never rebase commits that have been pushed to a shared repository?",
                         opts("Because rebase only works on local branches",
                                 "Because rebase deletes the original commits permanently",
@@ -255,7 +255,7 @@ public class Chapter2Questions {
                         "If you rewrite history that others have already pulled, their history no longer matches yours."
                 ),
 
-                build("q3",
+                build("mc3",
                         "What does `git rebase -i HEAD~2` do?",
                         opts("Interactively edit, squash or drop the last 2 commits",
                                 "Undo the last 2 commits permanently",
@@ -275,7 +275,7 @@ public class Chapter2Questions {
     private static List<MultipleChoiceQuestion> section26() {
         return Arrays.asList(
 
-                build("q1",
+                build("mc1",
                         "What does `git stash` do?",
                         opts("Permanently deletes your uncommitted changes",
                                 "Commits your changes with an automatic message",
@@ -286,7 +286,7 @@ public class Chapter2Questions {
                         "Your working directory becomes clean after stashing, as if you hadn't made any changes."
                 ),
 
-                build("q2",
+                build("mc2",
                         "Which command restores the most recently stashed changes?",
                         opts("git stash restore",
                                 "git stash apply",
@@ -297,7 +297,7 @@ public class Chapter2Questions {
                         "Pop removes the stash from the list after restoring it."
                 ),
 
-                build("q3",
+                build("mc3",
                         "When would you use `git stash`?",
                         opts("When you want to permanently delete work in progress",
                                 "When you want to commit without writing a message",
@@ -308,7 +308,7 @@ public class Chapter2Questions {
                         "What if you wanted to check out someone else's work on the main branch?"
                 ),
 
-                build("q4",
+                build("mc4",
                         "Which command stashes changes including untracked files?",
                         opts("git stash -u",
                                 "git stash --all",
@@ -328,7 +328,7 @@ public class Chapter2Questions {
     private static List<MultipleChoiceQuestion> section27() {
         return Arrays.asList(
 
-                build("q1",
+                build("mc1",
                         "What is a git tag used for?",
                         opts("To mark a specific commit as important, usually a release version",
                                 "To add a comment to a file",
@@ -339,7 +339,7 @@ public class Chapter2Questions {
                         "Tags are permanent markers on a specific point in history."
                 ),
 
-                build("q2",
+                build("mc2",
                         "What is the key difference between a tag and a branch?",
                         opts("Tags can only be created on the main branch",
                                 "Tags are deleted after merging",
@@ -350,7 +350,7 @@ public class Chapter2Questions {
                         "A tag always points to the same commit, forever."
                 ),
 
-                build("q3",
+                build("mc3",
                         "What is the difference between a lightweight and an annotated tag?",
                         opts("Lightweight tags can be pushed, annotated tags cannot",
                                 "Lightweight tags move with new commits, annotated tags do not",
@@ -361,7 +361,7 @@ public class Chapter2Questions {
                         "For official releases, annotated tags are recommended because they carry metadata."
                 ),
 
-                build("q4",
+                build("mc4",
                         "Why do you need a special command to push tags to a remote?",
                         opts("Because tags require approval from the repository owner",
                                 "Because tags are not included in a regular git push",

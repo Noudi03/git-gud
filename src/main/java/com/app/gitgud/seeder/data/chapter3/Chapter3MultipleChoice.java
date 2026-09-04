@@ -11,7 +11,7 @@ import java.util.Map;
 // The initial form of this file, more specifically the getQuestions() and sectionXX() parts, was generated using Claude LLM.
 // All the curriculum and questions were written by hand in the Obsidian notetaking app
 
-public class Chapter3Questions {
+public class Chapter3MultipleChoice {
 
     public static Map<String, List<MultipleChoiceQuestion>> getQuestions() {
         Map<String, List<MultipleChoiceQuestion>> map = new HashMap<>();
@@ -30,7 +30,7 @@ public class Chapter3Questions {
     private static List<MultipleChoiceQuestion> section31() {
         return Arrays.asList(
 
-                build("q1",
+                build("mc1",
                         "What is a remote repository?",
                         opts("A copy of the entire project on a different computer",
                                 "A branch that exists locally only",
@@ -41,7 +41,7 @@ public class Chapter3Questions {
                         "It is hosted somewhere other than your local computer and allows you to share and collaborate."
                 ),
 
-                build("q2",
+                build("mc2",
                         "What does `git clone` do?",
                         opts("Downloads a remote repository to your computer",
                                 "Creates a new empty repository",
@@ -52,7 +52,7 @@ public class Chapter3Questions {
                         "After cloning, you have a full local copy of the repository, including its history."
                 ),
 
-                build("q3",
+                build("mc3",
                         "What is origin?",
                         opts("The default name of the remote connection",
                                 "The first commit in a repository",
@@ -63,7 +63,7 @@ public class Chapter3Questions {
                         "It is a convention, not a rule. You can rename the remote to something else."
                 ),
 
-                build("q4",
+                build("mc4",
                         "Why would you add a second remote called upstream?",
                         opts("To connect to the original repository when working on a fork",
                                 "To create a backup of your remote",
@@ -83,7 +83,7 @@ public class Chapter3Questions {
     private static List<MultipleChoiceQuestion> section32() {
         return Arrays.asList(
 
-                build("q1",
+                build("mc1",
                         "What does `git push origin main` do?",
                         opts("Downloads the latest changes from the remote",
                                 "Creates a new branch on the remote called main",
@@ -94,7 +94,7 @@ public class Chapter3Questions {
                         "Your local commits become available to others after pushing."
                 ),
 
-                build("q2",
+                build("mc2",
                         "What does `git pull` do?",
                         opts("Downloads changes and merges them into your local branch",
                                 "Creates a new empty repository",
@@ -105,7 +105,7 @@ public class Chapter3Questions {
                         "After pulling, your local branch incorporates the latest changes from the remote."
                 ),
 
-                build("q3",
+                build("mc3",
                         "What is the difference between `git push` and `git pull`?",
                         opts("Push is for branches, pull is for files",
                                 "Push works offline, pull requires internet connectivity",
@@ -116,7 +116,7 @@ public class Chapter3Questions {
                         "One sends your commits to the remote, while the other retrieves changes from the remote."
                 ),
 
-                build("q4",
+                build("mc4",
                         "What does `git push --force` do and why is it dangerous?",
                         opts("It overwrites the remote history, and teammates can lose their work",
                                 "It bypasses authentication, exposing credentials",
@@ -127,7 +127,7 @@ public class Chapter3Questions {
                         "It can overwrite commits that other developers have already pushed, potentially causing them to lose work."
                 ),
 
-                build("q5",
+                build("mc5",
                         "`git pull` is effectively two commands in one. After `git fetch origin`, what command merges the changes?",
                         opts("git merge origin/main",
                                 "git merge origin main",
@@ -147,7 +147,7 @@ public class Chapter3Questions {
     private static List<MultipleChoiceQuestion> section33() {
         return Arrays.asList(
 
-                build("q1",
+                build("mc1",
                         "What does `git fetch` do differently from `git pull`?",
                         opts("Fetch is faster than pull, but they do the exact same thing",
                                 "Fetch downloads changes but does not merge them",
@@ -158,7 +158,7 @@ public class Chapter3Questions {
                         "After fetching, your local branch remains unchanged until you merge the changes manually."
                 ),
 
-                build("q2",
+                build("mc2",
                         "Why is `git fetch` considered safer than `git pull`?",
                         opts("Because it never modifies your local branch",
                                 "Because it requires authentication",
@@ -169,7 +169,7 @@ public class Chapter3Questions {
                         "Fetch lets you review the downloaded changes before integrating them into your local branch."
                 ),
 
-                build("q3",
+                build("mc3",
                         "After running `git fetch origin`, how do you see the downloaded commits?",
                         opts("`git log origin/main`",
                                 "`git show fetch`",
@@ -189,7 +189,7 @@ public class Chapter3Questions {
     private static List<MultipleChoiceQuestion> section34() {
         return Arrays.asList(
 
-                build("q1",
+                build("mc1",
                         "What does `git revert HEAD` do?",
                         opts("Creates a new commit that undoes the most recent commit",
                                 "Deletes the most recent commit permanently",
@@ -200,7 +200,7 @@ public class Chapter3Questions {
                         "It creates a new commit whose changes undo the changes introduced by the most recent commit."
                 ),
 
-                build("q2",
+                build("mc2",
                         "What does `git revert` produce?",
                         opts("A deleted commit",
                                 "A modified version of the previous commit",
@@ -211,7 +211,7 @@ public class Chapter3Questions {
                         "The history shows both the original commit and the new revert commit."
                 ),
 
-                build("q3",
+                build("mc3",
                         "What does `git revert HEAD~2..HEAD` do?",
                         opts("Reverts the last 2 commits",
                                 "Reverts the last 3 commits",
@@ -231,7 +231,7 @@ public class Chapter3Questions {
     private static List<MultipleChoiceQuestion> section35() {
         return Arrays.asList(
 
-                build("q1",
+                build("mc1",
                         "What does `git reset --hard HEAD~1` do?",
                         opts("Moves the branch back one commit and discards all changes permanently",
                                 "Moves the branch back one commit but does not discard changes",
@@ -242,7 +242,7 @@ public class Chapter3Questions {
                         "Your changes are discarded after running it."
                 ),
 
-                build("q2",
+                build("mc2",
                         "What does `git reset --soft HEAD~1` do differently from `--hard`?",
                         opts("It keeps your changes staged instead of discarding them",
                                 "It keeps your changes in the working directory but unstaged",
@@ -253,7 +253,7 @@ public class Chapter3Questions {
                         "Your changes are still there after running it, ready to be recommitted."
                 ),
 
-                build("q3",
+                build("mc3",
                         "When should you avoid using `git reset` on a shared repository?",
                         opts("Never, it is always safe",
                                 "Only when using `--hard`",
@@ -264,7 +264,7 @@ public class Chapter3Questions {
                         "You should generally use `git revert` instead when undoing changes that are already shared."
                 ),
 
-                build("q4",
+                build("mc4",
                         "Why is `git revert` safer than `git reset`?",
                         opts("Because revert is faster",
                                 "Because revert creates a backup",
@@ -275,7 +275,7 @@ public class Chapter3Questions {
                         "If you rewrite history that others already have, their copies no longer match yours."
                 ),
 
-                build("q5",
+                build("mc5",
                         "When should you use `git revert` instead of `git reset`?",
                         opts("When you want to permanently delete a commit",
                                 "When the commit has already been pushed to a shared repository",
@@ -286,7 +286,7 @@ public class Chapter3Questions {
                         "If others have the commit, rewriting history can cause problems for their copies of the repository."
                 ),
 
-                build("q6",
+                build("mc6",
                         "What does `git reset --mixed HEAD~1` do?",
                         opts("Discards all changes permanently",
                                 "Undoes the commit and unstages changes but keeps them in the working directory",
