@@ -57,7 +57,7 @@ document.addEventListener(
 
         const startButtons =
             document.querySelectorAll(
-                ".quiz-start-button"
+                "[data-quiz-url]"
             );
 
 
