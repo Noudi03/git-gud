@@ -12,7 +12,6 @@ public class QuizAccessService {
 
     private final CurriculumAccessService curriculumAccessService;
 
-
     public QuizAccessService(
             CurriculumAccessService curriculumAccessService
     ) {
@@ -20,7 +19,6 @@ public class QuizAccessService {
         this.curriculumAccessService =
                 curriculumAccessService;
     }
-
 
     public void validateCanStartQuiz(
             String userId,
@@ -43,14 +41,15 @@ public class QuizAccessService {
             );
 
             if (
-                    !curriculumAccessService.isSectionUnlocked(
-                            userId,
-                            sectionContext.getChapterId(),
-                            sectionContext.getSectionId()
-                    )
+                    !curriculumAccessService
+                            .isSectionUnlocked(
+                                    userId,
+                                    sectionContext.getChapterId(),
+                                    sectionContext.getSectionId()
+                            )
             ) {
-                throw new IllegalStateException(
-                        "Section is locked"
+                throw new CurriculumAccessDeniedException(
+                        "Section quiz is locked"
                 );
             }
 
@@ -67,12 +66,13 @@ public class QuizAccessService {
             );
 
             if (
-                    !curriculumAccessService.isChapterQuizUnlocked(
-                            userId,
-                            chapterContext.getChapterId()
-                    )
+                    !curriculumAccessService
+                            .isChapterQuizUnlocked(
+                                    userId,
+                                    chapterContext.getChapterId()
+                            )
             ) {
-                throw new IllegalStateException(
+                throw new CurriculumAccessDeniedException(
                         "Chapter quiz is locked"
                 );
             }
@@ -97,7 +97,7 @@ public class QuizAccessService {
                                         quiz
                                 )
                 ) {
-                    throw new IllegalStateException(
+                    throw new CurriculumAccessDeniedException(
                             "Introductory quiz has already been attempted"
                     );
                 }
@@ -116,7 +116,7 @@ public class QuizAccessService {
                                         userId
                                 )
                 ) {
-                    throw new IllegalStateException(
+                    throw new CurriculumAccessDeniedException(
                             "Review quizzes are locked"
                     );
                 }
@@ -133,7 +133,6 @@ public class QuizAccessService {
                 "Unsupported quiz context"
         );
     }
-
 
     private void validateCurriculumQuiz(
             Quiz quiz

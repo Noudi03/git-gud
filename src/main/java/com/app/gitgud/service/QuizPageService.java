@@ -18,12 +18,14 @@ public class QuizPageService {
     private final QuestionSelectionService questionSelectionService;
     private final QuizMapper quizMapper;
     private final QuestionMapper questionMapper;
+    private final QuizAccessService quizAccessService;
 
     public QuizPageService(
             QuizService quizService,
             QuestionSelectionService questionSelectionService,
             QuizMapper quizMapper,
-            QuestionMapper questionMapper
+            QuestionMapper questionMapper,
+            QuizAccessService quizAccessService
     ) {
 
         this.quizService =
@@ -37,6 +39,9 @@ public class QuizPageService {
 
         this.questionMapper =
                 questionMapper;
+
+        this.quizAccessService =
+                quizAccessService;
     }
 
     public QuizPageDto getSectionQuiz(
@@ -107,6 +112,11 @@ public class QuizPageService {
                     "User not found"
             );
         }
+
+        quizAccessService.validateCanStartQuiz(
+                user.getId(),
+                quiz
+        );
 
         List<Question> questions =
                 questionSelectionService.selectQuestions(

@@ -11,14 +11,63 @@
 
     <nav class="tutorial-navigation">
 
+        <!-- =========================
+             Introduction
+             ========================= -->
+
+        <div class="tutorial-introduction">
+
+            <div class="tutorial-introduction-title">
+                Introduction
+            </div>
+
+            <a
+                    th:if="${!page.introductoryQuizAttempted}"
+                    class="tutorial-introduction-link"
+                    th:href="@{/tutorials}"
+                    th:attr="data-quiz-url=@{/api/quizzes/{quizId}(
+                        quizId=${page.introductoryQuiz.id}
+                    )}">
+                <span>
+                    <span
+                            th:text="${page.introductoryQuiz.title}">
+                        Introductory Quiz
+                    </span>
+                </span>
+            </a>
+
+            <span
+                    th:if="${page.introductoryQuizAttempted}"
+                    class="tutorial-introduction-link locked">
+                <span
+                        th:text="${page.introductoryQuiz.title}">
+                    Introductory Quiz
+                </span>
+                <span class="tutorial-quiz-status">
+                    Completed
+                </span>
+            </span>
+
+        </div>
+
+
+        <!-- =========================
+             Chapters
+             ========================= -->
+
         <div
                 th:each="chapter : ${page.chapters}"
                 class="tutorial-chapter"
                 th:classappend="${page.chapter != null and page.chapter.id == chapter.id} ? ' expanded' : ''">
 
+            <!-- Chapter row -->
+
             <div class="tutorial-chapter-row">
 
+                <!-- Unlocked chapter content -->
+
                 <a
+                        th:if="${page.chapterContentUnlocked[chapter.id]}"
                         class="tutorial-chapter-link"
                         th:text="${chapter.title}"
                         th:href="@{/tutorials/{chapterId}(
@@ -27,6 +76,16 @@
                         th:classappend="${page.chapter != null and page.chapter.id == chapter.id} ? ' active' : ''">
                     Chapter title
                 </a>
+
+
+                <!-- Locked chapter content -->
+
+                <span
+                        th:if="${!page.chapterContentUnlocked[chapter.id]}"
+                        class="tutorial-chapter-link locked"
+                        th:text="${chapter.title}">
+                    Chapter title
+                </span>
 
 
                 <button
@@ -44,19 +103,67 @@
             </div>
 
 
+            <!-- =========================
+                 Chapter dropdown
+                 ========================= -->
+
             <div class="tutorial-sections">
 
+                <!-- Sections -->
+
+                <div
+                        th:each="section : ${page.sectionsByChapter[chapter.id]}">
+
+                    <!-- Unlocked section -->
+
+                    <a
+                            th:if="${page.sectionContentUnlocked[chapter.id][section.id]}"
+                            class="tutorial-section-link"
+                            th:text="${section.title}"
+                            th:href="@{/tutorials/{chapterId}/{sectionId}(
+                                chapterId=${chapter.id},
+                                sectionId=${section.id}
+                            )}"
+                            th:classappend="${page.section != null and page.section.id == section.id} ? ' active' : ''">
+                        Section title
+                    </a>
+
+
+                    <!-- Locked section -->
+
+                    <span
+                            th:if="${!page.sectionContentUnlocked[chapter.id][section.id]}"
+                            class="tutorial-section-link locked"
+                            th:text="${section.title}">
+                        Section title
+                    </span>
+
+                </div>
+
+
+                <!-- =========================
+                     Chapter final quiz
+                     ========================= -->
+
                 <a
-                        th:each="section : ${page.sectionsByChapter[chapter.id]}"
-                        class="tutorial-section-link"
-                        th:text="${section.title}"
-                        th:href="@{/tutorials/{chapterId}/{sectionId}(
+                        th:if="${page.chapterQuizUnlocked[chapter.id]}"
+                        class="tutorial-section-link tutorial-final-quiz-link"
+                        th:href="@{/tutorials}"
+                        th:attr="data-quiz-url=@{/api/quizzes/chapters/{chapterId}/{quizId}(
                             chapterId=${chapter.id},
-                            sectionId=${section.id}
+                            quizId=${page.chapterFinalQuizzes[chapter.id].id}
                         )}"
-                        th:classappend="${page.section != null and page.section.id == section.id} ? ' active' : ''">
-                    Section title
+                        th:text="${page.chapterFinalQuizzes[chapter.id].title}">
+                    Chapter Final Quiz
                 </a>
+
+
+                <span
+                        th:if="${!page.chapterQuizUnlocked[chapter.id]}"
+                        class="tutorial-section-link tutorial-final-quiz-link locked"
+                        th:text="${page.chapterFinalQuizzes[chapter.id].title}">
+                    Chapter Final Quiz
+                </span>
 
             </div>
 

@@ -11,6 +11,7 @@ import com.app.gitgud.repository.FirestoreChapterRepository;
 import com.app.gitgud.repository.FirestoreSectionRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -21,7 +22,6 @@ public class CurriculumAccessService {
     private final QuizService quizService;
     private final QuizAttemptService quizAttemptService;
     private final QuizResultService quizResultService;
-
 
     public CurriculumAccessService(
             FirestoreChapterRepository chapterRepository,
@@ -47,7 +47,6 @@ public class CurriculumAccessService {
                 quizResultService;
     }
 
-
     public boolean isSectionUnlocked(
             String userId,
             String chapterId,
@@ -55,7 +54,7 @@ public class CurriculumAccessService {
     ) throws Exception {
 
         List<Chapter> chapters =
-                chapterRepository.findChapters();
+                getOrderedChapters();
 
         Chapter chapter =
                 findChapter(
@@ -68,7 +67,7 @@ public class CurriculumAccessService {
         }
 
         List<Section> sections =
-                sectionRepository.findSections(
+                getOrderedSections(
                         chapterId
                 );
 
@@ -88,6 +87,10 @@ public class CurriculumAccessService {
         int sectionIndex =
                 sections.indexOf(section);
 
+        /*
+         * First section of first chapter:
+         * unlocked after passing the introductory quiz.
+         */
         if (
                 chapterIndex == 0
                         && sectionIndex == 0
@@ -98,6 +101,10 @@ public class CurriculumAccessService {
             );
         }
 
+        /*
+         * Every later section:
+         * unlocked after passing the previous section quiz.
+         */
         if (sectionIndex > 0) {
 
             Section previousSection =
@@ -112,6 +119,11 @@ public class CurriculumAccessService {
             );
         }
 
+        /*
+         * First section of a later chapter:
+         * unlocked after passing the previous chapter's
+         * final quiz.
+         */
         Chapter previousChapter =
                 chapters.get(
                         chapterIndex - 1
@@ -123,14 +135,20 @@ public class CurriculumAccessService {
         );
     }
 
-
+    /*
+     * This means the chapter is available in the curriculum
+     * progression sense.
+     *
+     * Chapter CONTENT should use isSectionUnlocked() for the
+     * chapter's first section instead.
+     */
     public boolean isChapterUnlocked(
             String userId,
             String chapterId
     ) throws Exception {
 
         List<Chapter> chapters =
-                chapterRepository.findChapters();
+                getOrderedChapters();
 
         Chapter chapter =
                 findChapter(
@@ -146,6 +164,7 @@ public class CurriculumAccessService {
                 chapters.indexOf(chapter);
 
         if (chapterIndex == 0) {
+
             return hasPassedIntroductoryQuiz(
                     userId
             );
@@ -162,7 +181,10 @@ public class CurriculumAccessService {
         );
     }
 
-
+    /*
+     * The chapter final quiz becomes available only after
+     * every section in that chapter has been passed.
+     */
     public boolean isChapterQuizUnlocked(
             String userId,
             String chapterId
@@ -178,9 +200,13 @@ public class CurriculumAccessService {
         }
 
         List<Section> sections =
-                sectionRepository.findSections(
+                getOrderedSections(
                         chapterId
                 );
+
+        if (sections.isEmpty()) {
+            return false;
+        }
 
         for (Section section : sections) {
 
@@ -198,13 +224,12 @@ public class CurriculumAccessService {
         return true;
     }
 
-
     public boolean isCurriculumComplete(
             String userId
     ) throws Exception {
 
         List<Chapter> chapters =
-                chapterRepository.findChapters();
+                getOrderedChapters();
 
         if (chapters.isEmpty()) {
             return true;
@@ -220,7 +245,6 @@ public class CurriculumAccessService {
                 lastChapter.getId()
         );
     }
-
 
     public boolean hasPassedQuiz(
             String userId,
@@ -270,11 +294,14 @@ public class CurriculumAccessService {
         return false;
     }
 
-
     public boolean hasAttemptForQuiz(
             String userId,
             Quiz quiz
     ) throws Exception {
+
+        if (quiz == null) {
+            return false;
+        }
 
         List<QuizAttempt> attempts =
                 quizAttemptService.getAttempts(
@@ -288,12 +315,15 @@ public class CurriculumAccessService {
                 );
     }
 
-
     public boolean hasPreviousAttemptForQuiz(
             String userId,
             Quiz quiz,
             String currentAttemptId
     ) throws Exception {
+
+        if (quiz == null) {
+            return false;
+        }
 
         List<QuizAttempt> attempts =
                 quizAttemptService.getAttempts(
@@ -309,66 +339,6 @@ public class CurriculumAccessService {
                                 .equals(quiz.getId())
                 );
     }
-
-
-    private boolean hasPassedIntroductoryQuiz(
-            String userId
-    ) throws Exception {
-
-        List<Quiz> quizzes =
-                quizService.getGlobalQuizzes();
-
-        Quiz introductoryQuiz =
-                quizzes.stream()
-                        .filter(quiz ->
-                                quiz.getType()
-                                        == QuizType.INTRODUCTORY
-                        )
-                        .findFirst()
-                        .orElse(null);
-
-        return hasPassedQuiz(
-                userId,
-                introductoryQuiz
-        );
-    }
-
-
-    private boolean hasPassedSectionQuiz(
-            String userId,
-            String chapterId,
-            String sectionId
-    ) throws Exception {
-
-        Quiz quiz =
-                getSingleSectionQuiz(
-                        chapterId,
-                        sectionId
-                );
-
-        return hasPassedQuiz(
-                userId,
-                quiz
-        );
-    }
-
-
-    private boolean hasPassedChapterQuiz(
-            String userId,
-            String chapterId
-    ) throws Exception {
-
-        Quiz quiz =
-                getSingleChapterQuiz(
-                        chapterId
-                );
-
-        return hasPassedQuiz(
-                userId,
-                quiz
-        );
-    }
-
 
     public Quiz getSingleSectionQuiz(
             String chapterId,
@@ -394,15 +364,12 @@ public class CurriculumAccessService {
         Quiz quiz =
                 quizzes.get(0);
 
-        if (quiz.getType() != null) {
-            throw new IllegalStateException(
-                    "Curriculum quiz must not have a quiz type"
-            );
-        }
+        validateCurriculumQuiz(
+                quiz
+        );
 
         return quiz;
     }
-
 
     public Quiz getSingleChapterQuiz(
             String chapterId
@@ -423,15 +390,108 @@ public class CurriculumAccessService {
         Quiz quiz =
                 quizzes.get(0);
 
+        validateCurriculumQuiz(
+                quiz
+        );
+
+        return quiz;
+    }
+
+    private boolean hasPassedIntroductoryQuiz(
+            String userId
+    ) throws Exception {
+
+        List<Quiz> quizzes =
+                quizService.getGlobalQuizzes();
+
+        Quiz introductoryQuiz =
+                quizzes.stream()
+                        .filter(quiz ->
+                                quiz.getType()
+                                        == QuizType.INTRODUCTORY
+                        )
+                        .findFirst()
+                        .orElse(null);
+
+        return hasPassedQuiz(
+                userId,
+                introductoryQuiz
+        );
+    }
+
+    private boolean hasPassedSectionQuiz(
+            String userId,
+            String chapterId,
+            String sectionId
+    ) throws Exception {
+
+        Quiz quiz =
+                getSingleSectionQuiz(
+                        chapterId,
+                        sectionId
+                );
+
+        return hasPassedQuiz(
+                userId,
+                quiz
+        );
+    }
+
+    private boolean hasPassedChapterQuiz(
+            String userId,
+            String chapterId
+    ) throws Exception {
+
+        Quiz quiz =
+                getSingleChapterQuiz(
+                        chapterId
+                );
+
+        return hasPassedQuiz(
+                userId,
+                quiz
+        );
+    }
+
+    private List<Chapter> getOrderedChapters()
+            throws Exception {
+
+        return chapterRepository.findChapters()
+                .stream()
+                .sorted(
+                        Comparator.comparingInt(
+                                Chapter::getOrder
+                        )
+                )
+                .toList();
+    }
+
+    private List<Section> getOrderedSections(
+            String chapterId
+    ) throws Exception {
+
+        return sectionRepository.findSections(
+                        chapterId
+                )
+                .stream()
+                .sorted(
+                        Comparator.comparingInt(
+                                Section::getOrder
+                        )
+                )
+                .toList();
+    }
+
+    private void validateCurriculumQuiz(
+            Quiz quiz
+    ) {
+
         if (quiz.getType() != null) {
             throw new IllegalStateException(
                     "Curriculum quiz must not have a quiz type"
             );
         }
-
-        return quiz;
     }
-
 
     private Chapter findChapter(
             List<Chapter> chapters,
@@ -447,7 +507,6 @@ public class CurriculumAccessService {
                 .findFirst()
                 .orElse(null);
     }
-
 
     private Section findSection(
             List<Section> sections,

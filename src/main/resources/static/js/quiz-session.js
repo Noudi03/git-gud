@@ -56,9 +56,16 @@ export class QuizSession {
             await fetch(quizUrl);
 
         if (!response.ok) {
-            throw new Error(
-                `Failed to load quiz (${response.status})`
-            );
+
+            const error =
+                new Error(
+                    `Failed to load quiz (${response.status})`
+                );
+
+            error.status =
+                response.status;
+
+            throw error;
         }
 
         this.quizUrl =
@@ -683,9 +690,15 @@ export class QuizSession {
 
         if (!response.ok) {
 
-            throw new Error(
-                `Failed to create quiz attempt (${response.status})`
-            );
+            const error =
+                new Error(
+                    `Failed to create quiz attempt (${response.status})`
+                );
+
+            error.status =
+                response.status;
+
+            throw error;
         }
 
         return response.json();
@@ -732,9 +745,15 @@ export class QuizSession {
 
         if (!response.ok) {
 
-            throw new Error(
-                `Failed to finalize quiz attempt (${response.status})`
-            );
+            const error =
+                new Error(
+                    `Failed to finalize quiz attempt (${response.status})`
+                );
+
+            error.status =
+                response.status;
+
+            throw error;
         }
 
         return response.json();
@@ -886,9 +905,15 @@ export class QuizSession {
 
         if (!response.ok) {
 
-            throw new Error(
-                `Failed to save question attempt (${response.status})`
-            );
+            const error =
+                new Error(
+                    `Failed to save question attempt (${response.status})`
+                );
+
+            error.status =
+                response.status;
+
+            throw error;
         }
     }
 }

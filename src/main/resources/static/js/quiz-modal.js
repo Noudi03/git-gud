@@ -6,7 +6,9 @@ document.addEventListener(
     () => {
 
         const modal =
-            document.getElementById("quiz-modal");
+            document.getElementById(
+                "quiz-modal"
+            );
 
         const closeButton =
             document.getElementById(
@@ -85,27 +87,32 @@ document.addEventListener(
 
 
         const session =
-            new QuizSession(elements);
+            new QuizSession(
+                elements
+            );
 
 
         async function openQuiz(link) {
 
+            const quizUrl =
+                link.dataset.quizUrl;
+
+            if (!quizUrl) {
+                return;
+            }
+
             try {
 
                 await session.load(
-                    link.dataset.quizUrl
+                    quizUrl
                 );
-
 
                 session.start();
 
-
                 modal.dataset.quizUrl =
-                    link.dataset.quizUrl;
-
+                    quizUrl;
 
                 modal.hidden = false;
-
 
                 document.body.classList.add(
                     "quiz-modal-open"
@@ -116,6 +123,27 @@ document.addEventListener(
                 console.error(
                     "Could not load quiz:",
                     error
+                );
+
+                /*
+                 * A 403 means the quiz is locked.
+                 * QuizSession.load() should expose the
+                 * HTTP response status on the error.
+                 */
+                if (
+                    error?.status === 403 ||
+                    error?.response?.status === 403
+                ) {
+
+                    alert(
+                        "This quiz is currently locked."
+                    );
+
+                    return;
+                }
+
+                alert(
+                    "Could not load the quiz."
                 );
             }
         }
@@ -132,32 +160,31 @@ document.addEventListener(
              */
             await session.cancel();
 
-
             modal.hidden = true;
-
 
             document.body.classList.remove(
                 "quiz-modal-open"
             );
 
-
             delete modal.dataset.quizUrl;
         }
 
 
-        startButtons.forEach(link => {
+        startButtons.forEach(
+            link => {
 
-            link.addEventListener(
-                "click",
-                event => {
+                link.addEventListener(
+                    "click",
+                    event => {
 
-                    event.preventDefault();
+                        event.preventDefault();
 
-                    openQuiz(link);
-                }
-            );
+                        openQuiz(link);
+                    }
+                );
 
-        });
+            }
+        );
 
 
         closeButton?.addEventListener(

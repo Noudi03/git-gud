@@ -42,6 +42,63 @@
 
 
 /* =========================
+   Introduction
+   ========================= */
+
+.tutorial-introduction {
+    margin-bottom: 0.75rem;
+
+    padding-bottom: 0.75rem;
+
+    border-bottom: 1px solid var(--color-border);
+}
+
+.tutorial-introduction-title {
+    padding: 0.45rem 0.75rem;
+
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+
+    color: var(--color-text-muted);
+}
+
+.tutorial-introduction-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-left: 0.75rem;
+    padding: 0.5rem 0.75rem;
+
+    font-size: 0.875rem;
+    font-weight: 600;
+
+    color: var(--color-text);
+
+    text-decoration: none;
+
+    border-left: 2px solid var(--color-border);
+
+    transition:
+            background-color 0.15s ease,
+            color 0.15s ease,
+            border-color 0.15s ease;
+}
+
+.tutorial-introduction-link:hover {
+    background-color: var(--color-surface-muted);
+
+    color: var(--color-text);
+
+    text-decoration: none;
+
+    border-left-color: var(--color-text-muted);
+}
+
+
+/* =========================
    Chapter
    ========================= */
 
@@ -59,9 +116,6 @@
     align-items: stretch;
 
     border-radius: var(--radius-sm);
-
-    transition:
-            background-color 0.15s ease;
 }
 
 
@@ -114,6 +168,33 @@
     background-color: var(--color-success-hover);
 
     color: white;
+}
+
+
+/* =========================
+   Locked Items
+   ========================= */
+
+.tutorial-chapter-link.locked,
+.tutorial-section-link.locked,
+.tutorial-introduction-link.locked {
+    color: var(--color-text-muted);
+
+    opacity: 0.55;
+
+    cursor: default;
+
+    text-decoration: none;
+}
+
+.tutorial-chapter-link.locked:hover,
+.tutorial-section-link.locked:hover,
+.tutorial-introduction-link.locked:hover {
+    background-color: transparent;
+
+    color: var(--color-text-muted);
+
+    border-left-color: var(--color-border);
 }
 
 
@@ -177,9 +258,6 @@
             transform 0.2s ease;
 }
 
-
-/* Expanded */
-
 .tutorial-chapter.expanded .tutorial-chapter-chevron {
     transform: rotate(90deg);
 }
@@ -200,18 +278,6 @@
 
 .tutorial-chapter.expanded .tutorial-sections {
     max-height: 500px;
-}
-
-
-/*
- * Inner links need a wrapper-like behavior
- * because grid-template-rows animation
- * requires the content to be constrained.
- */
-
-.tutorial-sections::before {
-    content: "";
-    min-height: 0;
 }
 
 
@@ -271,12 +337,50 @@
 
 
 /* =========================
+   Chapter Final Quiz
+   ========================= */
+
+.tutorial-final-quiz-link {
+    margin-top: 0.35rem;
+
+    font-weight: 600;
+
+    border-top: 1px solid var(--color-border);
+}
+
+.tutorial-final-quiz-link:not(.locked) {
+    color: var(--color-text);
+}
+
+.tutorial-final-quiz-link:not(.locked):hover {
+    color: var(--color-text);
+
+    border-left-color: var(--color-primary);
+}
+
+
+/* =========================
+   Quiz Status
+   ========================= */
+
+.tutorial-quiz-status {
+    margin-left: 0.5rem;
+
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+
+/* =========================
    Focus
    ========================= */
 
 .tutorial-chapter-link:focus-visible,
 .tutorial-chapter-toggle:focus-visible,
-.tutorial-section-link:focus-visible {
+.tutorial-section-link:focus-visible,
+.tutorial-introduction-link:focus-visible {
     outline: 2px solid var(--color-primary);
     outline-offset: 2px;
 }

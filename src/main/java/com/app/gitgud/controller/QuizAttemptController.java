@@ -5,12 +5,14 @@ import com.app.gitgud.model.QuizAttempt;
 import com.app.gitgud.model.QuizAttemptStatus;
 import com.app.gitgud.model.QuizResult;
 import com.app.gitgud.model.dto.QuizAttemptRequestDto;
+import com.app.gitgud.service.CurriculumAccessDeniedException;
 import com.app.gitgud.service.CurrentUserService;
 import com.app.gitgud.service.QuizAccessService;
 import com.app.gitgud.service.QuizAttemptService;
 import com.app.gitgud.service.QuizOutcomeService;
 import com.app.gitgud.service.QuizResultService;
 import com.app.gitgud.service.QuizService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,6 +37,7 @@ public class QuizAttemptController {
             QuizService quizService,
             CurrentUserService currentUserService
     ) {
+
         this.quizAttemptService =
                 quizAttemptService;
 
@@ -65,7 +68,6 @@ public class QuizAttemptController {
     ) {
 
         return createAttempt(
-                quizId,
                 () -> quizService.getSectionQuiz(
                         chapterId,
                         sectionId,
@@ -84,7 +86,6 @@ public class QuizAttemptController {
     ) {
 
         return createAttempt(
-                quizId,
                 () -> quizService.getChapterQuiz(
                         chapterId,
                         quizId
@@ -99,7 +100,6 @@ public class QuizAttemptController {
     ) {
 
         return createAttempt(
-                quizId,
                 () -> quizService.getGlobalQuiz(
                         quizId
                 )
@@ -117,7 +117,7 @@ public class QuizAttemptController {
 
         if (userId == null) {
             return ResponseEntity
-                    .status(401)
+                    .status(HttpStatus.UNAUTHORIZED)
                     .body("Not authenticated");
         }
 
@@ -173,7 +173,7 @@ public class QuizAttemptController {
         } catch (IllegalStateException e) {
 
             return ResponseEntity
-                    .status(409)
+                    .status(HttpStatus.CONFLICT)
                     .body(
                             e.getMessage()
                     );
@@ -196,7 +196,7 @@ public class QuizAttemptController {
 
         if (userId == null) {
             return ResponseEntity
-                    .status(401)
+                    .status(HttpStatus.UNAUTHORIZED)
                     .body("Not authenticated");
         }
 
@@ -231,7 +231,7 @@ public class QuizAttemptController {
 
         if (userId == null) {
             return ResponseEntity
-                    .status(401)
+                    .status(HttpStatus.UNAUTHORIZED)
                     .body("Not authenticated");
         }
 
@@ -273,7 +273,7 @@ public class QuizAttemptController {
 
         if (userId == null) {
             return ResponseEntity
-                    .status(401)
+                    .status(HttpStatus.UNAUTHORIZED)
                     .body("Not authenticated");
         }
 
@@ -298,7 +298,7 @@ public class QuizAttemptController {
         } catch (IllegalStateException e) {
 
             return ResponseEntity
-                    .status(409)
+                    .status(HttpStatus.CONFLICT)
                     .body(
                             e.getMessage()
                     );
@@ -314,7 +314,6 @@ public class QuizAttemptController {
     }
 
     private ResponseEntity<?> createAttempt(
-            String quizId,
             QuizSupplier quizSupplier
     ) {
 
@@ -323,7 +322,7 @@ public class QuizAttemptController {
 
         if (userId == null) {
             return ResponseEntity
-                    .status(401)
+                    .status(HttpStatus.UNAUTHORIZED)
                     .body("Not authenticated");
         }
 
@@ -332,6 +331,13 @@ public class QuizAttemptController {
             Quiz quiz =
                     quizSupplier.get();
 
+            /*
+             * This is the authoritative quiz-access check.
+             *
+             * It happens before an attempt is created, so a
+             * user cannot bypass the frontend by calling this
+             * endpoint directly.
+             */
             quizAccessService.validateCanStartQuiz(
                     userId,
                     quiz
@@ -341,12 +347,20 @@ public class QuizAttemptController {
                     quizAttemptService.createAttempt(
                             userId,
                             quiz,
-                            quizId
+                            quiz.getId()
                     );
 
             return ResponseEntity.ok(
                     attempt
             );
+
+        } catch (CurriculumAccessDeniedException e) {
+
+            return ResponseEntity
+                    .status(HttpStatus.FORBIDDEN)
+                    .body(
+                            e.getMessage()
+                    );
 
         } catch (IllegalArgumentException e) {
 
@@ -359,7 +373,7 @@ public class QuizAttemptController {
         } catch (IllegalStateException e) {
 
             return ResponseEntity
-                    .status(403)
+                    .status(HttpStatus.FORBIDDEN)
                     .body(
                             e.getMessage()
                     );
@@ -376,6 +390,7 @@ public class QuizAttemptController {
 
     @FunctionalInterface
     private interface QuizSupplier {
+
         Quiz get() throws Exception;
     }
 }

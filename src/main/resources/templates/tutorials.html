@@ -12,17 +12,24 @@
 
         <!-- Sidebar -->
         <aside class="col-md-3 col-lg-2 p-0">
-            <div th:replace="~{fragments/tutorial-sidebar :: tutorial-sidebar}">
+
+            <div
+                    th:replace="~{fragments/tutorial-sidebar :: tutorial-sidebar}">
             </div>
+
         </aside>
+
 
         <!-- Main content -->
         <main class="col-md-9 col-lg-10 p-4">
 
             <!-- Welcome -->
+
             <article th:if="${page.chapter == null}">
 
-                <h1>Welcome to the tutorials</h1>
+                <h1>
+                    Welcome to the tutorials
+                </h1>
 
                 <p>
                     Select a chapter or section from the sidebar to begin.
@@ -31,7 +38,8 @@
             </article>
 
 
-            <!-- Chapter -->
+            <!-- Chapter content -->
+
             <article
                     th:if="${page.chapter != null and page.section == null}">
 
@@ -45,43 +53,21 @@
                     Chapter content
                 </div>
 
-
-                <!-- Chapter quizzes -->
-                <div
-                        th:if="${page.quizzes != null and !page.quizzes.isEmpty()}">
-
-                    <h2>Quizzes</h2>
-
-                    <div th:each="quiz : ${page.quizzes}">
-
-                        <a
-                                class="quiz-start-button"
-                                th:href="@{/tutorials/chapters/{chapterId}/quizzes/{quizId}(
-                                    chapterId=${page.chapter.id},
-                                    quizId=${quiz.id}
-                                )}"
-                                th:attr="data-quiz-url=@{/api/quizzes/chapters/{chapterId}/{quizId}(
-                                    chapterId=${page.chapter.id},
-                                    quizId=${quiz.id}
-                                )}"
-                                th:text="${quiz.title}">
-                            Start Quiz
-                        </a>
-
-                    </div>
-
-                </div>
-
             </article>
 
 
-            <!-- Section -->
-            <article th:if="${page.section != null}">
+            <!-- Section content -->
+
+            <article
+                    th:if="${page.section != null}">
 
                 <h1 th:text="${page.section.title}">
                     Section title
                 </h1>
-                <div th:utext="${page.section.content}">
+
+                <div
+                        th:if="${page.section.content != null}"
+                        th:utext="${page.section.content}">
                     Section content
                 </div>
 
@@ -93,20 +79,20 @@
 
 
                 <!-- Section quizzes -->
+
                 <div
                         th:if="${page.quizzes != null and !page.quizzes.isEmpty()}">
 
-                    <h2>Quizzes</h2>
+                    <h2>
+                        Quizzes
+                    </h2>
 
-                    <div th:each="quiz : ${page.quizzes}">
+                    <div
+                            th:each="quiz : ${page.quizzes}">
 
                         <a
                                 class="quiz-start-button"
-                                th:href="@{/tutorials/chapters/{chapterId}/sections/{sectionId}/quizzes/{quizId}(
-                                    chapterId=${page.chapter.id},
-                                    sectionId=${page.section.id},
-                                    quizId=${quiz.id}
-                                )}"
+                                th:href="@{/tutorials}"
                                 th:attr="data-quiz-url=@{/api/quizzes/sections/{chapterId}/{sectionId}/{quizId}(
                                     chapterId=${page.chapter.id},
                                     sectionId=${page.section.id},
@@ -126,6 +112,7 @@
 
     </div>
 </div>
+
 
 <div th:replace="~{fragments/quiz-modal :: quiz-modal}"></div>
 

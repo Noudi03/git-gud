@@ -1,8 +1,10 @@
 package com.app.gitgud.controller;
 
 import com.app.gitgud.model.dto.QuizPageDto;
+import com.app.gitgud.service.CurriculumAccessDeniedException;
 import com.app.gitgud.service.CurrentUserService;
 import com.app.gitgud.service.QuizPageService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -52,11 +54,25 @@ public class QuizController {
 
             return ResponseEntity.ok(page);
 
-        } catch (Exception e) {
+        } catch (
+                CurriculumAccessDeniedException exception
+        ) {
+
+            return ResponseEntity
+                    .status(
+                            HttpStatus.FORBIDDEN
+                    )
+                    .body(
+                            exception.getMessage()
+                    );
+
+        } catch (Exception exception) {
 
             return ResponseEntity
                     .internalServerError()
-                    .body("Could not get quiz");
+                    .body(
+                            "Could not get quiz"
+                    );
         }
     }
 
@@ -85,11 +101,25 @@ public class QuizController {
 
             return ResponseEntity.ok(page);
 
-        } catch (Exception e) {
+        } catch (
+                CurriculumAccessDeniedException exception
+        ) {
+
+            return ResponseEntity
+                    .status(
+                            HttpStatus.FORBIDDEN
+                    )
+                    .body(
+                            exception.getMessage()
+                    );
+
+        } catch (Exception exception) {
 
             return ResponseEntity
                     .internalServerError()
-                    .body("Could not get quiz");
+                    .body(
+                            "Could not get quiz"
+                    );
         }
     }
 
@@ -114,11 +144,25 @@ public class QuizController {
 
             return ResponseEntity.ok(page);
 
-        } catch (Exception e) {
+        } catch (
+                CurriculumAccessDeniedException exception
+        ) {
+
+            return ResponseEntity
+                    .status(
+                            HttpStatus.FORBIDDEN
+                    )
+                    .body(
+                            exception.getMessage()
+                    );
+
+        } catch (Exception exception) {
 
             return ResponseEntity
                     .internalServerError()
-                    .body("Could not get quiz");
+                    .body(
+                            "Could not get quiz"
+                    );
         }
     }
 }

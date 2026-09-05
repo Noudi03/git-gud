@@ -1,5 +1,5 @@
 package com.app.gitgud.seeder;
-
+/*
 import com.app.gitgud.model.*;
 import com.app.gitgud.seeder.data.chapter1.Chapter1Data;
 import com.app.gitgud.seeder.data.chapter2.Chapter2Data;
@@ -192,4 +192,4 @@ public class ContentSeeder implements CommandLineRunner {
         }
         docRef.delete().get();
     }
-}
+}*/
