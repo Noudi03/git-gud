@@ -7,5 +7,5 @@ firebase:
 
 app:
   seeder:
-    enabled: false
-    reset: false
+    enabled: true
+    reset: true

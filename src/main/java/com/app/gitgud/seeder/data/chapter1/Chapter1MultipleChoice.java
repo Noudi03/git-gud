@@ -11,7 +11,7 @@ import java.util.Map;
 // The initial form of this file, more specifically the getQuestions() and sectionXX() parts, was generated using Claude LLM.
 // All the curriculum and questions were written by hand in the Obsidian notetaking app
 
-public class Chapter1Questions {
+public class Chapter1MultipleChoice {
 
     public static Map<String, List<MultipleChoiceQuestion>> getQuestions() {
         Map<String, List<MultipleChoiceQuestion>> map = new HashMap<>();
@@ -32,7 +32,7 @@ public class Chapter1Questions {
     private static List<MultipleChoiceQuestion> section11() {
         return Arrays.asList(
 
-                build("q1",
+                build("mc1",
                         "What is git mainly used for?",
                         opts("Managing databases", "Storing files",
                                 "Tracking changes in files over time", "Backing up a project"),
@@ -41,7 +41,7 @@ public class Chapter1Questions {
                         "Git was created by developers for developers. Think which one of the answers is the most common problem they face day to day."
                 ),
 
-                build("q2",
+                build("mc2",
                         "What happens if you break your code and you use git?",
                         opts("You lose everything",
                                 "You can go back to a previous saved version",
@@ -52,7 +52,7 @@ public class Chapter1Questions {
                         "Git stores snapshots of your project at different points in time."
                 ),
 
-                build("q3",
+                build("mc3",
                         "What makes git distributed?",
                         opts("It works online",
                                 "It distributes files across multiple hard drives",
@@ -72,7 +72,7 @@ public class Chapter1Questions {
     private static List<MultipleChoiceQuestion> section12() {
         return Arrays.asList(
 
-                build("q1",
+                build("mc1",
                         "Why do you need to add your name and email to git?",
                         opts("So you can sign up and use Github",
                                 "To be able to run git",
@@ -82,7 +82,7 @@ public class Chapter1Questions {
                         "Think about what git does every time you save your work.",
                         "If multiple people work on the same project, how do you know who made each change?"
                 ),
-                build("q2",
+                build("mc2",
                         "Why how do you set your name in git?",
                         opts("git config --name \"Name\"",
                                 "git name --config \"Name\"",
@@ -93,9 +93,9 @@ public class Chapter1Questions {
                         "It is a user configuration"
                 ),
 
-                build("q3",
+                build("mc3",
                         "Which configuration level overrides the global settings for a single project?",
-                        opts("--system", "--local", "--global", "--project"),
+                        opts("`--system`", "`--local`", "`--global`", "`--project`"),
                         "B", "advanced",
                         "There are 3 levels: system, global, local. Which one is the most specific?",
                         "The more specific the level, the higher its priority over broader settings."
@@ -110,15 +110,15 @@ public class Chapter1Questions {
     private static List<MultipleChoiceQuestion> section13() {
         return Arrays.asList(
 
-                build("q1",
+                build("mc1",
                         "Which folder is created after running the command `git init`?",
-                        opts(".github", ".gitconfig", "refs", ".git"),
+                        opts("`.github`", "`.gitconfig`", "`refs`", "`.git`"),
                         "D", "beginner",
                         "Git creates a hidden folder. Hidden folders start with a dot.",
                         "The folder name is related to the tool itself."
                 ),
 
-                build("q2",
+                build("mc2",
                         "What happens after deleting the .git folder?",
                         opts("Git stops tracking the project and your files get deleted",
                                 "Git stops tracking the project and your files remain",
@@ -129,9 +129,9 @@ public class Chapter1Questions {
                         "Think of .git as the memory of git. Your files are separate from that memory."
                 ),
 
-                build("q3",
+                build("mc3",
                         "Which file inside the .git directory points to your current branch?",
-                        opts("HEAD", "refs", "objects", "config"),
+                        opts("`HEAD`", "`refs`", "`objects`", "`config`"),
                         "A", "advanced",
                         "'You are here'. Which file in .git tells git where you currently are?",
                         "Think about what HEAD means — it is a common term in navigation."
@@ -146,7 +146,7 @@ public class Chapter1Questions {
     private static List<MultipleChoiceQuestion> section14() {
         return Arrays.asList(
 
-                build("q1",
+                build("mc1",
                         "What does `git add` do?",
                         opts("Upload files to github", "Save your files permanently",
                                 "Move files to the staging area", "Commit files"),
@@ -155,15 +155,15 @@ public class Chapter1Questions {
                         "git add prepares files, but does not save them permanently."
                 ),
 
-                build("q2",
+                build("mc2",
                         "Which command stages all changed files at once?",
-                        opts("git stage --all", "git add --all", "git add .", "git stage all"),
+                        opts("`git stage --all`", "`git add --all`", "`git add .`", "`git stage all`"),
                         "C", "intermediate",
                         "In the terminal, '.' usually refers to the current directory.",
                         "You want to add everything in the current folder."
                 ),
 
-                build("q3",
+                build("mc3",
                         "You run `git add file1`, then edit `file1`, then run `git commit`. What gets saved?",
                         opts("The latest version of the file",
                                 "Both versions",
@@ -174,12 +174,12 @@ public class Chapter1Questions {
                         "git add takes a picture of the file at that exact moment. Changes after that are not in the snapshot."
                 ),
 
-                build("q4",
+                build("mc4",
                         "Which flag allows you to stage specific parts of a file?",
-                        opts("git add --section", "git add -p", "git add --chunk", "git add --select"),
+                        opts("`git add --section`", "`git add -p`", "`git add --chunk`", "`git add --select`"),
                         "B", "advanced",
                         "The flag stands for 'patch'.",
-                        "The flag is a single letter — think about the first letter of 'patch'."
+                        "The flag is a single letter, think about the first letter of 'patch'."
                 )
         );
     }
@@ -191,7 +191,7 @@ public class Chapter1Questions {
     private static List<MultipleChoiceQuestion> section15() {
         return Arrays.asList(
 
-                build("q1",
+                build("mc1",
                         "What does `git commit` do?",
                         opts("Uploads your files to github",
                                 "Stages all changed files",
@@ -202,7 +202,7 @@ public class Chapter1Questions {
                         "You want to permanently save your current staged changes."
                 ),
 
-                build("q2",
+                build("mc2",
                         "Which of the following is the most correct commit message?",
                         opts("Fixed login bug", "Fixes", "Fix login bug", "Fix stuff"),
                         "C", "intermediate",
@@ -210,7 +210,7 @@ public class Chapter1Questions {
                         "A good commit message is short, specific and uses imperative mood (e.g. 'Fix', not 'Fixed')."
                 ),
 
-                build("q3",
+                build("mc3",
                         "What does `git commit --amend` do?",
                         opts("Edits the most recent commit",
                                 "Merges the last 2 commits",
@@ -221,7 +221,7 @@ public class Chapter1Questions {
                         "It only affects the most recent commit, not older ones."
                 ),
 
-                build("q4",
+                build("mc4",
                         "What unique identifier does git assign to every commit?",
                         opts("A timestamp", "A random sequential number",
                                 "An md5 hash", "A sha-1 hash"),
@@ -239,7 +239,7 @@ public class Chapter1Questions {
     private static List<MultipleChoiceQuestion> section16() {
         return Arrays.asList(
 
-                build("q1",
+                build("mc1",
                         "What does `git log` do?",
                         opts("Shows the current status of your files",
                                 "Shows the differences between two files",
@@ -250,7 +250,7 @@ public class Chapter1Questions {
                         "It shows you the past, not the current state of files."
                 ),
 
-                build("q2",
+                build("mc2",
                         "What does `git log --oneline` do differently compared to `git log`?",
                         opts("Shows only the last commit in 1 line",
                                 "Shows each commit compressed into one line",
@@ -261,7 +261,7 @@ public class Chapter1Questions {
                         "It shows the same information as git log, just more compact."
                 ),
 
-                build("q3",
+                build("mc3",
                         "What does `git diff` show when run without any arguments?",
                         opts("Changes between 2 branches",
                                 "Changes not yet staged",
@@ -272,7 +272,7 @@ public class Chapter1Questions {
                         "'diff' shows the difference between your working directory and the staging area."
                 ),
 
-                build("q4",
+                build("mc4",
                         "In `git diff` output, what does a line starting with `+` mean?",
                         opts("A line that was added", "A line that was deleted",
                                 "A line that was modified", "An unchanged line"),
@@ -281,12 +281,12 @@ public class Chapter1Questions {
                         "Red lines were removed, green lines were added. Which symbol matches the green lines?"
                 ),
 
-                build("q5",
+                build("mc5",
                         "Which command shows a visual graph of all branches in the terminal?",
-                        opts("git log --oneline --graph --all",
-                                "git log --tree",
-                                "git log --visual --all",
-                                "git branch --show --graph"),
+                        opts("`git log --oneline --graph --all`",
+                                "`git log --tree`",
+                                "`git log --visual --all`",
+                                "`git branch --show --graph`"),
                         "A", "advanced",
                         "You need 3 arguments combined.",
                         "1st argument for compact view, 2nd for graph, 3rd for all branches."
@@ -301,7 +301,7 @@ public class Chapter1Questions {
     private static List<MultipleChoiceQuestion> section17() {
         return Arrays.asList(
 
-                build("q1",
+                build("mc1",
                         "What does `.gitignore` do?",
                         opts("Deletes files from the project",
                                 "Tells git which files not to track",
@@ -312,31 +312,31 @@ public class Chapter1Questions {
                         "It is a list of files and folders that git should pretend don't exist."
                 ),
 
-                build("q2",
+                build("mc2",
                         "Which of the following files belongs in the `.gitignore` file?",
-                        opts("index.html", "README.md", ".env", "style.css"),
+                        opts("`index.html`", "`README.md`", "`.env`", "`style.css`"),
                         "C", "intermediate",
                         "Think about sensitive information that should never be shared publicly.",
                         "Files containing passwords, API keys or secrets should be ignored. Which file usually contains those?"
                 ),
 
-                build("q3",
+                build("mc3",
                         "What does `*.log` inside a `.gitignore` file mean?",
-                        opts("Ignore only the file named log",
-                                "Ignore the folder named log",
-                                "Ignore files starting with log",
-                                "Ignore all files ending in .log"),
+                        opts("Ignore only the file named `log`",
+                                "Ignore the folder named `log`",
+                                "Ignore files starting with ``log`",
+                                "Ignore all files ending in `.log`"),
                         "D", "intermediate",
                         "* is a wildcard — it matches anything.",
                         "It means any filename combined with a .log extension."
                 ),
 
-                build("q4",
+                build("mc4",
                         "Which command untracks a file without deleting it from your computer?",
-                        opts("git remove --now filename",
-                                "git rm --cached filename",
-                                "git untrack filename",
-                                "git ignore filename"),
+                        opts("`git remove --now filename`",
+                                "`git rm --cached filename`",
+                                "`git untrack filename`",
+                                "`git ignore filename`"),
                         "B", "advanced",
                         "You want to remove it from git's memory, not from your computer.",
                         "The command uses 'rm' with a special flag that affects only the cache, not the actual file."

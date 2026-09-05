@@ -1,5 +1,5 @@
 package com.app.gitgud.seeder;
-/*
+
 import com.app.gitgud.model.*;
 import com.app.gitgud.seeder.data.chapter1.Chapter1Data;
 import com.app.gitgud.seeder.data.chapter2.Chapter2Data;
@@ -61,23 +61,32 @@ public class ContentSeeder implements CommandLineRunner {
     }
 
     // quizzes are stored as subcollections within their parent section or parent chapter (except global quizzes)
-    // trials are stored as a subcollection (under their quiz)
+    // questions are stored as a subcollection (under their quiz)
     private void seedChapter(Firestore db, ChapterData data) throws Exception {
 
         DocumentReference chapterRef = db.collection("chapters").document(data.getChapter().getId());
         chapterRef.set(data.getChapter()).get();
 
-        Map<String, List<MultipleChoiceQuestion>> allQuestions = data.getQuestions();
+        Map<String, List<MultipleChoiceQuestion>> allMcq = data.getQuestions();
+        Map<String, List<TrueFalseQuestion>> allTf = data.getTrueFalseQuestions();
+        Map<String, List<FillInTheBlankQuestion>> allFib = data.getFillInTheBlankQuestions();
 
         for (Section section : data.getSections()) {
 
             DocumentReference sectionRef = chapterRef.collection("sections").document(section.getId());
             sectionRef.set(section).get();
 
-            List<MultipleChoiceQuestion> multipleChoiceTrials = allQuestions.getOrDefault(section.getId(), List.of());
+            // Section-level practice quiz
+            List<MultipleChoiceQuestion> mcqQuestions =
+                    allMcq.getOrDefault(section.getId(), List.of());
 
-            // section level practice quiz
-            if (!multipleChoiceTrials.isEmpty()) {
+            List<TrueFalseQuestion> tfQuestions =
+                    allTf.getOrDefault(section.getId(), List.of());
+
+            List<FillInTheBlankQuestion> fibQuestions =
+                    allFib.getOrDefault(section.getId(), List.of());
+
+            if (!mcqQuestions.isEmpty() || !tfQuestions.isEmpty() || !fibQuestions.isEmpty()) {
                 String quizId = "quiz-practice";
 
                 Quiz practiceQuiz = new Quiz();
@@ -88,22 +97,44 @@ public class ContentSeeder implements CommandLineRunner {
 
                 sectionRef.collection("quizzes").document(quizId).set(practiceQuiz).get();
 
-                for (MultipleChoiceQuestion q : multipleChoiceTrials) {
+                // Multiple choice questions
+                for (MultipleChoiceQuestion q : mcqQuestions) {
                     sectionRef.collection("quizzes")
                             .document(quizId)
-                            .collection("trials")
+                            .collection("questions")
                             .document(q.getId())
-                            .set(toTrialData(q))
+                            .set(toMcqData(q))
+                            .get();
+                }
+
+                // True/false questions
+                for (TrueFalseQuestion q : tfQuestions) {
+                    sectionRef.collection("quizzes")
+                            .document(quizId)
+                            .collection("questions")
+                            .document(q.getId())
+                            .set(toTrueFalseData(q))
+                            .get();
+                }
+
+                // Fill-in-the-blank questions
+                for (FillInTheBlankQuestion q : fibQuestions) {
+                    sectionRef.collection("quizzes")
+                            .document(quizId)
+                            .collection("questions")
+                            .document(q.getId())
+                            .set(toFillInTheBlankData(q))
                             .get();
                 }
             }
         }
 
         // todo: make it skill based
-        // Chapter-level final quiz: one question per section
-        List<MultipleChoiceQuestion> finalMultipleChoiceTrials = data.getSections().stream()
+        // Chapter-level final quiz: one MCQ per section
+        List<MultipleChoiceQuestion> finalMcqQuestions = data.getSections().stream()
                 .map(section -> {
-                    List<MultipleChoiceQuestion> qs = allQuestions.getOrDefault(section.getId(), List.of());
+                    List<MultipleChoiceQuestion> qs =
+                            allMcq.getOrDefault(section.getId(), List.of());
                     return qs.isEmpty() ? null : qs.getFirst();
                 })
                 .filter(Objects::nonNull)
@@ -112,7 +143,6 @@ public class ContentSeeder implements CommandLineRunner {
         String finalQuizId = "quiz-" + data.getChapter().getId() + "-final";
 
         Quiz finalQuiz = new Quiz();
-
         finalQuiz.setId(finalQuizId);
         finalQuiz.setTitle("Final Quiz");
         finalQuiz.setType(QuizType.FINAL);
@@ -120,24 +150,27 @@ public class ContentSeeder implements CommandLineRunner {
 
         chapterRef.collection("quizzes").document(finalQuizId).set(finalQuiz).get();
 
-        for (MultipleChoiceQuestion q : finalMultipleChoiceTrials) {
+        for (MultipleChoiceQuestion q : finalMcqQuestions) {
             chapterRef.collection("quizzes")
                     .document(finalQuizId)
-                    .collection("trials")
+                    .collection("questions")
                     .document(q.getId())
-                    .set(toTrialData(q))
+                    .set(toMcqData(q))
                     .get();
         }
     }
 
     // todo: make it skill based
-    // global review quiz. One question per chapter
+    // global review quiz, one MCQ per chapter
     private void seedReviewQuiz(Firestore db, List<ChapterData> chapters) throws Exception {
 
-        List<MultipleChoiceQuestion> reviewMultipleChoiceTrials = chapters.stream()
+        List<MultipleChoiceQuestion> reviewMcqQuestions = chapters.stream()
                 .map(data -> {
                     List<MultipleChoiceQuestion> qs = data.getQuestions()
-                            .getOrDefault(data.getSections().getFirst().getId(), List.of());
+                            .getOrDefault(
+                                    data.getSections().getFirst().getId(),
+                                    List.of()
+                            );
                     return qs.isEmpty() ? null : qs.getFirst();
                 })
                 .filter(Objects::nonNull)
@@ -153,31 +186,54 @@ public class ContentSeeder implements CommandLineRunner {
 
         db.collection("quizzes").document(reviewQuizId).set(reviewQuiz).get();
 
-        for (MultipleChoiceQuestion q : reviewMultipleChoiceTrials) {
+        for (MultipleChoiceQuestion q : reviewMcqQuestions) {
             db.collection("quizzes")
                     .document(reviewQuizId)
-                    .collection("trials")
+                    .collection("questions")
                     .document(q.getId())
-                    .set(toTrialData(q))
+                    .set(toMcqData(q))
                     .get();
         }
 
         System.out.println("Seeded review quiz.");
     }
 
-    // Builds the Firestore map for a MultipleChoiceQuestion, ensuring type is saved as lowercase string
-    private Map<String, Object> toTrialData(MultipleChoiceQuestion q) {
+    // Firestore serialisers
+    private Map<String, Object> toMcqData(MultipleChoiceQuestion q) {
         Map<String, Object> data = new HashMap<>();
-        data.put("type", q.getType().getValue());           // "question"
+        data.put("type", q.getType().getValue());
         data.put("text", q.getText());
         data.put("options", q.getOptions());
         data.put("correctAnswer", q.getCorrectAnswer());
-        data.put("difficulty", q.getDifficulty().getValue()); // "beginner" / "intermediate" / "advanced"
+        data.put("difficulty", q.getDifficulty().getValue());
         data.put("hints", q.getHints());
         data.put("order", q.getOrder());
         return data;
     }
 
+    private Map<String, Object> toTrueFalseData(TrueFalseQuestion q) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("type", q.getType().getValue());
+        data.put("text", q.getText());
+        data.put("correctAnswer", q.isCorrectAnswer());
+        data.put("difficulty", q.getDifficulty().getValue());
+        data.put("hints", q.getHints());
+        data.put("order", q.getOrder());
+        return data;
+    }
+
+    private Map<String, Object> toFillInTheBlankData(FillInTheBlankQuestion q) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("type", q.getType().getValue());
+        data.put("text", q.getText());
+        data.put("correctAnswer", q.getCorrectAnswer());
+        data.put("difficulty", q.getDifficulty().getValue());
+        data.put("hints", q.getHints());
+        data.put("order", q.getOrder());
+        return data;
+    }
+
+    // Firestore helpers
     // deletes documents in a collection, including subcollections
     private void deleteCollection(CollectionReference colRef) throws Exception {
         for (var doc : colRef.get().get().getDocuments()) {
@@ -192,4 +248,4 @@ public class ContentSeeder implements CommandLineRunner {
         }
         docRef.delete().get();
     }
-}*/
+}

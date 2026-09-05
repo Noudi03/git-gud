@@ -1,9 +1,10 @@
-
 package com.app.gitgud.seeder.data.chapter1;
 
 import com.app.gitgud.model.Chapter;
+import com.app.gitgud.model.FillInTheBlankQuestion;
 import com.app.gitgud.model.MultipleChoiceQuestion;
 import com.app.gitgud.model.Section;
+import com.app.gitgud.model.TrueFalseQuestion;
 import com.app.gitgud.seeder.ChapterData;
 
 import java.util.List;
@@ -27,6 +28,16 @@ public class Chapter1Data implements ChapterData {
 
     @Override
     public Map<String, List<MultipleChoiceQuestion>> getQuestions() {
-        return Chapter1Questions.getQuestions();
+        return Chapter1MultipleChoice.getQuestions();
+    }
+
+    @Override
+    public Map<String, List<TrueFalseQuestion>> getTrueFalseQuestions() {
+        return Chapter1TrueFalse.getQuestions();
+    }
+
+    @Override
+    public Map<String, List<FillInTheBlankQuestion>> getFillInTheBlankQuestions() {
+        return Chapter1FillBlanks.getQuestions();
     }
 }

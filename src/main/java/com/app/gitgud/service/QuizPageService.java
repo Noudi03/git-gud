@@ -4,12 +4,17 @@ import com.app.gitgud.mapper.QuestionMapper;
 import com.app.gitgud.mapper.QuizMapper;
 import com.app.gitgud.model.Question;
 import com.app.gitgud.model.Quiz;
+import com.app.gitgud.model.dto.FillInTheBlankQuestionDto;
+import com.app.gitgud.model.dto.MultipleChoiceQuestionDto;
 import com.app.gitgud.model.User;
 import com.app.gitgud.model.dto.QuestionDto;
 import com.app.gitgud.model.dto.QuizPageDto;
+import com.app.gitgud.model.dto.TrueFalseQuestionDto;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class QuizPageService {
@@ -18,12 +23,15 @@ public class QuizPageService {
     private final QuestionSelectionService questionSelectionService;
     private final QuizMapper quizMapper;
     private final QuestionMapper questionMapper;
+    private final MarkdownService markdownService;
     private final QuizAccessService quizAccessService;
 
     public QuizPageService(
             QuizService quizService,
             QuestionSelectionService questionSelectionService,
             QuizMapper quizMapper,
+            QuestionMapper questionMapper,
+            MarkdownService markdownService
             QuestionMapper questionMapper,
             QuizAccessService quizAccessService
     ) {
@@ -39,6 +47,9 @@ public class QuizPageService {
 
         this.questionMapper =
                 questionMapper;
+
+        this.markdownService =
+                markdownService;
 
         this.quizAccessService =
                 quizAccessService;
@@ -127,11 +138,90 @@ public class QuizPageService {
         List<QuestionDto> questionDtos =
                 questions.stream()
                         .map(questionMapper::toDto)
+                        .map(this::convertQuestion)
                         .toList();
 
         return new QuizPageDto(
                 quizMapper.toDto(quiz),
                 questionDtos
         );
+    }
+
+    private QuestionDto convertQuestion(
+            QuestionDto dto
+    ) {
+
+        return switch (dto.getType()) {
+
+            case MULTIPLE_CHOICE -> {
+                MultipleChoiceQuestionDto q =
+                        (MultipleChoiceQuestionDto) dto;
+                yield new MultipleChoiceQuestionDto(
+                        q.getId(),
+                        markdownService.toHtml(q.getText()),
+                        convertOptions(q.getOptions()),
+                        q.getCorrectAnswer(),
+                        q.getDifficulty(),
+                        convertHints(q.getHints()),
+                        q.getOrder()
+                );
+            }
+
+            case TRUE_FALSE -> {
+                TrueFalseQuestionDto q =
+                        (TrueFalseQuestionDto) dto;
+                yield new TrueFalseQuestionDto(
+                        q.getId(),
+                        markdownService.toHtml(q.getText()),
+                        q.isCorrectAnswer(),
+                        q.getDifficulty(),
+                        convertHints(q.getHints()),
+                        q.getOrder()
+                );
+            }
+
+            case FILL_IN_THE_BLANK -> {
+                FillInTheBlankQuestionDto q =
+                        (FillInTheBlankQuestionDto) dto;
+                yield new FillInTheBlankQuestionDto(
+                        q.getId(),
+                        markdownService.toHtml(q.getText()),
+                        q.getCorrectAnswer(),
+                        q.getDifficulty(),
+                        convertHints(q.getHints()),
+                        q.getOrder()
+                );
+            }
+        };
+    }
+
+    private Map<String, String> convertOptions(
+            Map<String, String> options
+    ) {
+
+        if (options == null) {
+            return Map.of();
+        }
+
+        return options.entrySet()
+                .stream()
+                .collect(
+                        Collectors.toMap(
+                                Map.Entry::getKey,
+                                e -> markdownService.toHtml(e.getValue())
+                        )
+                );
+    }
+
+    private List<String> convertHints(
+            List<String> hints
+    ) {
+
+        if (hints == null) {
+            return List.of();
+        }
+
+        return hints.stream()
+                .map(markdownService::toHtml).toList();
     }
 }
