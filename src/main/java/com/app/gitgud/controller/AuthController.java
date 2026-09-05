@@ -1,5 +1,6 @@
 package com.app.gitgud.controller;
 
+import com.app.gitgud.config.GitGudProperties;
 import com.app.gitgud.model.User;
 import com.app.gitgud.model.dto.LoginRequestDto;
 import com.app.gitgud.model.dto.RegisterRequestDto;
@@ -18,11 +19,13 @@ public class AuthController {
     private final AuthenticationService authenticationService;
     private final CurrentUserService currentUserService;
     private final UserService userService;
+    private final GitGudProperties properties;
 
     public AuthController(
             AuthenticationService authenticationService,
             CurrentUserService currentUserService,
-            UserService userService
+            UserService userService,
+            GitGudProperties properties
     ) {
         this.authenticationService =
                 authenticationService;
@@ -32,6 +35,9 @@ public class AuthController {
 
         this.userService =
                 userService;
+
+        this.properties =
+                properties;
     }
 
     @PostMapping("/register")
@@ -63,11 +69,17 @@ public class AuthController {
                             request.getIdToken()
                     );
 
+            int defaultRating =
+                    properties
+                            .getRating()
+                            .getDefaultRating();
+
             User user =
                     new User(
                             token.getUid(),
                             token.getEmail(),
-                            request.getUsername()
+                            request.getUsername(),
+                            defaultRating
                     );
 
             userService.createUser(user);
