@@ -32,21 +32,21 @@ public class Chapter3TrueFalse {
 
                 build("tf1",
                         "When you clone a repository, Git automatically creates a remote connection called `origin`.",
-                        true, "beginner",
+                        true, "easy",
                         "Think about what Git sets up for you automatically after cloning.",
                         "origin is the default name Git assigns to the remote you cloned from."
                 ),
 
                 build("tf2",
                         "You can only have one remote connection per Git repository.",
-                        false, "intermediate",
+                        false, "medium",
                         "Think about the workflow when contributing to an open-source fork.",
                         "You can have multiple remotes, for example origin for your fork and upstream for the original project."
                 ),
 
                 build("tf3",
                         "Remote names like `origin` and `upstream` are enforced by Git and cannot be changed.",
-                        false, "advanced",
+                        false, "hard",
                         "Think about whether Git requires specific remote names.",
                         "These are conventions only. You can rename or remove remotes freely with `git remote rename` and `git remote remove`."
                 )
@@ -62,21 +62,21 @@ public class Chapter3TrueFalse {
 
                 build("tf1",
                         "`git push` uploads your local commits to the remote repository.",
-                        true, "beginner",
+                        true, "easy",
                         "Think about the direction of data flow with push.",
                         "Push sends your local work outward to the remote."
                 ),
 
                 build("tf2",
                         "`git pull` downloads changes from the remote but does not merge them into your local branch.",
-                        false, "intermediate",
+                        false, "medium",
                         "Think about what pull does automatically compared to fetch.",
                         "git pull is fetch + merge. It downloads and merges in one step."
                 ),
 
                 build("tf3",
                         "`git push --force` is always safe to use on shared branches.",
-                        false, "advanced",
+                        false, "hard",
                         "Think about what force push does to the remote history.",
                         "Force push overwrites the remote history. Teammates who already pulled those commits can lose work."
                 )
@@ -92,21 +92,21 @@ public class Chapter3TrueFalse {
 
                 build("tf1",
                         "`git fetch` downloads changes from the remote but leaves your local branch unchanged.",
-                        true, "beginner",
+                        true, "easy",
                         "Think about what fetch does compared to pull.",
                         "Fetch only retrieves, it never modifies your current branch automatically."
                 ),
 
                 build("tf2",
                         "After running `git fetch origin`, you cannot inspect the downloaded commits before merging.",
-                        false, "intermediate",
+                        false, "medium",
                         "Think about the reason fetch is considered safer than pull.",
                         "Fetched commits are stored in remote-tracking branches like origin/main, which you can inspect freely."
                 ),
 
                 build("tf3",
                         "`git fetch --prune` removes remote-tracking branches that no longer exist on the remote.",
-                        true, "advanced",
+                        true, "hard",
                         "Think about what prune means.",
                         "Pruning cleans up stale references to deleted remote branches."
                 )
@@ -122,21 +122,21 @@ public class Chapter3TrueFalse {
 
                 build("tf1",
                         "`git revert HEAD` deletes the most recent commit from the history.",
-                        false, "beginner",
+                        false, "easy",
                         "Think about what revert produces.",
                         "git revert creates a new commit that undoes the changes, it never removes existing commits."
                 ),
 
                 build("tf2",
                         "`git revert` is safe to use on shared repositories because it does not rewrite history.",
-                        true, "intermediate",
+                        true, "medium",
                         "Think about why revert is preferred over reset for shared branches.",
                         "Revert adds a new commit on top of the existing history, so teammates are not affected."
                 ),
 
                 build("tf3",
                         "`git revert --no-commit` applies the revert changes without immediately creating a commit.",
-                        true, "advanced",
+                        true, "hard",
                         "Think about what --no-commit gives you the opportunity to do.",
                         "It lets you review or combine the reverted changes before committing the result."
                 )
@@ -152,21 +152,21 @@ public class Chapter3TrueFalse {
 
                 build("tf1",
                         "`git reset --hard HEAD~1` discards all changes permanently and cannot be undone easily.",
-                        true, "beginner",
+                        true, "easy",
                         "Think about what the --hard flag does to your working directory.",
                         "--hard is destructive: it moves the pointer back and throws away all changes."
                 ),
 
                 build("tf2",
                         "`git reset --soft HEAD~1` keeps your changes staged and ready to recommit.",
-                        true, "intermediate",
+                        true, "medium",
                         "Think about what --soft preserves after undoing the commit.",
                         "--soft only moves the branch pointer. Your staged changes stay exactly as they were."
                 ),
 
                 build("tf3",
                         "`git reset` is preferred over `git revert` when undoing commits that have already been pushed to a shared repository.",
-                        false, "advanced",
+                        false, "hard",
                         "Think about what reset does to the history that teammates already have.",
                         "Reset rewrites history. For shared branches, git revert is the safe choice because it preserves history."
                 )

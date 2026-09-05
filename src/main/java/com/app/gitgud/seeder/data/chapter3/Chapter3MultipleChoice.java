@@ -36,7 +36,7 @@ public class Chapter3MultipleChoice {
                                 "A branch that exists locally only",
                                 "A version of your project hosted on the internet",
                                 "A connection to a GitHub repository"),
-                        "C", "beginner",
+                        "C", "easy",
                         "Think about what 'remote' means.",
                         "It is hosted somewhere other than your local computer and allows you to share and collaborate."
                 ),
@@ -47,7 +47,7 @@ public class Chapter3MultipleChoice {
                                 "Creates a new empty repository",
                                 "Uploads your local repository to GitHub",
                                 "Creates a copy of a local repository"),
-                        "A", "intermediate",
+                        "A", "medium",
                         "Think about what a clone is, it is an exact copy.",
                         "After cloning, you have a full local copy of the repository, including its history."
                 ),
@@ -58,7 +58,7 @@ public class Chapter3MultipleChoice {
                                 "The first commit in a repository",
                                 "The name of the default Git configuration file",
                                 "The main branch of a repository"),
-                        "A", "intermediate",
+                        "A", "medium",
                         "When you clone a repository, Git automatically creates this connection.",
                         "It is a convention, not a rule. You can rename the remote to something else."
                 ),
@@ -69,7 +69,7 @@ public class Chapter3MultipleChoice {
                                 "To create a backup of your remote",
                                 "To speed up push and pull operations",
                                 "To push to two servers at the same time"),
-                        "A", "advanced",
+                        "A", "hard",
                         "A fork is your own copy of someone else's repository.",
                         "You need a way to pull updates from the original project into your fork."
                 )
@@ -89,7 +89,7 @@ public class Chapter3MultipleChoice {
                                 "Creates a new branch on the remote called main",
                                 "Uploads your local commits to the remote repository",
                                 "Merges the remote main into your local main"),
-                        "C", "beginner",
+                        "C", "easy",
                         "Think about the direction. Push means you are sending something.",
                         "Your local commits become available to others after pushing."
                 ),
@@ -100,7 +100,7 @@ public class Chapter3MultipleChoice {
                                 "Creates a new empty repository",
                                 "Creates a copy of the remote branch locally",
                                 "Downloads changes without merging them"),
-                        "A", "intermediate",
+                        "A", "medium",
                         "Think about the direction. Pull means you are receiving something.",
                         "After pulling, your local branch incorporates the latest changes from the remote."
                 ),
@@ -111,7 +111,7 @@ public class Chapter3MultipleChoice {
                                 "Push works offline, pull requires internet connectivity",
                                 "There is no difference, they are aliases",
                                 "Push uploads changes to remote, pull downloads from remote"),
-                        "D", "intermediate",
+                        "D", "medium",
                         "Think about the direction of data flow in each command.",
                         "One sends your commits to the remote, while the other retrieves changes from the remote."
                 ),
@@ -122,7 +122,7 @@ public class Chapter3MultipleChoice {
                                 "It bypasses authentication, exposing credentials",
                                 "It deletes the remote branch and cannot be undone",
                                 "It pushes all branches at once and is dangerous because it is slow"),
-                        "A", "advanced",
+                        "A", "hard",
                         "Force push replaces the remote with your local version.",
                         "It can overwrite commits that other developers have already pushed, potentially causing them to lose work."
                 ),
@@ -133,7 +133,7 @@ public class Chapter3MultipleChoice {
                                 "`git merge origin main`",
                                 "`git push origin main`",
                                 "`git commit`"),
-                        "A", "advanced",
+                        "A", "hard",
                         "Git pull uses fetch and merge.",
                         "The fetched remote branch is merged into your current branch with `git merge origin/main`."
                 )
@@ -153,7 +153,7 @@ public class Chapter3MultipleChoice {
                                 "`Fetch` downloads changes but does not merge them",
                                 "`Fetch` only works with branches, pull works with files",
                                 "`Fetch` deletes remote branches, pull creates them"),
-                        "B", "beginner",
+                        "B", "easy",
                         "Think about the word 'fetch', you retrieve something but do not use it yet.",
                         "After fetching, your local branch remains unchanged until you merge the changes manually."
                 ),
@@ -164,7 +164,7 @@ public class Chapter3MultipleChoice {
                                 "Because it requires authentication",
                                 "Because it creates a backup before downloading",
                                 "Because it checks for conflicts before downloading"),
-                        "A", "intermediate",
+                        "A", "medium",
                         "Think about what pull does automatically that fetch does not.",
                         "Fetch lets you review the downloaded changes before integrating them into your local branch."
                 ),
@@ -175,7 +175,7 @@ public class Chapter3MultipleChoice {
                                 "`git show fetch`",
                                 "`git diff --fetched`",
                                 "`git show origin`"),
-                        "A", "advanced",
+                        "A", "hard",
                         "The downloaded changes are stored in remote-tracking branches.",
                         "The remote-tracking branch is named after the remote and the branch, such as `origin/main`."
                 )
@@ -195,7 +195,7 @@ public class Chapter3MultipleChoice {
                                 "Deletes the most recent commit permanently",
                                 "Moves HEAD back to the previous commit",
                                 "Restores all files to their original state"),
-                        "A", "beginner",
+                        "A", "easy",
                         "Think about what 'revert' means.",
                         "It creates a new commit whose changes undo the changes introduced by the most recent commit."
                 ),
@@ -206,7 +206,7 @@ public class Chapter3MultipleChoice {
                                 "A modified version of the previous commit",
                                 "A new commit that reverses the changes of a previous one",
                                 "A stashed version of the undone changes"),
-                        "C", "intermediate",
+                        "C", "medium",
                         "Git revert never removes commits.",
                         "The history shows both the original commit and the new revert commit."
                 ),
@@ -217,7 +217,7 @@ public class Chapter3MultipleChoice {
                                 "Reverts the last 3 commits",
                                 "Reverts the last commit",
                                 "Reverts the last 4 commits"),
-                        "A", "advanced",
+                        "A", "hard",
                         "This syntax reverts a range of commits.",
                         "The range contains two commits: `HEAD~1` and `HEAD`."
                 )
@@ -237,7 +237,7 @@ public class Chapter3MultipleChoice {
                                 "Moves the branch back one commit but does not discard changes",
                                 "Restores deleted files from the last commit",
                                 "Moves the branch back two commits and keeps changes staged"),
-                        "A", "beginner",
+                        "A", "easy",
                         "`--hard` is destructive.",
                         "Your changes are discarded after running it."
                 ),
@@ -248,7 +248,7 @@ public class Chapter3MultipleChoice {
                                 "It keeps your changes in the working directory but unstaged",
                                 "It creates a backup before resetting",
                                 "It only resets tracked files"),
-                        "A", "intermediate",
+                        "A", "medium",
                         "`--soft` is non-destructive.",
                         "Your changes are still there after running it, ready to be recommitted."
                 ),
@@ -259,7 +259,7 @@ public class Chapter3MultipleChoice {
                                 "Only when using `--hard`",
                                 "Always, because it rewrites history",
                                 "Only when there are less than 5 people working on the project"),
-                        "C", "intermediate",
+                        "C", "medium",
                         "It rewrites history.",
                         "You should generally use `git revert` instead when undoing changes that are already shared."
                 ),
@@ -270,7 +270,7 @@ public class Chapter3MultipleChoice {
                                 "Because revert creates a backup",
                                 "Because revert only affects local files",
                                 "Because revert does not rewrite history"),
-                        "D", "intermediate",
+                        "D", "medium",
                         "Think about what your teammates have already pulled from the remote.",
                         "If you rewrite history that others already have, their copies no longer match yours."
                 ),
@@ -281,7 +281,7 @@ public class Chapter3MultipleChoice {
                                 "When the commit has already been pushed to a shared repository",
                                 "When you want to undo multiple commits at once",
                                 "When you are working on a local branch only"),
-                        "B", "advanced",
+                        "B", "hard",
                         "Think about who else might have pulled the commit you want to undo.",
                         "If others have the commit, rewriting history can cause problems for their copies of the repository."
                 ),
@@ -292,7 +292,7 @@ public class Chapter3MultipleChoice {
                                 "Undoes the commit and unstages changes but keeps them in the working directory",
                                 "Moves all changes to the stash",
                                 "Keeps changes staged and ready to commit"),
-                        "B", "advanced",
+                        "B", "hard",
                         "`--mixed` is between `--soft` and `--hard`.",
                         "Your files are still there, but you need to add them again before committing."
                 )

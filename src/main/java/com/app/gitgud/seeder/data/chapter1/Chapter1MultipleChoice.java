@@ -36,7 +36,7 @@ public class Chapter1MultipleChoice {
                         "What is `git` mainly used for?",
                         opts("Managing databases", "Storing files",
                                 "Tracking changes in files over time", "Backing up a project"),
-                        "C", "beginner",
+                        "C", "easy",
                         "Think about what 'version' means in 'version control'.",
                         "`Git` was created by developers for developers. Think which one of the answers is the most common problem they face day to day."
                 ),
@@ -47,7 +47,7 @@ public class Chapter1MultipleChoice {
                                 "You can go back to a previous saved version",
                                 "`Git` automatically fixes your mistakes",
                                 "`Git` provides you with suggestions to fix your mistakes"),
-                        "B", "intermediate",
+                        "B", "medium",
                         "Think about the 'save history' analogy.",
                         "`Git` stores snapshots of your project at different points in time."
                 ),
@@ -58,7 +58,7 @@ public class Chapter1MultipleChoice {
                                 "It distributes files across multiple hard drives",
                                 "Every developer has a full copy of the repository",
                                 "Multiple people host different parts of the project"),
-                        "C", "advanced",
+                        "C", "hard",
                         "Think about what 'decentralized' means.",
                         "If the main server goes down, can developers still work?"
                 )
@@ -78,7 +78,7 @@ public class Chapter1MultipleChoice {
                                 "To be able to run `git`",
                                 "Because `git` attaches your identity to every commit",
                                 "To access private repositories only assigned to you"),
-                        "C", "beginner",
+                        "C", "easy",
                         "Think about what `git` does every time you save your work.",
                         "If multiple people work on the same project, how do you know who made each change?"
                 ),
@@ -88,7 +88,7 @@ public class Chapter1MultipleChoice {
                                 "`git name --config \"Name\"`",
                                 "`git config --global user.name \"Name\"`",
                                 "`git config --global --name \"Name\"`"),
-                        "C", "intermediate",
+                        "C", "medium",
                         "The configuration commands start with `git config`",
                         "It is a user configuration"
                 ),
@@ -96,7 +96,7 @@ public class Chapter1MultipleChoice {
                 build("mc3",
                         "Which configuration level overrides the global settings for a single project?",
                         opts("`--system`", "`--local`", "`--global`", "`--project`"),
-                        "B", "advanced",
+                        "B", "hard",
                         "There are 3 levels: system, global, local. Which one is the most specific?",
                         "The more specific the level, the higher its priority over broader settings."
                 )
@@ -113,7 +113,7 @@ public class Chapter1MultipleChoice {
                 build("mc1",
                         "Which folder is created after running the command `git init`?",
                         opts("`.github`", "`.gitconfig`", "`refs`", "`.git`"),
-                        "D", "beginner",
+                        "D", "easy",
                         "Git creates a hidden folder. Hidden folders start with a dot.",
                         "The folder name is related to the tool itself."
                 ),
@@ -124,7 +124,7 @@ public class Chapter1MultipleChoice {
                                 "`Git` stops tracking the project and your files remain",
                                 "`Git` automatically creates another `.git` folder",
                                 "Nothing changes"),
-                        "B", "intermediate",
+                        "B", "medium",
                         "The `.git` folder contains the history, not your actual files.",
                         "Think of `.git` as the memory of `git`. Your files are separate from that memory."
                 ),
@@ -132,7 +132,7 @@ public class Chapter1MultipleChoice {
                 build("mc3",
                         "Which file inside the `.git` directory points to your current branch?",
                         opts("`HEAD`", "`refs`", "`objects`", "`config`"),
-                        "A", "advanced",
+                        "A", "hard",
                         "'You are here'. Which file in `.git` tells `git` where you currently are?",
                         "Think about what `HEAD` means, it is a common term in navigation."
                 )
@@ -150,7 +150,7 @@ public class Chapter1MultipleChoice {
                         "What does `git add` do?",
                         opts("Upload files to `github`", "Save your files permanently",
                                 "Move files to the staging area", "Commit files"),
-                        "C", "beginner",
+                        "C", "easy",
                         "Think about the step before saving. What do you do first?",
                         "`git add` prepares files, but does not save them permanently."
                 ),
@@ -158,7 +158,7 @@ public class Chapter1MultipleChoice {
                 build("mc2",
                         "Which command stages all changed files at once?",
                         opts("`git stage --all`", "`git add --all`", "`git add .`", "`git stage all`"),
-                        "C", "intermediate",
+                        "C", "medium",
                         "In the terminal, `.` usually refers to the current directory.",
                         "You want to add everything in the current folder."
                 ),
@@ -169,7 +169,7 @@ public class Chapter1MultipleChoice {
                                 "Both versions",
                                 "Nothing, you need to run `git add` again",
                                 "The version of the file at the time of `git add`"),
-                        "D", "intermediate",
+                        "D", "medium",
                         "Think about what 'snapshot' means. When was the snapshot taken?",
                         "`git add` takes a picture of the file at that exact moment. Changes after that are not in the snapshot."
                 ),
@@ -177,7 +177,7 @@ public class Chapter1MultipleChoice {
                 build("mc4",
                         "Which flag allows you to stage specific parts of a file?",
                         opts("`git add --section`", "`git add -p`", "`git add --chunk`", "`git add --select`"),
-                        "B", "advanced",
+                        "B", "hard",
                         "The flag stands for 'patch'.",
                         "The flag is a single letter, think about the first letter of 'patch'."
                 )
@@ -197,7 +197,7 @@ public class Chapter1MultipleChoice {
                                 "Stages all changed files",
                                 "Permanently saves your staged changes into `git`'s history",
                                 "Creates a new branch"),
-                        "C", "beginner",
+                        "C", "easy",
                         "This is the step after staging. What is the final goal?",
                         "You want to permanently save your current staged changes."
                 ),
@@ -205,7 +205,7 @@ public class Chapter1MultipleChoice {
                 build("mc2",
                         "Which of the following is the most correct commit message?",
                         opts("`Fixed login bug`", "`Fixes`", "`Fix login bug`", "`Fix stuff`"),
-                        "C", "intermediate",
+                        "C", "medium",
                         "Use imperative mood, like giving a command.",
                         "A good commit message is short, specific and uses imperative mood (e.g. `Fix`, not `Fixed`)."
                 ),
@@ -216,7 +216,7 @@ public class Chapter1MultipleChoice {
                                 "Merges the last 2 commits",
                                 "Deletes the last commit permanently",
                                 "Changes the branch of a commit"),
-                        "A", "intermediate",
+                        "A", "medium",
                         "'Amend' means to make corrections to something.",
                         "It only affects the most recent commit, not older ones."
                 ),
@@ -225,7 +225,7 @@ public class Chapter1MultipleChoice {
                         "What unique identifier does `git` assign to every commit?",
                         opts("A timestamp", "A random sequential number",
                                 "An md5 hash", "A sha-1 hash"),
-                        "D", "advanced",
+                        "D", "hard",
                         "It is a cryptographic hash function, not MD5, not a timestamp.",
                         "It produces a 40-character hexadecimal string."
                 )
@@ -245,7 +245,7 @@ public class Chapter1MultipleChoice {
                                 "Shows the differences between two files",
                                 "Shows a list of all commits in the repository",
                                 "Creates a new branch"),
-                        "C", "beginner",
+                        "C", "easy",
                         "Think about what 'log' means in everyday language, like a ship's log or a diary.",
                         "It shows you the past, not the current state of files."
                 ),
@@ -256,7 +256,7 @@ public class Chapter1MultipleChoice {
                                 "Shows each commit compressed into one line",
                                 "Shows only the commit messages",
                                 "Filters commits by date"),
-                        "B", "intermediate",
+                        "B", "medium",
                         "What does 'oneline' suggest about the output of the command?",
                         "It shows the same information as `git log`, just more compact."
                 ),
@@ -267,7 +267,7 @@ public class Chapter1MultipleChoice {
                                 "Changes not yet staged",
                                 "The full commit history",
                                 "Changes already staged"),
-                        "B", "intermediate",
+                        "B", "medium",
                         "Where are your changes before you run `git add`?",
                         "'diff' shows the difference between your working directory and the staging area."
                 ),
@@ -276,7 +276,7 @@ public class Chapter1MultipleChoice {
                         "In `git diff` output, what does a line starting with `+` mean?",
                         opts("A line that was added", "A line that was deleted",
                                 "A line that was modified", "An unchanged line"),
-                        "A", "advanced",
+                        "A", "hard",
                         "Just like maths: `+` means something was added, `-` means something was removed.",
                         "Red lines were removed, green lines were added. Which symbol matches the green lines?"
                 ),
@@ -287,7 +287,7 @@ public class Chapter1MultipleChoice {
                                 "`git log --tree`",
                                 "`git log --visual --all`",
                                 "`git branch --show --graph`"),
-                        "A", "advanced",
+                        "A", "hard",
                         "You need 3 arguments combined.",
                         "1st argument for compact view, 2nd for graph, 3rd for all branches."
                 )
@@ -307,7 +307,7 @@ public class Chapter1MultipleChoice {
                                 "Tells `git` which files not to track",
                                 "Stores `git` configuration settings",
                                 "Commits files"),
-                        "B", "beginner",
+                        "B", "easy",
                         "What does 'ignore' mean?",
                         "It is a list of files and folders that `git` should pretend don't exist."
                 ),
@@ -315,7 +315,7 @@ public class Chapter1MultipleChoice {
                 build("mc2",
                         "Which of the following files belongs in the `.gitignore` file?",
                         opts("`index.html`", "`README.md`", "`.env`", "`style.css`"),
-                        "C", "intermediate",
+                        "C", "medium",
                         "Think about sensitive information that should never be shared publicly.",
                         "Files containing passwords, API keys or secrets should be ignored. Which file usually contains those?"
                 ),
@@ -326,7 +326,7 @@ public class Chapter1MultipleChoice {
                                 "Ignore the folder named `log`",
                                 "Ignore files starting with `log`",
                                 "Ignore all files ending in `.log`"),
-                        "D", "intermediate",
+                        "D", "medium",
                         "`*` is a wildcard, it matches anything.",
                         "It means any filename combined with a `.log` extension."
                 ),
@@ -337,7 +337,7 @@ public class Chapter1MultipleChoice {
                                 "`git rm --cached filename`",
                                 "`git untrack filename`",
                                 "`git ignore filename`"),
-                        "B", "advanced",
+                        "B", "hard",
                         "You want to remove it from `git`'s memory, not from your computer.",
                         "The command uses `rm` with a special flag that affects only the cache, not the actual file."
                 )
