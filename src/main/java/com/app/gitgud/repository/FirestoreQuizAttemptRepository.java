@@ -2,6 +2,7 @@ package com.app.gitgud.repository;
 
 import com.app.gitgud.mapper.FirestoreQuizAttemptMapper;
 import com.app.gitgud.model.QuizAttempt;
+import com.app.gitgud.model.QuizAttemptStatus;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.Firestore;
 import org.springframework.stereotype.Repository;
@@ -14,32 +15,28 @@ public class FirestoreQuizAttemptRepository {
     private final Firestore db;
     private final FirestoreQuizAttemptMapper mapper;
 
-
     public FirestoreQuizAttemptRepository(
             Firestore db,
             FirestoreQuizAttemptMapper mapper
     ) {
-
         this.db = db;
         this.mapper = mapper;
     }
-
 
     public void createAttempt(
             String userId,
             QuizAttempt attempt
     ) throws Exception {
 
-        db.collection("users")
-                .document(userId)
-                .collection("quizAttempts")
-                .document(attempt.getId())
+        getAttemptReference(
+                userId,
+                attempt.getId()
+        )
                 .set(
                         mapper.toData(attempt)
                 )
                 .get();
     }
-
 
     public List<QuizAttempt> findAttempts(
             String userId
@@ -57,7 +54,6 @@ public class FirestoreQuizAttemptRepository {
                 .toList();
     }
 
-
     public QuizAttempt findAttempt(
             String userId,
             String attemptId
@@ -72,7 +68,6 @@ public class FirestoreQuizAttemptRepository {
                         .get()
         );
     }
-
 
     public void updateStatus(
             String userId,
@@ -90,7 +85,6 @@ public class FirestoreQuizAttemptRepository {
                 )
                 .get();
     }
-
 
     public boolean markOutcomeProcessed(
             String userId,
@@ -129,6 +123,21 @@ public class FirestoreQuizAttemptRepository {
                         return false;
                     }
 
+                    String status =
+                            snapshot.getString(
+                                    "status"
+                            );
+
+                    if (
+                            !QuizAttemptStatus.IN_PROGRESS
+                                    .getValue()
+                                    .equals(status)
+                    ) {
+                        throw new IllegalStateException(
+                                "Quiz attempt is not in progress"
+                        );
+                    }
+
                     transaction.update(
                             reference,
                             "outcomeProcessed",
@@ -139,7 +148,6 @@ public class FirestoreQuizAttemptRepository {
                 }
         ).get();
     }
-
 
     private DocumentReference getAttemptReference(
             String userId,

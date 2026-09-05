@@ -2,24 +2,21 @@ package com.app.gitgud.repository;
 
 import com.app.gitgud.model.User;
 import com.google.cloud.firestore.DocumentSnapshot;
-import com.google.cloud.firestore.FieldValue;
 import com.google.cloud.firestore.Firestore;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class FirestoreUserRepository
-        implements UserRepository {
+public class FirestoreUserRepository implements UserRepository {
+
+    private static final int MIN_RATING = 0;
 
     private final Firestore db;
-
 
     public FirestoreUserRepository(
             Firestore db
     ) {
-
         this.db = db;
     }
-
 
     @Override
     public void createUser(
@@ -31,7 +28,6 @@ public class FirestoreUserRepository
                 .set(user)
                 .get();
     }
-
 
     @Override
     public User getUser(
@@ -52,7 +48,6 @@ public class FirestoreUserRepository
                 document.getLong("rating");
 
         if (rating == null) {
-
             return new User(
                     document.getId(),
                     document.getString("email"),
@@ -64,10 +59,12 @@ public class FirestoreUserRepository
                 document.getId(),
                 document.getString("email"),
                 document.getString("username"),
-                rating.intValue()
+                Math.max(
+                        MIN_RATING,
+                        rating.intValue()
+                )
         );
     }
-
 
     @Override
     public void setRating(
@@ -80,13 +77,12 @@ public class FirestoreUserRepository
                 .update(
                         "rating",
                         Math.max(
-                                0,
+                                MIN_RATING,
                                 rating
                         )
                 )
                 .get();
     }
-
 
     @Override
     public void changeRating(
@@ -94,14 +90,46 @@ public class FirestoreUserRepository
             int ratingChange
     ) throws Exception {
 
-        db.collection("users")
-                .document(userId)
-                .update(
-                        "rating",
-                        FieldValue.increment(
-                                ratingChange
-                        )
-                )
-                .get();
+        var userReference =
+                db.collection("users")
+                        .document(userId);
+
+        db.runTransaction(
+                transaction -> {
+
+                    DocumentSnapshot document =
+                            transaction.get(
+                                    userReference
+                            ).get();
+
+                    if (!document.exists()) {
+                        throw new IllegalArgumentException(
+                                "User not found"
+                        );
+                    }
+
+                    Long storedRating =
+                            document.getLong("rating");
+
+                    int currentRating =
+                            storedRating == null
+                                    ? User.DEFAULT_RATING
+                                    : storedRating.intValue();
+
+                    int newRating =
+                            Math.max(
+                                    MIN_RATING,
+                                    currentRating + ratingChange
+                            );
+
+                    transaction.update(
+                            userReference,
+                            "rating",
+                            newRating
+                    );
+
+                    return null;
+                }
+        ).get();
     }
 }
