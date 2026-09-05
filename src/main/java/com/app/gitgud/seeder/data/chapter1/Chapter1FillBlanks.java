@@ -34,21 +34,21 @@ public class Chapter1FillBlanks {
 
                 build("fb1",
                         "Git is a ___ control system that tracks changes in your files over time.",
-                        "version", "beginner",
+                        "version", "easy",
                         "Think about what type of control Git provides.",
                         "The name of the category Git belongs to contains this word."
                 ),
 
                 build("fb2",
                         "Git is described as ___ because every developer has a full copy of the repository.",
-                        "distributed", "intermediate",
+                        "distributed", "medium",
                         "Think about the opposite of centralized.",
                         "This word describes a system where no single point holds all the data."
                 ),
 
                 build("fb3",
                         "With Git, you can save ___ of your work at any point in time.",
-                        "snapshots", "intermediate",
+                        "snapshots", "hard",
                         "Think about a photography analogy.",
                         "Git captures the full state of your project at a given moment, like a photo."
                 )
@@ -63,22 +63,22 @@ public class Chapter1FillBlanks {
         return Arrays.asList(
 
                 build("fb1",
-                        "To set your Git username for all projects on your computer, you use the ___ flag.",
-                        "--global", "beginner",
+                        "To set your `Git` username for all projects on your computer, you use the ___ flag.",
+                        "--global", "easy",
                         "Think about what level of configuration applies to all your projects.",
                         "The flag is the same word as 'applies to everything'."
                 ),
 
                 build("fb2",
-                        "You can view your current Git configuration by running `git config ___`.",
-                        "--list", "intermediate",
+                        "You can view your current `Git` configuration by running `git config ___`.",
+                        "--list", "medium",
                         "Think about a flag that shows all entries.",
                         "This flag prints all configuration key-value pairs."
                 ),
 
                 build("fb3",
-                        "Global Git configuration is typically stored in a file called ___.",
-                        "~/.gitconfig", "advanced",
+                        "Global `Git` configuration is typically stored in a file called `~/.gitconfig`.",
+                        "~/.gitconfig", "hard",
                         "Think about where user-level config files are usually stored on Unix systems.",
                         "It lives in your home directory and starts with a dot."
                 )
@@ -93,22 +93,22 @@ public class Chapter1FillBlanks {
         return Arrays.asList(
 
                 build("fb1",
-                        "Running `git init` creates a hidden folder called ___ inside your project.",
-                        ".git", "beginner",
+                        "Running `git init` creates a hidden folder called `.git` inside your project.",
+                        ".git", "easy",
                         "Hidden folders on Unix start with a dot.",
                         "The folder name is the tool name prefixed with a dot."
                 ),
 
                 build("fb2",
-                        "After `git init`, the folder becomes a Git ___.",
-                        "repository", "intermediate",
-                        "Think about the term used for a project tracked by Git.",
-                        "This is the standard word for a Git-tracked project folder."
+                        "After `git init`, the folder becomes a `Git` repository.",
+                        "repository", "medium",
+                        "Think about the term used for a project tracked by `Git`.",
+                        "This is the standard word for a `Git`-tracked project folder."
                 ),
 
                 build("fb3",
-                        "The ___ folder inside `.git` stores Git's objects, including file contents and commits.",
-                        "objects/", "advanced",
+                        "The `objects/` folder inside `.git` stores Git's objects, including file contents and commits.",
+                        "objects/", "hard",
                         "Think about what Git calls the raw stored data.",
                         "The folder name reflects what Git stores inside it."
                 )
@@ -124,21 +124,21 @@ public class Chapter1FillBlanks {
 
                 build("fb1",
                         "`git add` moves your changed files to the ___ area.",
-                        "staging", "beginner",
+                        "staging", "easy",
                         "Think about the step between editing and committing.",
                         "This area is also called the index."
                 ),
 
                 build("fb2",
                         "To stage all changed files in the current directory at once, you run `git add ___`.",
-                        ".", "intermediate",
+                        ".", "medium",
                         "In the terminal, a single character refers to the current directory.",
                         "It is the shortest possible path reference."
                 ),
 
                 build("fb3",
-                        "The staging area is also known as the ___.",
-                        "index", "advanced",
+                        "The staging area is also known as the `index`.",
+                        "index", "hard",
                         "Think about the technical name Git uses internally.",
                         "It is a single noun found inside the `.git` directory."
                 )
@@ -154,21 +154,21 @@ public class Chapter1FillBlanks {
 
                 build("fb1",
                         "`git commit` saves your staged changes as a ___ of your project.",
-                        "snapshot", "beginner",
+                        "snapshot", "easy",
                         "Think about a photography analogy.",
                         "Git captures the complete state of your staged files at that moment."
                 ),
 
                 build("fb2",
-                        "Good commit messages use the ___ mood, for example 'Fix login bug' instead of 'Fixed login bug'.",
-                        "imperative", "intermediate",
+                        "Good commit messages use the ___ mood, for example `Fix login bug` instead of `Fixed login bug`.",
+                        "imperative", "medium",
                         "Think about giving a command or instruction.",
                         "This grammatical mood is used when giving orders or directions."
                 ),
 
                 build("fb3",
-                        "The chain of parent commit pointers in Git forms a DAG, which stands for Directed ___ Graph.",
-                        "Acyclic", "advanced",
+                        "The chain of parent commit pointers in Git forms a `DAG`, which stands for Directed ___ Graph.",
+                        "Acyclic", "hard",
                         "Think about the property that means history never loops back.",
                         "This word means the graph has no cycles."
                 )
@@ -184,21 +184,21 @@ public class Chapter1FillBlanks {
 
                 build("fb1",
                         "`git log ___` shows each commit compressed into a single line.",
-                        "--oneline", "beginner",
+                        "--oneline", "easy",
                         "Think about the flag name that describes compact output.",
                         "The flag name describes the format: one line per commit."
                 ),
 
                 build("fb2",
                         "`git diff` without arguments shows changes that are not yet ___.",
-                        "staged", "intermediate",
-                        "Think about the state of changes before git add.",
+                        "staged", "medium",
+                        "Think about the state of changes before `git add`.",
                         "These are changes in your working directory that haven't been added yet."
                 ),
 
                 build("fb3",
                         "To visualize the branch tree in the terminal, you combine `git log` with `--oneline`, `--graph`, and ___.",
-                        "--all", "advanced",
+                        "--all", "hard",
                         "Think about what flag makes Git show every branch, not just the current one.",
                         "This flag ensures all branches are included in the output."
                 )
@@ -213,23 +213,23 @@ public class Chapter1FillBlanks {
         return Arrays.asList(
 
                 build("fb1",
-                        "The file that tells Git which files and folders to ignore is called ___.",
-                        ".gitignore", "beginner",
+                        "The file that tells Git which files and folders to ignore is called `.gitignore`.",
+                        ".gitignore", "easy",
                         "Think about the tool name combined with the word ignore.",
                         "It lives in your project root and starts with a dot."
                 ),
 
                 build("fb2",
                         "To stop tracking an already-committed file without deleting it, you run `git rm ___ filename`.",
-                        "--cached", "intermediate",
+                        "--cached", "medium",
                         "Think about a flag that affects only Git's memory, not the actual file.",
-                        "This flag targets the index (staging area / cache) rather than the working directory."
+                        "This flag targets the `index` (staging area / cache) rather than the working directory."
                 ),
 
                 build("fb3",
                         "In `.gitignore`, the `!` prefix creates an ___ to an ignore rule.",
-                        "exception", "advanced",
-                        "Think about what the ! symbol typically means in programming.",
+                        "exception", "hard",
+                        "Think about what the `!` symbol typically means in programming.",
                         "It negates or reverses the rule that would otherwise apply."
                 )
         );

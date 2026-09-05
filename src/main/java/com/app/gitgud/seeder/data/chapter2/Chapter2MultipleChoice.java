@@ -38,7 +38,7 @@ public class Chapter2MultipleChoice {
                                 "An independent line of development",
                                 "A saved version of a file",
                                 "A connection to a GitHub repository"),
-                        "B", "beginner",
+                        "B", "easy",
                         "Think about what parallel means when developing software with others.",
                         "A branch lets you work on a new feature without touching the main code."
                 ),
@@ -49,7 +49,7 @@ public class Chapter2MultipleChoice {
                                 "`root`",
                                 "`dev`",
                                 "`feature`"),
-                        "A", "intermediate",
+                        "A", "medium",
                         "What is the main stable version of a project usually called?",
                         "Git gives 2 possible names for that branch."
                 ),
@@ -60,7 +60,7 @@ public class Chapter2MultipleChoice {
                                 "A pointer to a commit",
                                 "A snapshot of all files",
                                 "A different repository with all changes up to that point"),
-                        "B", "advanced",
+                        "B", "hard",
                         "Think about why creating a branch is very fast.",
                         "No files are copied when you create a branch."
                 )
@@ -80,8 +80,8 @@ public class Chapter2MultipleChoice {
                                 "Creates a branch named `main`",
                                 "Merges your current branch into `main`",
                                 "Renames the current branch to `main`"),
-                        "A", "beginner",
-                        "What does switch refer to in everyday language?",
+                        "A", "easy",
+                        "What does `switch` refer to in everyday language?",
                         "Your files update to reflect the state of the branch you switch to."
                 ),
 
@@ -91,9 +91,9 @@ public class Chapter2MultipleChoice {
                                 "`git switch --branch feature`",
                                 "`git switch --new feature`",
                                 "`git switch -c feature`"),
-                        "D", "intermediate",
+                        "D", "medium",
                         "You need a flag. What does the flag `-c` stand for?",
-                        "The flag stands for create."
+                        "The flag stands for `create`."
                 ),
 
                 build("mc3",
@@ -102,7 +102,7 @@ public class Chapter2MultipleChoice {
                                 "Nothing changes until you commit a change",
                                 "They are temporarily saved in the stash",
                                 "They update to reflect the state of the new branch"),
-                        "D", "intermediate",
+                        "D", "medium",
                         "Think about what the purpose of switching branches is.",
                         "Each branch holds its own version of the project."
                 ),
@@ -113,8 +113,8 @@ public class Chapter2MultipleChoice {
                                 "Because `git checkout` required an internet connection",
                                 "Because `git checkout` was taking up too many resources",
                                 "Because `git checkout` was doing too many unrelated things"),
-                        "D", "advanced",
-                        "Git checkout can switch branches, restore files and detach HEAD.",
+                        "D", "hard",
+                        "`git checkout` can switch branches, restore files and detach `HEAD`.",
                         "Having one command do many unrelated things is considered bad design."
                 )
         );
@@ -128,13 +128,13 @@ public class Chapter2MultipleChoice {
         return Arrays.asList(
 
                 build("mc1",
-                        "What does `git merge feature` do when run from main?",
-                        opts("Deletes the feature branch",
+                        "What does `git merge feature` do when run from `main`?",
+                        opts("Deletes the `feature` branch",
                                 "Brings the changes from `feature` to `main`",
                                 "Brings the changes from `main` to `feature`",
-                                "Moves all commits from main to `feature`"),
-                        "B", "beginner",
-                        "Think about the direction: you are on main and merging feature into it.",
+                                "Moves all commits from `main` to `feature`"),
+                        "B", "easy",
+                        "Think about the direction: you are on `main` and merging `feature` into it.",
                         "The branch you run it from is the one that receives the changes."
                 ),
 
@@ -144,19 +144,19 @@ public class Chapter2MultipleChoice {
                                 "`git delete feature`",
                                 "`git branch -d feature`",
                                 "`git merge --delete feature`"),
-                        "C", "intermediate",
+                        "C", "medium",
                         "The command starts with `git branch`.",
-                        "The flag stands for delete."
+                        "The flag stands for `delete`."
                 ),
 
                 build("mc3",
-                        "After merging a `feature` branch into `main`, what happens to the `feature branch`?",
+                        "After merging a `feature` branch into `main`, what happens to the `feature` branch?",
                         opts("It is automatically deleted",
                                 "It still exists until you manually delete it",
                                 "It is renamed to merged",
                                 "It is moved inside main"),
-                        "B", "intermediate",
-                        "`git merge` function is to combine changes.",
+                        "B", "medium",
+                        "`git merge`'s function is to combine changes.",
                         "You need a separate command to delete a branch."
                 ),
 
@@ -166,8 +166,8 @@ public class Chapter2MultipleChoice {
                                 "A merge where git moves the pointer forward without creating a merge commit",
                                 "A merge that combines all commits into one",
                                 "A merge that happens when both branches have commits"),
-                        "B", "advanced",
-                        "What happens when the main branch has not changed since you created your feature branch?",
+                        "B", "hard",
+                        "What happens when the `main` branch has not changed since you created your feature branch?",
                         "If the history is linear, git doesn't need to create a new commit, it can just move the pointer."
                 )
         );
@@ -186,7 +186,7 @@ public class Chapter2MultipleChoice {
                                 "When two branches have a change at the same part of a file",
                                 "When the feature branch has no new commits",
                                 "When you forget to stage your files before merging"),
-                        "B", "beginner",
+                        "B", "easy",
                         "Think about what git needs to decide when merging two branches.",
                         "If both branches changed different files, git can merge them automatically."
                 ),
@@ -197,9 +197,9 @@ public class Chapter2MultipleChoice {
                                 "The file name from its content",
                                 "Your branch's version from the incoming branch's version",
                                 "The staged changes from the unstaged changes"),
-                        "C", "intermediate",
-                        "Look at the conflict markers: <<<<<<< is your version, >>>>>>> is theirs.",
-                        "The ======= is the dividing line between the two versions."
+                        "C", "medium",
+                        "Look at the conflict markers: `<<<<<<<` is your version, `>>>>>>>` is theirs.",
+                        "The `=======` is the dividing line between the two versions."
                 ),
 
                 build("mc3",
@@ -208,9 +208,9 @@ public class Chapter2MultipleChoice {
                                 "edit the file -> commit -> add",
                                 "edit the file -> add -> commit",
                                 "add -> edit the file -> commit"),
-                        "C", "intermediate",
+                        "C", "medium",
                         "What comes before a commit in the standard git workflow?",
-                        "You need to stage the resolved file before git knows the conflict is fixed."
+                        "You need to stage the resolved file before Git knows the conflict is fixed."
                 ),
 
                 build("mc4",
@@ -219,7 +219,7 @@ public class Chapter2MultipleChoice {
                                 "`git merge --cancel`",
                                 "`git reset merge`",
                                 "`git merge --revert`"),
-                        "A", "advanced",
+                        "A", "hard",
                         "What happens when something goes wrong and you want to undo the merge attempt?",
                         "The flag means you stop any operation that goes wrong."
                 )
@@ -235,12 +235,12 @@ public class Chapter2MultipleChoice {
 
                 build("mc1",
                         "What does `git rebase main` do when run from a feature branch?",
-                        opts("Merges main into feature creating a merge commit",
-                                "Moves the feature branch commits on top of the latest main commit",
-                                "Deletes the feature branch and replaces it with main",
-                                "Creates a copy of main inside feature"),
-                        "B", "beginner",
-                        "Think about the word 'rebase'. It changes the base of your branch.",
+                        opts("Merges `main` into `feature` creating a merge commit",
+                                "Moves the feature branch commits on top of the latest `main` commit",
+                                "Deletes the feature branch and replaces it with `main`",
+                                "Creates a copy of `main` inside `feature`"),
+                        "B", "easy",
+                        "Think about the word `rebase`. It changes the base of your branch.",
                         "The result is a linear history."
                 ),
 
@@ -250,7 +250,7 @@ public class Chapter2MultipleChoice {
                                 "Because rebase deletes the original commits permanently",
                                 "Because rebase rewrites history and will cause conflicts for teammates",
                                 "Because rebasing deletes the original branch"),
-                        "C", "intermediate",
+                        "C", "medium",
                         "Think about what your teammates have on their machines.",
                         "If you rewrite history that others have already pulled, their history no longer matches yours."
                 ),
@@ -261,8 +261,8 @@ public class Chapter2MultipleChoice {
                                 "Undo the last 2 commits permanently",
                                 "Compare the last 2 commits with the main branch",
                                 "Rebase the last 2 branches"),
-                        "A", "advanced",
-                        "The `-i` flag stands for interactive.",
+                        "A", "hard",
+                        "The `-i` flag stands for `interactive`.",
                         "You get an editor that lets you choose what to do with each commit."
                 )
         );
@@ -281,8 +281,8 @@ public class Chapter2MultipleChoice {
                                 "Commits your changes with an automatic message",
                                 "Temporarily saves your uncommitted changes and cleans the working directory",
                                 "Moves your changes to a new branch"),
-                        "C", "beginner",
-                        "Think about the word 'stash'. Where do you put things you want to keep but not use right away?",
+                        "C", "easy",
+                        "Think about the word `stash`. Where do you put things you want to keep but not use right away?",
                         "Your working directory becomes clean after stashing, as if you hadn't made any changes."
                 ),
 
@@ -292,9 +292,9 @@ public class Chapter2MultipleChoice {
                                 "`git stash apply`",
                                 "`git stash pop`",
                                 "`git stash get`"),
-                        "C", "intermediate",
+                        "C", "medium",
                         "Think about what happens to a stack.",
-                        "Pop removes the stash from the list after restoring it."
+                        "`pop` removes the stash from the list after restoring it."
                 ),
 
                 build("mc3",
@@ -303,9 +303,9 @@ public class Chapter2MultipleChoice {
                                 "When you want to commit without writing a message",
                                 "When you want to undo the last commit",
                                 "When you need to switch branches but have uncommitted changes"),
-                        "D", "intermediate",
+                        "D", "medium",
                         "What if you wanted to put your changes aside for a bit?",
-                        "What if you wanted to check out someone else's work on the main branch?"
+                        "What if you wanted to check out someone else's work on the `main` branch?"
                 ),
 
                 build("mc4",
@@ -314,7 +314,7 @@ public class Chapter2MultipleChoice {
                                 "`git stash --all`",
                                 "`git untracked --stash`",
                                 "`git stash -f`"),
-                        "A", "advanced",
+                        "A", "hard",
                         "Untracked files are not included by default.",
                         "The flag is a single letter."
                 )
@@ -334,8 +334,8 @@ public class Chapter2MultipleChoice {
                                 "To add a comment to a file",
                                 "To create a new branch at a specific commit",
                                 "To rename a branch"),
-                        "A", "beginner",
-                        "Think about how software versions are tracked (v1.0, v2.0 etc).",
+                        "A", "easy",
+                        "Think about how software versions are tracked (`v1.0`, `v2.0`, etc.).",
                         "Tags are permanent markers on a specific point in history."
                 ),
 
@@ -345,7 +345,7 @@ public class Chapter2MultipleChoice {
                                 "Tags are deleted after merging",
                                 "Tags do not move when new commits are made",
                                 "Tags only exist locally and cannot be pushed"),
-                        "C", "intermediate",
+                        "C", "medium",
                         "Think about what a branch does when you make a new commit.",
                         "A tag always points to the same commit, forever."
                 ),
@@ -356,20 +356,20 @@ public class Chapter2MultipleChoice {
                                 "Lightweight tags move with new commits, annotated tags do not",
                                 "Annotated tags include a message, author and date, lightweight tags are just pointers",
                                 "Annotated tags are automatically created on every commit"),
-                        "C", "advanced",
-                        "Think about what 'annotated' means, it has extra information attached.",
+                        "C", "hard",
+                        "Think about what `annotated` means, it has extra information attached.",
                         "For official releases, annotated tags are recommended because they carry metadata."
                 ),
 
                 build("mc4",
                         "Why do you need a special command to push tags to a remote?",
                         opts("Because tags require approval from the repository owner",
-                                "Because tags are not included in a regular git push",
+                                "Because tags are not included in a regular `git push`",
                                 "Because tags can only be pushed by the original author",
                                 "Because tags are stored in a different server"),
-                        "B", "advanced",
-                        "Think about what git push does by default.",
-                        "Git push only pushes commits."
+                        "B", "hard",
+                        "Think about what `git push` does by default.",
+                        "`git push` only pushes commits."
                 )
         );
     }

@@ -236,7 +236,8 @@ public class ContentSeeder implements CommandLineRunner {
         }
     }
 
-    // deletes document and all of its subcollections — subcollections must be deleted first
+    // deletes document and all of its subcollections
+    // subcollections must be deleted first
     private void deleteDocumentRecursively(DocumentReference docRef) throws Exception {
         for (CollectionReference col : docRef.listCollections()) {
             deleteCollection(col);
