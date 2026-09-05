@@ -31,8 +31,7 @@ public class QuizPageService {
             QuestionSelectionService questionSelectionService,
             QuizMapper quizMapper,
             QuestionMapper questionMapper,
-            MarkdownService markdownService
-            QuestionMapper questionMapper,
+            MarkdownService markdownService,
             QuizAccessService quizAccessService
     ) {
 
@@ -162,8 +161,7 @@ public class QuizPageService {
                         convertOptions(q.getOptions()),
                         q.getCorrectAnswer(),
                         q.getDifficulty(),
-                        convertHints(q.getHints()),
-                        q.getOrder()
+                        convertHints(q.getHints())
                 );
             }
 
@@ -175,8 +173,7 @@ public class QuizPageService {
                         markdownService.toHtml(q.getText()),
                         q.isCorrectAnswer(),
                         q.getDifficulty(),
-                        convertHints(q.getHints()),
-                        q.getOrder()
+                        convertHints(q.getHints())
                 );
             }
 
@@ -188,8 +185,7 @@ public class QuizPageService {
                         markdownService.toHtml(q.getText()),
                         q.getCorrectAnswer(),
                         q.getDifficulty(),
-                        convertHints(q.getHints()),
-                        q.getOrder()
+                        convertHints(q.getHints())
                 );
             }
         };

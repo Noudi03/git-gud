@@ -92,7 +92,6 @@ public class ContentSeeder implements CommandLineRunner {
                 Quiz practiceQuiz = new Quiz();
                 practiceQuiz.setId(quizId);
                 practiceQuiz.setTitle("Practice Quiz");
-                practiceQuiz.setType(QuizType.PRACTICE);
                 practiceQuiz.setOrder(1);
 
                 sectionRef.collection("quizzes").document(quizId).set(practiceQuiz).get();
@@ -145,7 +144,6 @@ public class ContentSeeder implements CommandLineRunner {
         Quiz finalQuiz = new Quiz();
         finalQuiz.setId(finalQuizId);
         finalQuiz.setTitle("Final Quiz");
-        finalQuiz.setType(QuizType.FINAL);
         finalQuiz.setOrder(1);
 
         chapterRef.collection("quizzes").document(finalQuizId).set(finalQuiz).get();
@@ -207,7 +205,6 @@ public class ContentSeeder implements CommandLineRunner {
         data.put("correctAnswer", q.getCorrectAnswer());
         data.put("difficulty", q.getDifficulty().getValue());
         data.put("hints", q.getHints());
-        data.put("order", q.getOrder());
         return data;
     }
 
@@ -218,7 +215,6 @@ public class ContentSeeder implements CommandLineRunner {
         data.put("correctAnswer", q.isCorrectAnswer());
         data.put("difficulty", q.getDifficulty().getValue());
         data.put("hints", q.getHints());
-        data.put("order", q.getOrder());
         return data;
     }
 
@@ -229,7 +225,6 @@ public class ContentSeeder implements CommandLineRunner {
         data.put("correctAnswer", q.getCorrectAnswer());
         data.put("difficulty", q.getDifficulty().getValue());
         data.put("hints", q.getHints());
-        data.put("order", q.getOrder());
         return data;
     }
 
