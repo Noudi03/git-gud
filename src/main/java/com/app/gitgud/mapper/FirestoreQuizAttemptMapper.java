@@ -41,7 +41,8 @@ public class FirestoreQuizAttemptMapper {
                 attempt.getContext();
 
         if (
-                context instanceof SectionQuizContext sectionContext
+                context instanceof SectionQuizContext
+                        sectionContext
         ) {
 
             data.put(
@@ -60,7 +61,8 @@ public class FirestoreQuizAttemptMapper {
             );
 
         } else if (
-                context instanceof ChapterQuizContext chapterContext
+                context instanceof ChapterQuizContext
+                        chapterContext
         ) {
 
             data.put(
@@ -92,7 +94,6 @@ public class FirestoreQuizAttemptMapper {
 
         return data;
     }
-
 
     public QuizAttempt toModel(
             DocumentSnapshot document

@@ -2,26 +2,10 @@ package com.app.gitgud.model;
 
 public class User {
 
-    public static final int DEFAULT_RATING = 1000;
-
     private final String id;
     private final String email;
     private final String username;
     private int rating;
-
-    public User(
-            String id,
-            String email,
-            String username
-    ) {
-
-        this(
-                id,
-                email,
-                username,
-                DEFAULT_RATING
-        );
-    }
 
     public User(
             String id,

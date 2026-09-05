@@ -9,15 +9,12 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-
     public UserService(
             UserRepository userRepository
     ) {
-
         this.userRepository =
                 userRepository;
     }
-
 
     public void createUser(
             User user
@@ -28,7 +25,6 @@ public class UserService {
         );
     }
 
-
     public User getUser(
             String userId
     ) throws Exception {
@@ -38,7 +34,6 @@ public class UserService {
         );
     }
 
-
     public void setRating(
             String userId,
             int rating
@@ -47,18 +42,6 @@ public class UserService {
         userRepository.setRating(
                 userId,
                 rating
-        );
-    }
-
-
-    public void changeRating(
-            String userId,
-            int ratingChange
-    ) throws Exception {
-
-        userRepository.changeRating(
-                userId,
-                ratingChange
         );
     }
 }

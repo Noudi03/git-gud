@@ -184,7 +184,10 @@ export class QuizSession {
         );
     }
 
-    answer(question, selectedAnswer) {
+    answer(
+        question,
+        selectedAnswer
+    ) {
 
         if (
             this.isFinished ||
@@ -213,15 +216,24 @@ export class QuizSession {
         this.questionAttempts.set(
             question.id,
             {
-                questionId: question.id,
-                selectedAnswer: selectedAnswer,
-                correct: correct,
+                questionId:
+                question.id,
+
+                selectedAnswer:
+                selectedAnswer,
+
+                correct:
+                correct,
+
                 timeSpentMillis:
                     (existingAttempt?.timeSpentMillis ?? 0)
                     + timeSpentMillis,
+
                 hintsUsed:
                     existingAttempt?.hintsUsed ?? 0,
-                skipCount: skipCount
+
+                skipCount:
+                skipCount
             }
         );
 
@@ -281,17 +293,24 @@ export class QuizSession {
         this.questionAttempts.set(
             question.id,
             {
-                questionId: question.id,
+                questionId:
+                question.id,
+
                 selectedAnswer:
                     existingAttempt?.selectedAnswer ?? null,
+
                 correct:
                     existingAttempt?.correct ?? false,
+
                 timeSpentMillis:
                     (existingAttempt?.timeSpentMillis ?? 0)
                     + timeSpentMillis,
+
                 hintsUsed:
                     existingAttempt?.hintsUsed ?? 0,
-                skipCount: skipCount
+
+                skipCount:
+                skipCount
             }
         );
 
@@ -303,6 +322,7 @@ export class QuizSession {
             );
 
         if (!alreadySkipped) {
+
             this.skippedQuestions.push(
                 question
             );
@@ -324,12 +344,19 @@ export class QuizSession {
             return;
         }
 
-        if (this.isCurrentQuestionAnswered()) {
+        if (
+            this.isCurrentQuestionAnswered()
+        ) {
+
             this.moveToNextQuestion();
+
             return;
         }
 
-        if (this.isCurrentQuestionSkipped()) {
+        if (
+            this.isCurrentQuestionSkipped()
+        ) {
+
             this.moveToNextQuestion();
         }
     }
@@ -365,6 +392,7 @@ export class QuizSession {
     }
 
     canSkip() {
+
         return (
             this.getRemainingQuestionCount() > 1
         );
@@ -384,6 +412,7 @@ export class QuizSession {
                     question.id
                 )
             ) {
+
                 remaining++;
             }
         }
@@ -414,7 +443,11 @@ export class QuizSession {
                         question.id
                 );
 
-            if (!answered && !skipped) {
+            if (
+                !answered &&
+                !skipped
+            ) {
+
                 return i;
             }
         }
@@ -485,12 +518,14 @@ export class QuizSession {
         switch (question.type) {
 
             case "MULTIPLE_CHOICE":
+
                 return (
                     answer ===
                     question.correctAnswer
                 );
 
             case "FILL_IN_THE_BLANK":
+
                 return (
                     this.normalizeAnswer(answer) ===
                     this.normalizeAnswer(
@@ -499,12 +534,14 @@ export class QuizSession {
                 );
 
             case "TRUE_FALSE":
+
                 return (
                     Boolean(answer) ===
                     question.correctAnswer
                 );
 
             default:
+
                 return false;
         }
     }
@@ -515,6 +552,7 @@ export class QuizSession {
             answer === null ||
             answer === undefined
         ) {
+
             return "";
         }
 
@@ -534,6 +572,8 @@ export class QuizSession {
 
         this.isFinished = true;
 
+        this.recordCurrentQuestionTime();
+
         renderCompletion(
             this.quizData,
             Array.from(
@@ -544,11 +584,7 @@ export class QuizSession {
 
         try {
 
-            await this.startAttempt();
-
-            await this.createQuestionAttempts();
-
-            await this.finalizeAttempt(
+            await this.submitAttempt(
                 "completed"
             );
 
@@ -583,11 +619,7 @@ export class QuizSession {
 
         try {
 
-            await this.startAttempt();
-
-            await this.createQuestionAttempts();
-
-            await this.finalizeAttempt(
+            await this.submitAttempt(
                 "cancelled"
             );
 
@@ -600,24 +632,81 @@ export class QuizSession {
         }
     }
 
-    async startAttempt() {
+    async submitAttempt(status) {
+
+        if (!this.quizData) {
+            return;
+        }
 
         const attempt =
-            await this.createQuizAttempt(
-                "in_progress"
-            );
+            await this.createQuizAttempt();
 
         this.attemptId =
             attempt.id;
 
-        return attempt;
+        await this.createQuestionAttempts();
+
+        await this.finalizeAttempt(
+            status
+        );
+    }
+
+    async createQuizAttempt() {
+
+        const request = {
+
+            quizId:
+            this.quizData.quiz.id,
+
+            status:
+                "in_progress"
+        };
+
+        const response =
+            await fetch(
+                this.getAttemptUrl(),
+                {
+                    method:
+                        "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify(
+                            request
+                        )
+                }
+            );
+
+        if (!response.ok) {
+
+            throw new Error(
+                `Failed to create quiz attempt (${response.status})`
+            );
+        }
+
+        return response.json();
     }
 
     async finalizeAttempt(status) {
 
         if (!this.attemptId) {
+
             throw new Error(
                 "Missing quiz attempt ID."
+            );
+        }
+
+        if (
+            status !== "completed" &&
+            status !== "cancelled"
+        ) {
+
+            throw new Error(
+                `Invalid final quiz attempt status: ${status}`
             );
         }
 
@@ -625,19 +714,24 @@ export class QuizSession {
             await fetch(
                 `/api/quiz-attempts/${this.attemptId}/finalize`,
                 {
-                    method: "POST",
+                    method:
+                        "POST",
+
                     headers: {
                         "Content-Type":
                             "application/json"
                     },
+
                     body:
                         JSON.stringify({
-                            status: status
+                            status:
+                            status
                         })
                 }
             );
 
         if (!response.ok) {
+
             throw new Error(
                 `Failed to finalize quiz attempt (${response.status})`
             );
@@ -664,6 +758,10 @@ export class QuizSession {
             this.getTimeSpent();
 
         if (timeSpentMillis <= 0) {
+
+            this.questionStartTime =
+                null;
+
             return;
         }
 
@@ -675,16 +773,22 @@ export class QuizSession {
         this.questionAttempts.set(
             question.id,
             {
-                questionId: question.id,
+                questionId:
+                question.id,
+
                 selectedAnswer:
                     existingAttempt?.selectedAnswer ?? null,
+
                 correct:
                     existingAttempt?.correct ?? false,
+
                 timeSpentMillis:
                     (existingAttempt?.timeSpentMillis ?? 0)
                     + timeSpentMillis,
+
                 hintsUsed:
                     existingAttempt?.hintsUsed ?? 0,
+
                 skipCount:
                     existingAttempt?.skipCount ?? 0
             }
@@ -694,69 +798,10 @@ export class QuizSession {
             null;
     }
 
-    async submitAttempt(status) {
-
-        if (!this.quizData) {
-            return;
-        }
-
-        try {
-
-            const attempt =
-                await this.createQuizAttempt(
-                    status
-                );
-
-            this.attemptId =
-                attempt.id;
-
-            await this.createQuestionAttempts();
-
-        } catch (error) {
-
-            console.error(
-                "Could not save quiz attempt:",
-                error
-            );
-        }
-    }
-
-    async createQuizAttempt(status) {
-
-        const request = {
-            quizId:
-            this.quizData.quiz.id,
-
-            status:
-            status
-        };
-
-        const response =
-            await fetch(
-                this.getAttemptUrl(),
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type":
-                            "application/json"
-                    },
-                    body:
-                        JSON.stringify(request)
-                }
-            );
-
-        if (!response.ok) {
-            throw new Error(
-                `Failed to save quiz attempt (${response.status})`
-            );
-        }
-
-        return response.json();
-    }
-
     getAttemptUrl() {
 
         if (!this.quizUrl) {
+
             throw new Error(
                 "Missing quiz URL."
             );
@@ -771,6 +816,7 @@ export class QuizSession {
     async createQuestionAttempts() {
 
         if (!this.attemptId) {
+
             throw new Error(
                 "Missing quiz attempt ID."
             );
@@ -786,6 +832,7 @@ export class QuizSession {
                         );
 
                     return {
+
                         questionId:
                         question.id,
 
@@ -822,11 +869,14 @@ export class QuizSession {
             await fetch(
                 `/api/quiz-attempts/${this.attemptId}/question-attempts`,
                 {
-                    method: "POST",
+                    method:
+                        "POST",
+
                     headers: {
                         "Content-Type":
                             "application/json"
                     },
+
                     body:
                         JSON.stringify(
                             questionAttempt
@@ -835,6 +885,7 @@ export class QuizSession {
             );
 
         if (!response.ok) {
+
             throw new Error(
                 `Failed to save question attempt (${response.status})`
             );

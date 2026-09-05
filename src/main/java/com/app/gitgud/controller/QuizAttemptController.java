@@ -27,7 +27,6 @@ public class QuizAttemptController {
     private final QuizService quizService;
     private final CurrentUserService currentUserService;
 
-
     public QuizAttemptController(
             QuizAttemptService quizAttemptService,
             QuizResultService quizResultService,
@@ -36,7 +35,6 @@ public class QuizAttemptController {
             QuizService quizService,
             CurrentUserService currentUserService
     ) {
-
         this.quizAttemptService =
                 quizAttemptService;
 
@@ -56,8 +54,9 @@ public class QuizAttemptController {
                 currentUserService;
     }
 
-
-    @PostMapping("/sections/{chapterId}/{sectionId}/{quizId}")
+    @PostMapping(
+            "/sections/{chapterId}/{sectionId}/{quizId}"
+    )
     public ResponseEntity<?> createSectionAttempt(
             @PathVariable String chapterId,
             @PathVariable String sectionId,
@@ -66,7 +65,7 @@ public class QuizAttemptController {
     ) {
 
         return createAttempt(
-                request,
+                quizId,
                 () -> quizService.getSectionQuiz(
                         chapterId,
                         sectionId,
@@ -75,8 +74,9 @@ public class QuizAttemptController {
         );
     }
 
-
-    @PostMapping("/chapters/{chapterId}/{quizId}")
+    @PostMapping(
+            "/chapters/{chapterId}/{quizId}"
+    )
     public ResponseEntity<?> createChapterAttempt(
             @PathVariable String chapterId,
             @PathVariable String quizId,
@@ -84,14 +84,13 @@ public class QuizAttemptController {
     ) {
 
         return createAttempt(
-                request,
+                quizId,
                 () -> quizService.getChapterQuiz(
                         chapterId,
                         quizId
                 )
         );
     }
-
 
     @PostMapping("/{quizId}")
     public ResponseEntity<?> createGlobalAttempt(
@@ -100,13 +99,12 @@ public class QuizAttemptController {
     ) {
 
         return createAttempt(
-                request,
+                quizId,
                 () -> quizService.getGlobalQuiz(
                         quizId
                 )
         );
     }
-
 
     @PostMapping("/{attemptId}/finalize")
     public ResponseEntity<?> finalizeAttempt(
@@ -141,7 +139,7 @@ public class QuizAttemptController {
                         );
             }
 
-            QuizAttempt existingAttempt =
+            QuizAttempt attempt =
                     quizAttemptService.getAttempt(
                             userId,
                             attemptId
@@ -149,21 +147,15 @@ public class QuizAttemptController {
 
             Quiz quiz =
                     quizAttemptService.getQuiz(
-                            existingAttempt
-                    );
-
-            QuizAttempt attempt =
-                    quizAttemptService.finalizeAttempt(
-                            userId,
-                            attemptId,
-                            status
+                            attempt
                     );
 
             QuizResult result =
                     quizOutcomeService.process(
                             userId,
                             attempt,
-                            quiz
+                            quiz,
+                            status
                     );
 
             return ResponseEntity.ok(
@@ -195,7 +187,6 @@ public class QuizAttemptController {
                     );
         }
     }
-
 
     @GetMapping
     public ResponseEntity<?> getAttempts() {
@@ -229,7 +220,6 @@ public class QuizAttemptController {
                     );
         }
     }
-
 
     @GetMapping("/{attemptId}")
     public ResponseEntity<?> getAttempt(
@@ -272,7 +262,6 @@ public class QuizAttemptController {
                     );
         }
     }
-
 
     @GetMapping("/{attemptId}/result")
     public ResponseEntity<?> getResult(
@@ -324,9 +313,8 @@ public class QuizAttemptController {
         }
     }
 
-
     private ResponseEntity<?> createAttempt(
-            QuizAttemptRequestDto request,
+            String quizId,
             QuizSupplier quizSupplier
     ) {
 
@@ -353,7 +341,7 @@ public class QuizAttemptController {
                     quizAttemptService.createAttempt(
                             userId,
                             quiz,
-                            request
+                            quizId
                     );
 
             return ResponseEntity.ok(
@@ -385,7 +373,6 @@ public class QuizAttemptController {
                     );
         }
     }
-
 
     @FunctionalInterface
     private interface QuizSupplier {

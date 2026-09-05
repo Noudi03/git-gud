@@ -1,5 +1,6 @@
 package com.app.gitgud.service;
 
+import com.app.gitgud.config.GitGudProperties;
 import com.app.gitgud.model.Question;
 import com.app.gitgud.model.Quiz;
 import com.app.gitgud.model.User;
@@ -14,10 +15,12 @@ public class QuestionSelectionService {
 
     private final FirestoreQuestionRepository questionRepository;
     private final QuestionSelectionStrategy selectionStrategy;
+    private final GitGudProperties properties;
 
     public QuestionSelectionService(
             FirestoreQuestionRepository questionRepository,
-            QuestionSelectionStrategy selectionStrategy
+            QuestionSelectionStrategy selectionStrategy,
+            GitGudProperties properties
     ) {
 
         this.questionRepository =
@@ -25,6 +28,9 @@ public class QuestionSelectionService {
 
         this.selectionStrategy =
                 selectionStrategy;
+
+        this.properties =
+                properties;
     }
 
     public List<Question> selectQuestions(
@@ -37,9 +43,47 @@ public class QuestionSelectionService {
                         quiz
                 );
 
-        return selectionStrategy.selectQuestions(
-                user,
-                questions
-        );
+        int questionCount =
+                properties
+                        .getQuiz()
+                        .getQuestionsPerAttempt();
+
+        if (questionCount <= 0) {
+
+            throw new IllegalStateException(
+                    "Questions per quiz must be greater than zero"
+            );
+        }
+
+        if (
+                questions == null ||
+                        questions.size() < questionCount
+        ) {
+
+            throw new IllegalStateException(
+                    "Quiz does not contain enough questions"
+            );
+        }
+
+        List<Question> selectedQuestions =
+                selectionStrategy.selectQuestions(
+                        user,
+                        questions,
+                        questionCount
+                );
+
+        if (
+                selectedQuestions.size()
+                        != questionCount
+        ) {
+
+            throw new IllegalStateException(
+                    "Question selection must return exactly "
+                            + questionCount
+                            + " questions"
+            );
+        }
+
+        return selectedQuestions;
     }
 }

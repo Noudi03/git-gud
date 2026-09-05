@@ -1,14 +1,12 @@
 package com.app.gitgud.service;
 
 import com.app.gitgud.mapper.QuizAttemptMapper;
-import com.app.gitgud.model.Quiz;
-import com.app.gitgud.model.QuizAttempt;
-import com.app.gitgud.model.QuizAttemptStatus;
-import com.app.gitgud.model.QuizContext;
-import com.app.gitgud.model.SectionQuizContext;
 import com.app.gitgud.model.ChapterQuizContext;
 import com.app.gitgud.model.GlobalQuizContext;
-import com.app.gitgud.model.dto.QuizAttemptRequestDto;
+import com.app.gitgud.model.Quiz;
+import com.app.gitgud.model.QuizAttempt;
+import com.app.gitgud.model.QuizContext;
+import com.app.gitgud.model.SectionQuizContext;
 import com.app.gitgud.repository.FirestoreQuizAttemptRepository;
 import org.springframework.stereotype.Service;
 
@@ -22,13 +20,11 @@ public class QuizAttemptService {
     private final QuizAttemptMapper quizAttemptMapper;
     private final QuizService quizService;
 
-
     public QuizAttemptService(
             FirestoreQuizAttemptRepository quizAttemptRepository,
             QuizAttemptMapper quizAttemptMapper,
             QuizService quizService
     ) {
-
         this.quizAttemptRepository =
                 quizAttemptRepository;
 
@@ -39,11 +35,10 @@ public class QuizAttemptService {
                 quizService;
     }
 
-
     public QuizAttempt createAttempt(
             String userId,
             Quiz quiz,
-            QuizAttemptRequestDto request
+            String quizId
     ) throws Exception {
 
         if (quiz == null) {
@@ -53,22 +48,11 @@ public class QuizAttemptService {
         }
 
         if (
-                !quiz.getId().equals(
-                        request.getQuizId()
-                )
+                quizId == null
+                        || !quiz.getId().equals(quizId)
         ) {
             throw new IllegalArgumentException(
                     "Quiz ID does not match request path"
-            );
-        }
-
-        if (
-                !"in_progress".equalsIgnoreCase(
-                        request.getStatus()
-                )
-        ) {
-            throw new IllegalArgumentException(
-                    "New quiz attempts must start as in_progress"
             );
         }
 
@@ -78,8 +62,7 @@ public class QuizAttemptService {
         QuizAttempt attempt =
                 quizAttemptMapper.toModel(
                         attemptId,
-                        quiz,
-                        request
+                        quiz
                 );
 
         quizAttemptRepository.createAttempt(
@@ -90,7 +73,6 @@ public class QuizAttemptService {
         return attempt;
     }
 
-
     public List<QuizAttempt> getAttempts(
             String userId
     ) throws Exception {
@@ -99,7 +81,6 @@ public class QuizAttemptService {
                 userId
         );
     }
-
 
     public QuizAttempt getAttempt(
             String userId,
@@ -120,63 +101,6 @@ public class QuizAttemptService {
 
         return attempt;
     }
-
-
-    public QuizAttempt finalizeAttempt(
-            String userId,
-            String attemptId,
-            QuizAttemptStatus status
-    ) throws Exception {
-
-        if (
-                status != QuizAttemptStatus.COMPLETED
-                        && status != QuizAttemptStatus.CANCELLED
-        ) {
-            throw new IllegalArgumentException(
-                    "Invalid final quiz attempt status"
-            );
-        }
-
-        QuizAttempt attempt =
-                getAttempt(
-                        userId,
-                        attemptId
-                );
-
-        if (
-                attempt.getStatus()
-                        != QuizAttemptStatus.IN_PROGRESS
-        ) {
-            throw new IllegalStateException(
-                    "Quiz attempt has already been finalized"
-            );
-        }
-
-        quizAttemptRepository.updateStatus(
-                userId,
-                attemptId,
-                status.getValue()
-        );
-
-        return getAttempt(
-                userId,
-                attemptId
-        );
-    }
-
-
-    public boolean markOutcomeProcessed(
-            String userId,
-            String attemptId
-    ) throws Exception {
-
-        return quizAttemptRepository
-                .markOutcomeProcessed(
-                        userId,
-                        attemptId
-                );
-    }
-
 
     public Quiz getQuiz(
             QuizAttempt attempt

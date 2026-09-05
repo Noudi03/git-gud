@@ -1,5 +1,6 @@
 package com.app.gitgud.service;
 
+import com.app.gitgud.config.GitGudProperties;
 import com.app.gitgud.model.Question;
 import com.app.gitgud.model.QuestionAttempt;
 import com.app.gitgud.model.QuestionDifficulty;
@@ -19,11 +20,10 @@ import java.util.Set;
 @Service
 public class QuizResultService {
 
-    private static final int REQUIRED_QUESTION_COUNT = 5;
-
     private final QuizAttemptService quizAttemptService;
     private final QuestionAttemptService questionAttemptService;
     private final FirestoreQuestionRepository questionRepository;
+    private final GitGudProperties properties;
 
     private final int basePoints;
     private final double hintPenalty;
@@ -31,11 +31,11 @@ public class QuizResultService {
     private final int freeTimeSeconds;
     private final int skipPenalty;
 
-
     public QuizResultService(
             QuizAttemptService quizAttemptService,
             QuestionAttemptService questionAttemptService,
             FirestoreQuestionRepository questionRepository,
+            GitGudProperties properties,
 
             @Value("${gitgud.quiz-scoring.base-points}")
             int basePoints,
@@ -62,6 +62,9 @@ public class QuizResultService {
         this.questionRepository =
                 questionRepository;
 
+        this.properties =
+                properties;
+
         this.basePoints =
                 basePoints;
 
@@ -78,7 +81,6 @@ public class QuizResultService {
                 skipPenalty;
     }
 
-
     public QuizResult getResult(
             String userId,
             String attemptId
@@ -94,10 +96,43 @@ public class QuizResultService {
                 attempt.getStatus()
                         == QuizAttemptStatus.IN_PROGRESS
         ) {
+
             throw new IllegalStateException(
                     "Quiz attempt is still in progress"
             );
         }
+
+        return calculateResult(
+                userId,
+                attempt
+        );
+    }
+
+    public QuizResult calculateResultForFinalization(
+            String userId,
+            QuizAttempt attempt
+    ) throws Exception {
+
+        if (
+                attempt.getStatus()
+                        != QuizAttemptStatus.IN_PROGRESS
+        ) {
+
+            throw new IllegalStateException(
+                    "Quiz attempt is not in progress"
+            );
+        }
+
+        return calculateResult(
+                userId,
+                attempt
+        );
+    }
+
+    private QuizResult calculateResult(
+            String userId,
+            QuizAttempt attempt
+    ) throws Exception {
 
         if (
                 attempt.getStatus()
@@ -120,7 +155,7 @@ public class QuizResultService {
                 questionAttemptService
                         .getQuestionAttempts(
                                 userId,
-                                attemptId
+                                attempt.getId()
                         );
 
         validateCompletedAttempt(
@@ -133,18 +168,32 @@ public class QuizResultService {
         );
     }
 
-
     private void validateCompletedAttempt(
             List<QuestionAttempt> questionAttempts
     ) {
 
+        int requiredQuestionCount =
+                properties
+                        .getQuiz()
+                        .getQuestionsPerAttempt();
+
+        if (
+                requiredQuestionCount <= 0
+        ) {
+
+            throw new IllegalStateException(
+                    "Questions per quiz must be greater than zero"
+            );
+        }
+
         if (
                 questionAttempts.size()
-                        != REQUIRED_QUESTION_COUNT
+                        != requiredQuestionCount
         ) {
+
             throw new IllegalStateException(
                     "Completed quiz must contain exactly "
-                            + REQUIRED_QUESTION_COUNT
+                            + requiredQuestionCount
                             + " question attempts"
             );
         }
@@ -162,6 +211,7 @@ public class QuizResultService {
                             attempt.getQuestionId()
                     )
             ) {
+
                 throw new IllegalStateException(
                         "Completed quiz cannot contain duplicate question attempts"
                 );
@@ -169,20 +219,14 @@ public class QuizResultService {
         }
     }
 
-
     private QuizResult calculateResult(
             Quiz quiz,
             List<QuestionAttempt> questionAttempts
     ) throws Exception {
 
-        int correctCount =
-                0;
-
-        int score =
-                0;
-
-        int totalSkips =
-                0;
+        int correctCount = 0;
+        int score = 0;
+        int totalSkips = 0;
 
         for (
                 QuestionAttempt attempt
@@ -196,6 +240,7 @@ public class QuizResultService {
                     );
 
             if (question == null) {
+
                 throw new IllegalStateException(
                         "Question does not belong to quiz"
                 );
@@ -238,7 +283,6 @@ public class QuizResultService {
                 correctCount
         );
     }
-
 
     private int calculateQuestionScore(
             Question question,
@@ -288,7 +332,6 @@ public class QuizResultService {
         );
     }
 
-
     private int getDifficultyMultiplier(
             QuestionDifficulty difficulty
     ) {
@@ -300,7 +343,6 @@ public class QuizResultService {
             case HARD -> 4;
         };
     }
-
 
     private QuizGrade calculateGrade(
             int correctCount

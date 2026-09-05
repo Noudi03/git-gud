@@ -16,9 +16,4 @@ public interface UserRepository {
             String userId,
             int rating
     ) throws Exception;
-
-    void changeRating(
-            String userId,
-            int ratingChange
-    ) throws Exception;
 }

@@ -9,6 +9,7 @@ public interface QuestionSelectionStrategy {
 
     List<Question> selectQuestions(
             User user,
-            List<Question> questions
+            List<Question> questions,
+            int questionCount
     );
 }

@@ -1,21 +1,25 @@
 package com.app.gitgud.repository;
 
+import com.app.gitgud.config.GitGudProperties;
 import com.app.gitgud.model.User;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class FirestoreUserRepository implements UserRepository {
-
-    private static final int MIN_RATING = 0;
+public class FirestoreUserRepository
+        implements UserRepository {
 
     private final Firestore db;
+    private final GitGudProperties properties;
 
     public FirestoreUserRepository(
-            Firestore db
+            Firestore db,
+            GitGudProperties properties
     ) {
+
         this.db = db;
+        this.properties = properties;
     }
 
     @Override
@@ -47,22 +51,18 @@ public class FirestoreUserRepository implements UserRepository {
         Long rating =
                 document.getLong("rating");
 
-        if (rating == null) {
-            return new User(
-                    document.getId(),
-                    document.getString("email"),
-                    document.getString("username")
-            );
-        }
+        int resolvedRating =
+                rating == null
+                        ? properties.getRating().getDefaultRating()
+                        : clampRating(
+                        rating.intValue()
+                );
 
         return new User(
                 document.getId(),
                 document.getString("email"),
                 document.getString("username"),
-                Math.max(
-                        MIN_RATING,
-                        rating.intValue()
-                )
+                resolvedRating
         );
     }
 
@@ -76,60 +76,26 @@ public class FirestoreUserRepository implements UserRepository {
                 .document(userId)
                 .update(
                         "rating",
-                        Math.max(
-                                MIN_RATING,
-                                rating
-                        )
+                        clampRating(rating)
                 )
                 .get();
     }
 
-    @Override
-    public void changeRating(
-            String userId,
-            int ratingChange
-    ) throws Exception {
+    private int clampRating(
+            long rating
+    ) {
 
-        var userReference =
-                db.collection("users")
-                        .document(userId);
+        int minimum =
+                properties.getRating().getMin();
 
-        db.runTransaction(
-                transaction -> {
+        if (rating <= minimum) {
+            return minimum;
+        }
 
-                    DocumentSnapshot document =
-                            transaction.get(
-                                    userReference
-                            ).get();
+        if (rating >= Integer.MAX_VALUE) {
+            return Integer.MAX_VALUE;
+        }
 
-                    if (!document.exists()) {
-                        throw new IllegalArgumentException(
-                                "User not found"
-                        );
-                    }
-
-                    Long storedRating =
-                            document.getLong("rating");
-
-                    int currentRating =
-                            storedRating == null
-                                    ? User.DEFAULT_RATING
-                                    : storedRating.intValue();
-
-                    int newRating =
-                            Math.max(
-                                    MIN_RATING,
-                                    currentRating + ratingChange
-                            );
-
-                    transaction.update(
-                            userReference,
-                            "rating",
-                            newRating
-                    );
-
-                    return null;
-                }
-        ).get();
+        return (int) rating;
     }
 }

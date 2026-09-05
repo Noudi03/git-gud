@@ -17,8 +17,6 @@ import java.util.Random;
 public class WeightedQuestionSelectionStrategy
         implements QuestionSelectionStrategy {
 
-    private static final int QUESTION_COUNT = 5;
-
     private final UserTierResolver userTierResolver;
 
     private final Map<UserTier, Map<QuestionDifficulty, Integer>>
@@ -53,7 +51,9 @@ public class WeightedQuestionSelectionStrategy
                 userTierResolver;
 
         this.weights =
-                new EnumMap<>(UserTier.class);
+                new EnumMap<>(
+                        UserTier.class
+                );
 
         this.weights.put(
                 UserTier.NOVICE,
@@ -77,11 +77,13 @@ public class WeightedQuestionSelectionStrategy
     @Override
     public List<Question> selectQuestions(
             User user,
-            List<Question> questions
+            List<Question> questions,
+            int questionCount
     ) {
 
         if (
-                questions == null ||
+                questionCount <= 0 ||
+                        questions == null ||
                         questions.isEmpty()
         ) {
 
@@ -96,16 +98,21 @@ public class WeightedQuestionSelectionStrategy
                 weights.get(tier);
 
         List<Question> remaining =
-                new ArrayList<>(questions);
+                new ArrayList<>(
+                        questions
+                );
 
         List<Question> selected =
-                new ArrayList<>();
-
-        int questionCount =
-                Math.min(
-                        QUESTION_COUNT,
-                        remaining.size()
+                new ArrayList<>(
+                        questionCount
                 );
+
+        if (
+                remaining.size() < questionCount
+        ) {
+
+            return List.of();
+        }
 
         for (
                 int i = 0;
@@ -134,11 +141,16 @@ public class WeightedQuestionSelectionStrategy
             }
 
             if (question == null) {
-                break;
+                return List.of();
             }
 
-            selected.add(question);
-            remaining.remove(question);
+            selected.add(
+                    question
+            );
+
+            remaining.remove(
+                    question
+            );
         }
 
         return selected;
@@ -152,7 +164,9 @@ public class WeightedQuestionSelectionStrategy
         List<QuestionDifficulty>
                 availableDifficulties =
                 questions.stream()
-                        .map(Question::getDifficulty)
+                        .map(
+                                Question::getDifficulty
+                        )
                         .distinct()
                         .toList();
 
@@ -177,7 +191,9 @@ public class WeightedQuestionSelectionStrategy
         }
 
         int value =
-                random.nextInt(totalWeight);
+                random.nextInt(
+                        totalWeight
+                );
 
         int cumulative = 0;
 
