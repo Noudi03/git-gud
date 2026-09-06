@@ -2,6 +2,7 @@ package com.app.gitgud.repository;
 
 import com.app.gitgud.config.GitGudProperties;
 import com.app.gitgud.model.QuizAttemptStatus;
+import com.app.gitgud.model.QuizGrade;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
@@ -17,7 +18,6 @@ public class FirestoreQuizOutcomeRepository {
             Firestore db,
             GitGudProperties properties
     ) {
-
         this.db = db;
         this.properties = properties;
     }
@@ -26,25 +26,29 @@ public class FirestoreQuizOutcomeRepository {
             String userId,
             String attemptId,
             QuizAttemptStatus finalStatus,
+            QuizGrade grade,
             Integer ratingChange,
             Integer absoluteRating
     ) throws Exception {
-
         if (
                 finalStatus != QuizAttemptStatus.COMPLETED
                         && finalStatus != QuizAttemptStatus.CANCELLED
         ) {
-
             throw new IllegalArgumentException(
                     "Invalid final quiz attempt status"
             );
         }
 
-        if (
-                ratingChange != null &&
-                        absoluteRating != null
-        ) {
+        if (grade == null) {
+            throw new IllegalArgumentException(
+                    "Quiz grade is required"
+            );
+        }
 
+        if (
+                ratingChange != null
+                        && absoluteRating != null
+        ) {
             throw new IllegalArgumentException(
                     "Cannot apply both rating change and absolute rating"
             );
@@ -63,14 +67,12 @@ public class FirestoreQuizOutcomeRepository {
 
         return db.runTransaction(
                 transaction -> {
-
                     DocumentSnapshot attempt =
                             transaction.get(
                                     attemptReference
                             ).get();
 
                     if (!attempt.exists()) {
-
                         throw new IllegalArgumentException(
                                 "Quiz attempt not found"
                         );
@@ -86,7 +88,6 @@ public class FirestoreQuizOutcomeRepository {
                                     outcomeProcessed
                             )
                     ) {
-
                         return false;
                     }
 
@@ -102,24 +103,21 @@ public class FirestoreQuizOutcomeRepository {
                                             currentStatus
                                     )
                     ) {
-
                         throw new IllegalStateException(
                                 "Quiz attempt is not in progress"
                         );
                     }
 
                     if (
-                            ratingChange != null ||
-                                    absoluteRating != null
+                            ratingChange != null
+                                    || absoluteRating != null
                     ) {
-
                         DocumentSnapshot user =
                                 transaction.get(
                                         userReference
                                 ).get();
 
                         if (!user.exists()) {
-
                             throw new IllegalArgumentException(
                                     "User not found"
                             );
@@ -134,21 +132,17 @@ public class FirestoreQuizOutcomeRepository {
                                         .getRating()
                                         .getDefaultRating()
                                         : clampRating(
-                                        storedRating
-                                                .intValue()
+                                        storedRating.intValue()
                                 );
 
                         int newRating;
 
                         if (absoluteRating != null) {
-
                             newRating =
                                     clampRating(
                                             absoluteRating
                                     );
-
                         } else {
-
                             long candidate =
                                     (long) currentRating
                                             + ratingChange;
@@ -171,7 +165,9 @@ public class FirestoreQuizOutcomeRepository {
                             "status",
                             finalStatus.getValue(),
                             "outcomeProcessed",
-                            true
+                            true,
+                            "grade",
+                            grade.getValue()
                     );
 
                     return true;
@@ -182,7 +178,6 @@ public class FirestoreQuizOutcomeRepository {
     private int clampRating(
             long rating
     ) {
-
         int minimum =
                 properties.getRating().getMin();
 
@@ -201,7 +196,6 @@ public class FirestoreQuizOutcomeRepository {
             String userId,
             String attemptId
     ) {
-
         return db.collection("users")
                 .document(userId)
                 .collection("quizAttempts")
@@ -211,7 +205,6 @@ public class FirestoreQuizOutcomeRepository {
     private DocumentReference getUserReference(
             String userId
     ) {
-
         return db.collection("users")
                 .document(userId);
     }

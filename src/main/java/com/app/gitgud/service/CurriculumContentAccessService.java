@@ -37,14 +37,35 @@ public class CurriculumContentAccessService {
             String chapterId
     ) throws Exception {
 
+        CurriculumProgressService progress =
+                curriculumAccessService.loadProgress(
+                        userId
+                );
+
+        return isChapterContentUnlocked(
+                userId,
+                chapterId,
+                progress
+        );
+    }
+
+    public boolean isChapterContentUnlocked(
+            String userId,
+            String chapterId,
+            CurriculumProgressService progress
+    ) throws Exception {
+
         List<Chapter> chapters =
                 chapterRepository.findChapters();
 
         boolean chapterExists =
                 chapters.stream()
-                        .anyMatch(chapter ->
-                                chapter.getId()
-                                        .equals(chapterId)
+                        .anyMatch(
+                                chapter ->
+                                        chapter.getId()
+                                                .equals(
+                                                        chapterId
+                                                )
                         );
 
         if (!chapterExists) {
@@ -70,11 +91,13 @@ public class CurriculumContentAccessService {
         Section firstSection =
                 sections.get(0);
 
-        return curriculumAccessService.isSectionUnlocked(
-                userId,
-                chapterId,
-                firstSection.getId()
-        );
+        return curriculumAccessService
+                .isSectionUnlocked(
+                        userId,
+                        chapterId,
+                        firstSection.getId(),
+                        progress
+                );
     }
 
     public boolean isSectionContentUnlocked(
@@ -83,10 +106,31 @@ public class CurriculumContentAccessService {
             String sectionId
     ) throws Exception {
 
+        CurriculumProgressService progress =
+                curriculumAccessService.loadProgress(
+                        userId
+                );
+
+        return isSectionContentUnlocked(
+                userId,
+                chapterId,
+                sectionId,
+                progress
+        );
+    }
+
+    public boolean isSectionContentUnlocked(
+            String userId,
+            String chapterId,
+            String sectionId,
+            CurriculumProgressService progress
+    ) throws Exception {
+
         return curriculumAccessService.isSectionUnlocked(
                 userId,
                 chapterId,
-                sectionId
+                sectionId,
+                progress
         );
     }
 }

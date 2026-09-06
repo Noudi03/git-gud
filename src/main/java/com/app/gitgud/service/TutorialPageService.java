@@ -9,12 +9,12 @@ import com.app.gitgud.model.QuizType;
 import com.app.gitgud.model.Section;
 import com.app.gitgud.model.User;
 import com.app.gitgud.model.dto.ChapterDto;
+import com.app.gitgud.model.dto.QuizDto;
 import com.app.gitgud.model.dto.SectionDto;
 import com.app.gitgud.model.dto.TutorialPageDto;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -91,13 +91,19 @@ public class TutorialPageService {
                         chapters
                 );
 
+        CurriculumProgressService progress =
+                curriculumAccessService.loadProgress(
+                        user.getId()
+                );
+
         return buildPage(
                 user,
                 chapters,
                 sectionsByChapter,
                 null,
                 null,
-                List.of()
+                List.of(),
+                progress
         );
     }
 
@@ -123,11 +129,17 @@ public class TutorialPageService {
             return null;
         }
 
+        CurriculumProgressService progress =
+                curriculumAccessService.loadProgress(
+                        user.getId()
+                );
+
         if (
                 !curriculumContentAccessService
                         .isChapterContentUnlocked(
                                 user.getId(),
-                                chapterId
+                                chapterId,
+                                progress
                         )
         ) {
             throw new CurriculumAccessDeniedException(
@@ -135,19 +147,14 @@ public class TutorialPageService {
             );
         }
 
-        /*
-         * Chapter pages contain ONLY chapter content.
-         *
-         * The chapter final quiz is represented in the
-         * sidebar instead.
-         */
         return buildPage(
                 user,
                 chapters,
                 sectionsByChapter,
                 convertChapter(chapter),
                 null,
-                List.of()
+                List.of(),
+                progress
         );
     }
 
@@ -184,12 +191,18 @@ public class TutorialPageService {
             return null;
         }
 
+        CurriculumProgressService progress =
+                curriculumAccessService.loadProgress(
+                        user.getId()
+                );
+
         if (
                 !curriculumContentAccessService
                         .isSectionContentUnlocked(
                                 user.getId(),
                                 chapterId,
-                                sectionId
+                                sectionId,
+                                progress
                         )
         ) {
             throw new CurriculumAccessDeniedException(
@@ -209,7 +222,8 @@ public class TutorialPageService {
                 sectionsByChapter,
                 convertChapter(chapter),
                 convertSection(section),
-                quizMapper.toDtoList(quizzes)
+                quizMapper.toDtoList(quizzes),
+                progress
         );
     }
 
@@ -220,8 +234,8 @@ public class TutorialPageService {
                     sectionsByChapter,
             ChapterDto chapter,
             SectionDto section,
-            List<com.app.gitgud.model.dto.QuizDto>
-                    quizzes
+            List<QuizDto> quizzes,
+            CurriculumProgressService progress
     ) throws Exception {
 
         Map<String, Boolean>
@@ -236,7 +250,7 @@ public class TutorialPageService {
                 sectionContentUnlocked =
                 new LinkedHashMap<>();
 
-        Map<String, com.app.gitgud.model.dto.QuizDto>
+        Map<String, QuizDto>
                 chapterFinalQuizzes =
                 new LinkedHashMap<>();
 
@@ -246,7 +260,8 @@ public class TutorialPageService {
                     curriculumContentAccessService
                             .isChapterContentUnlocked(
                                     user.getId(),
-                                    currentChapter.getId()
+                                    currentChapter.getId(),
+                                    progress
                             );
 
             chapterContentUnlocked.put(
@@ -258,7 +273,8 @@ public class TutorialPageService {
                     curriculumAccessService
                             .isChapterQuizUnlocked(
                                     user.getId(),
-                                    currentChapter.getId()
+                                    currentChapter.getId(),
+                                    progress
                             );
 
             chapterQuizUnlocked.put(
@@ -284,7 +300,8 @@ public class TutorialPageService {
                                 .isSectionContentUnlocked(
                                         user.getId(),
                                         currentChapter.getId(),
-                                        currentSection.getId()
+                                        currentSection.getId(),
+                                        progress
                                 )
                 );
             }
@@ -314,8 +331,8 @@ public class TutorialPageService {
         boolean introductoryQuizAttempted =
                 curriculumAccessService
                         .hasAttemptForQuiz(
-                                user.getId(),
-                                introductoryQuiz
+                                introductoryQuiz,
+                                progress
                         );
 
         return new TutorialPageDto(
@@ -344,15 +361,17 @@ public class TutorialPageService {
                 quizService.getGlobalQuizzes();
 
         return quizzes.stream()
-                .filter(quiz ->
-                        quiz.getType()
-                                == QuizType.INTRODUCTORY
+                .filter(
+                        quiz ->
+                                quiz.getType()
+                                        == QuizType.INTRODUCTORY
                 )
                 .findFirst()
-                .orElseThrow(() ->
-                        new IllegalStateException(
-                                "Introductory quiz not found"
-                        )
+                .orElseThrow(
+                        () ->
+                                new IllegalStateException(
+                                        "Introductory quiz not found"
+                                )
                 );
     }
 

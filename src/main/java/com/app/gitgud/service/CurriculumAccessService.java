@@ -26,16 +26,13 @@ public class CurriculumAccessService {
     private final FirestoreSectionRepository sectionRepository;
     private final QuizService quizService;
     private final QuizAttemptService quizAttemptService;
-    private final QuizResultService quizResultService;
 
     public CurriculumAccessService(
             FirestoreChapterRepository chapterRepository,
             FirestoreSectionRepository sectionRepository,
             QuizService quizService,
-            QuizAttemptService quizAttemptService,
-            QuizResultService quizResultService
+            QuizAttemptService quizAttemptService
     ) {
-
         this.chapterRepository =
                 chapterRepository;
 
@@ -47,15 +44,41 @@ public class CurriculumAccessService {
 
         this.quizAttemptService =
                 quizAttemptService;
+    }
 
-        this.quizResultService =
-                quizResultService;
+    public CurriculumProgressService loadProgress(
+            String userId
+    ) throws Exception {
+
+        return new CurriculumProgressService(
+                quizAttemptService.getAttempts(
+                        userId
+                )
+        );
     }
 
     public boolean isSectionUnlocked(
             String userId,
             String chapterId,
             String sectionId
+    ) throws Exception {
+
+        CurriculumProgressService progress =
+                loadProgress(userId);
+
+        return isSectionUnlocked(
+                userId,
+                chapterId,
+                sectionId,
+                progress
+        );
+    }
+
+    public boolean isSectionUnlocked(
+            String userId,
+            String chapterId,
+            String sectionId,
+            CurriculumProgressService progress
     ) throws Exception {
 
         List<Chapter> chapters =
@@ -96,14 +119,12 @@ public class CurriculumAccessService {
                 chapterIndex == 0
                         && sectionIndex == 0
         ) {
-
             return hasAttemptedIntroductoryQuiz(
-                    userId
+                    progress
             );
         }
 
         if (sectionIndex > 0) {
-
             Section previousSection =
                     sections.get(
                             sectionIndex - 1
@@ -112,7 +133,8 @@ public class CurriculumAccessService {
             return hasPassedSectionQuiz(
                     userId,
                     chapterId,
-                    previousSection.getId()
+                    previousSection.getId(),
+                    progress
             );
         }
 
@@ -123,13 +145,30 @@ public class CurriculumAccessService {
 
         return hasPassedChapterQuiz(
                 userId,
-                previousChapter.getId()
+                previousChapter.getId(),
+                progress
         );
     }
 
     public boolean isChapterUnlocked(
             String userId,
             String chapterId
+    ) throws Exception {
+
+        CurriculumProgressService progress =
+                loadProgress(userId);
+
+        return isChapterUnlocked(
+                userId,
+                chapterId,
+                progress
+        );
+    }
+
+    public boolean isChapterUnlocked(
+            String userId,
+            String chapterId,
+            CurriculumProgressService progress
     ) throws Exception {
 
         List<Chapter> chapters =
@@ -149,9 +188,8 @@ public class CurriculumAccessService {
                 chapters.indexOf(chapter);
 
         if (chapterIndex == 0) {
-
             return hasAttemptedIntroductoryQuiz(
-                    userId
+                    progress
             );
         }
 
@@ -162,7 +200,8 @@ public class CurriculumAccessService {
 
         return hasPassedChapterQuiz(
                 userId,
-                previousChapter.getId()
+                previousChapter.getId(),
+                progress
         );
     }
 
@@ -171,10 +210,27 @@ public class CurriculumAccessService {
             String chapterId
     ) throws Exception {
 
+        CurriculumProgressService progress =
+                loadProgress(userId);
+
+        return isChapterQuizUnlocked(
+                userId,
+                chapterId,
+                progress
+        );
+    }
+
+    public boolean isChapterQuizUnlocked(
+            String userId,
+            String chapterId,
+            CurriculumProgressService progress
+    ) throws Exception {
+
         if (
                 !isChapterUnlocked(
                         userId,
-                        chapterId
+                        chapterId,
+                        progress
                 )
         ) {
             return false;
@@ -190,12 +246,12 @@ public class CurriculumAccessService {
         }
 
         for (Section section : sections) {
-
             if (
                     !hasPassedSectionQuiz(
                             userId,
                             chapterId,
-                            section.getId()
+                            section.getId(),
+                            progress
                     )
             ) {
                 return false;
@@ -208,6 +264,9 @@ public class CurriculumAccessService {
     public boolean isCurriculumComplete(
             String userId
     ) throws Exception {
+
+        CurriculumProgressService progress =
+                loadProgress(userId);
 
         List<Chapter> chapters =
                 getOrderedChapters();
@@ -223,7 +282,8 @@ public class CurriculumAccessService {
 
         return hasPassedChapterQuiz(
                 userId,
-                lastChapter.getId()
+                lastChapter.getId(),
+                progress
         );
     }
 
@@ -232,14 +292,28 @@ public class CurriculumAccessService {
             Quiz quiz
     ) throws Exception {
 
+        CurriculumProgressService progress =
+                loadProgress(userId);
+
+        return hasPassedQuiz(
+                userId,
+                quiz,
+                progress
+        );
+    }
+
+    public boolean hasPassedQuiz(
+            String userId,
+            Quiz quiz,
+            CurriculumProgressService progress
+    ) {
+
         if (quiz == null) {
             return false;
         }
 
-        List<QuizAttempt> attempts =
-                quizAttemptService.getAttempts(userId);
-
-        for (QuizAttempt attempt : attempts) {
+        for (QuizAttempt attempt :
+                progress.getAttempts()) {
 
             if (!isSameQuiz(attempt, quiz)) {
                 continue;
@@ -253,14 +327,12 @@ public class CurriculumAccessService {
             }
 
             QuizGrade grade =
-                    quizResultService
-                            .getResult(
-                                    userId,
-                                    attempt.getId()
-                            )
-                            .getGrade();
+                    attempt.getGrade();
 
-            if (grade != QuizGrade.FAILURE) {
+            if (
+                    grade != null
+                            && grade != QuizGrade.FAILURE
+            ) {
                 return true;
             }
         }
@@ -273,14 +345,26 @@ public class CurriculumAccessService {
             Quiz quiz
     ) throws Exception {
 
+        CurriculumProgressService progress =
+                loadProgress(userId);
+
+        return hasAttemptForQuiz(
+                quiz,
+                progress
+        );
+    }
+
+    public boolean hasAttemptForQuiz(
+            Quiz quiz,
+            CurriculumProgressService progress
+    ) {
+
         if (quiz == null) {
             return false;
         }
 
-        List<QuizAttempt> attempts =
-                quizAttemptService.getAttempts(userId);
-
-        return attempts.stream()
+        return progress.getAttempts()
+                .stream()
                 .anyMatch(
                         attempt ->
                                 isSameQuiz(
@@ -296,19 +380,34 @@ public class CurriculumAccessService {
             String currentAttemptId
     ) throws Exception {
 
+        CurriculumProgressService progress =
+                loadProgress(userId);
+
+        return hasPreviousAttemptForQuiz(
+                quiz,
+                currentAttemptId,
+                progress
+        );
+    }
+
+    public boolean hasPreviousAttemptForQuiz(
+            Quiz quiz,
+            String currentAttemptId,
+            CurriculumProgressService progress
+    ) {
+
         if (quiz == null) {
             return false;
         }
 
-        List<QuizAttempt> attempts =
-                quizAttemptService.getAttempts(userId);
-
-        return attempts.stream()
+        return progress.getAttempts()
+                .stream()
                 .anyMatch(
                         attempt ->
-                                !attempt
-                                        .getId()
-                                        .equals(currentAttemptId)
+                                !Objects.equals(
+                                        attempt.getId(),
+                                        currentAttemptId
+                                )
                                         && isSameQuiz(
                                         attempt,
                                         quiz
@@ -374,7 +473,7 @@ public class CurriculumAccessService {
     }
 
     private boolean hasAttemptedIntroductoryQuiz(
-            String userId
+            CurriculumProgressService progress
     ) throws Exception {
 
         List<Quiz> quizzes =
@@ -391,15 +490,16 @@ public class CurriculumAccessService {
                         .orElse(null);
 
         return hasAttemptForQuiz(
-                userId,
-                introductoryQuiz
+                introductoryQuiz,
+                progress
         );
     }
 
     private boolean hasPassedSectionQuiz(
             String userId,
             String chapterId,
-            String sectionId
+            String sectionId,
+            CurriculumProgressService progress
     ) throws Exception {
 
         Quiz quiz =
@@ -410,13 +510,15 @@ public class CurriculumAccessService {
 
         return hasPassedQuiz(
                 userId,
-                quiz
+                quiz,
+                progress
         );
     }
 
     private boolean hasPassedChapterQuiz(
             String userId,
-            String chapterId
+            String chapterId,
+            CurriculumProgressService progress
     ) throws Exception {
 
         Quiz quiz =
@@ -426,7 +528,8 @@ public class CurriculumAccessService {
 
         return hasPassedQuiz(
                 userId,
-                quiz
+                quiz,
+                progress
         );
     }
 
@@ -532,7 +635,6 @@ public class CurriculumAccessService {
                         && attemptContext instanceof SectionQuizContext
                         attemptSectionContext
         ) {
-
             return Objects.equals(
                     quizSectionContext.getChapterId(),
                     attemptSectionContext.getChapterId()
@@ -549,7 +651,6 @@ public class CurriculumAccessService {
                         && attemptContext instanceof ChapterQuizContext
                         attemptChapterContext
         ) {
-
             return Objects.equals(
                     quizChapterContext.getChapterId(),
                     attemptChapterContext.getChapterId()
@@ -560,7 +661,6 @@ public class CurriculumAccessService {
                 quizContext instanceof GlobalQuizContext
                         && attemptContext instanceof GlobalQuizContext
         ) {
-
             return true;
         }
 

@@ -73,6 +73,7 @@ public class QuizOutcomeService {
                 userId,
                 attempt.getId(),
                 finalStatus,
+                result.getGrade(),
                 ratingUpdate.getRatingChange(),
                 ratingUpdate.getAbsoluteRating()
         );
