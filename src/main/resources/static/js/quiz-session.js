@@ -3,8 +3,12 @@ import {
     renderAnswer,
     renderSkipped,
     renderEmptyQuiz,
-    renderCompletion
+    renderCompletion,
+    renderHintButton,
+    renderHints
 } from "./quiz-renderer.js";
+
+const HINT_INTERVAL_MILLIS = 3000;
 
 export class QuizSession {
 
@@ -35,6 +39,9 @@ export class QuizSession {
             new Map();
 
         this.questionStartTime =
+            null;
+
+        this.hintTimerId =
             null;
 
         this.isFinished =
@@ -92,6 +99,8 @@ export class QuizSession {
         this.questionStartTime =
             null;
 
+        this.clearHintTimer();
+
         this.isFinished =
             false;
 
@@ -141,20 +150,8 @@ export class QuizSession {
             return;
         }
 
-        this.questionStartTime =
-            Date.now();
-
-        renderQuestion(
-            question,
-            this.currentQuestionIndex,
-            this.quizData.questions.length,
-            this.elements,
-            answer =>
-                this.answer(
-                    question,
-                    answer
-                ),
-            this.canSkip()
+        this.startQuestion(
+            question
         );
     }
 
@@ -174,12 +171,29 @@ export class QuizSession {
         this.currentQuestionIndex =
             questionIndex;
 
+        this.startQuestion(
+            question
+        );
+    }
+
+    startQuestion(question) {
+
+        this.clearHintTimer();
+
         this.questionStartTime =
             Date.now();
 
+        const existingAttempt =
+            this.questionAttempts.get(
+                question.id
+            );
+
+        const hintsUsed =
+            existingAttempt?.hintsUsed ?? 0;
+
         renderQuestion(
             question,
-            questionIndex,
+            this.currentQuestionIndex,
             this.quizData.questions.length,
             this.elements,
             answer =>
@@ -187,8 +201,23 @@ export class QuizSession {
                     question,
                     answer
                 ),
-            this.canSkip()
+            this.canSkip(),
+            hintsUsed
         );
+
+        this.updateHintAvailability(
+            question
+        );
+
+        if (
+            !this.isHintAvailable(
+                question
+            )
+        ) {
+            this.startHintTimer(
+                question
+            );
+        }
     }
 
     answer(
@@ -220,6 +249,9 @@ export class QuizSession {
         const skipCount =
             existingAttempt?.skipCount ?? 0;
 
+        const hintsUsed =
+            existingAttempt?.hintsUsed ?? 0;
+
         this.questionAttempts.set(
             question.id,
             {
@@ -237,12 +269,17 @@ export class QuizSession {
                     + timeSpentMillis,
 
                 hintsUsed:
-                    existingAttempt?.hintsUsed ?? 0,
+                hintsUsed,
 
                 skipCount:
                 skipCount
             }
         );
+
+        this.questionStartTime =
+            null;
+
+        this.clearHintTimer();
 
         this.answeredQuestions.add(
             question.id
@@ -258,7 +295,8 @@ export class QuizSession {
         renderAnswer(
             question,
             selectedAnswer,
-            this.elements
+            this.elements,
+            hintsUsed
         );
 
         this.elements.nextButton.textContent =
@@ -321,6 +359,11 @@ export class QuizSession {
             }
         );
 
+        this.questionStartTime =
+            null;
+
+        this.clearHintTimer();
+
         const alreadySkipped =
             this.skippedQuestions.some(
                 skippedQuestion =>
@@ -368,12 +411,293 @@ export class QuizSession {
         }
     }
 
+    useHint() {
+
+        if (
+            this.isFinished ||
+            this.isCancelled
+        ) {
+            return;
+        }
+
+        const question =
+            this.quizData.questions[
+                this.currentQuestionIndex
+                ];
+
+        if (
+            !question ||
+            !Array.isArray(question.hints)
+        ) {
+            return;
+        }
+
+        const existingAttempt =
+            this.questionAttempts.get(
+                question.id
+            );
+
+        const hintsUsed =
+            existingAttempt?.hintsUsed ?? 0;
+
+        if (
+            hintsUsed >=
+            question.hints.length
+        ) {
+
+            this.elements.hintButton.hidden =
+                true;
+
+            this.clearHintTimer();
+
+            return;
+        }
+
+        if (
+            !this.isHintAvailable(
+                question
+            )
+        ) {
+            return;
+        }
+
+        const nextHintsUsed =
+            hintsUsed + 1;
+
+        this.questionAttempts.set(
+            question.id,
+            {
+                questionId:
+                question.id,
+
+                selectedAnswer:
+                    existingAttempt?.selectedAnswer ?? null,
+
+                correct:
+                    existingAttempt?.correct ?? false,
+
+                timeSpentMillis:
+                    existingAttempt?.timeSpentMillis ?? 0,
+
+                hintsUsed:
+                nextHintsUsed,
+
+                skipCount:
+                    existingAttempt?.skipCount ?? 0
+            }
+        );
+
+        renderHints(
+            question,
+            nextHintsUsed,
+            this.elements
+        );
+
+        this.elements.hintButton.hidden =
+            true;
+
+        if (
+            nextHintsUsed <
+            question.hints.length
+        ) {
+
+            this.startHintTimer(
+                question
+            );
+
+        } else {
+
+            this.clearHintTimer();
+        }
+    }
+
+    startHintTimer(question) {
+
+        this.clearHintTimer();
+
+        if (
+            !Array.isArray(question.hints)
+        ) {
+            return;
+        }
+
+        const existingAttempt =
+            this.questionAttempts.get(
+                question.id
+            );
+
+        const hintsUsed =
+            existingAttempt?.hintsUsed ?? 0;
+
+        if (
+            hintsUsed >=
+            question.hints.length
+        ) {
+            return;
+        }
+
+        const questionIndex =
+            this.quizData.questions.findIndex(
+                item =>
+                    item.id ===
+                    question.id
+            );
+
+        const update =
+            () => {
+
+                if (
+                    this.isFinished ||
+                    this.isCancelled ||
+                    this.currentQuestionIndex !==
+                    questionIndex ||
+                    this.questionStartTime === null
+                ) {
+
+                    this.clearHintTimer();
+
+                    return;
+                }
+
+                this.updateHintAvailability(
+                    question
+                );
+
+                if (
+                    !this.elements.hintButton.hidden
+                ) {
+
+                    this.clearHintTimer();
+                }
+            };
+
+        update();
+
+        if (
+            this.elements.hintButton.hidden
+        ) {
+
+            this.hintTimerId =
+                window.setInterval(
+                    update,
+                    100
+                );
+        }
+    }
+
+    updateHintAvailability(question) {
+
+        if (
+            !Array.isArray(question.hints)
+        ) {
+
+            this.elements.hintButton.hidden =
+                true;
+
+            return;
+        }
+
+        const existingAttempt =
+            this.questionAttempts.get(
+                question.id
+            );
+
+        const hintsUsed =
+            existingAttempt?.hintsUsed ?? 0;
+
+        const available =
+            this.isHintAvailable(
+                question
+            );
+
+        renderHintButton(
+            question,
+            hintsUsed,
+            available,
+            this.elements
+        );
+
+        if (available) {
+            this.clearHintTimer();
+        }
+    }
+
+    isHintAvailable(question) {
+
+        if (
+            !Array.isArray(question.hints)
+        ) {
+            return false;
+        }
+
+        const existingAttempt =
+            this.questionAttempts.get(
+                question.id
+            );
+
+        const hintsUsed =
+            existingAttempt?.hintsUsed ?? 0;
+
+        if (
+            hintsUsed >=
+            question.hints.length
+        ) {
+            return false;
+        }
+
+        const accumulatedTime =
+            this.getCurrentQuestionTotalTimeMillis(
+                question
+            );
+
+        const requiredTime =
+            (hintsUsed + 1) *
+            HINT_INTERVAL_MILLIS;
+
+        return (
+            accumulatedTime >=
+            requiredTime
+        );
+    }
+
+    getCurrentQuestionTotalTimeMillis(
+        question
+    ) {
+
+        const existingAttempt =
+            this.questionAttempts.get(
+                question.id
+            );
+
+        return (
+            (existingAttempt?.timeSpentMillis ?? 0)
+            + this.getTimeSpent()
+        );
+    }
+
+    clearHintTimer() {
+
+        if (
+            this.hintTimerId !== null
+        ) {
+
+            window.clearInterval(
+                this.hintTimerId
+            );
+
+            this.hintTimerId =
+                null;
+        }
+    }
+
     moveToNextQuestion() {
 
         const nextQuestionIndex =
             this.findNextUnansweredQuestionIndex();
 
-        if (nextQuestionIndex !== -1) {
+        if (
+            nextQuestionIndex !== -1
+        ) {
 
             this.currentQuestionIndex =
                 nextQuestionIndex;
@@ -383,7 +707,9 @@ export class QuizSession {
             return;
         }
 
-        if (this.skippedQuestions.length > 0) {
+        if (
+            this.skippedQuestions.length > 0
+        ) {
 
             const skippedQuestion =
                 this.skippedQuestions.shift();
@@ -401,7 +727,8 @@ export class QuizSession {
     canSkip() {
 
         return (
-            this.getRemainingQuestionCount() > 1
+            this.getRemainingQuestionCount() >
+            1
         );
     }
 
@@ -577,9 +904,12 @@ export class QuizSession {
             return;
         }
 
-        this.isFinished = true;
-
         this.recordCurrentQuestionTime();
+
+        this.clearHintTimer();
+
+        this.isFinished =
+            true;
 
         renderCompletion(
             this.quizData,
@@ -622,7 +952,10 @@ export class QuizSession {
 
         this.recordCurrentQuestionTime();
 
-        this.isCancelled = true;
+        this.clearHintTimer();
+
+        this.isCancelled =
+            true;
 
         try {
 
@@ -776,7 +1109,9 @@ export class QuizSession {
         const timeSpentMillis =
             this.getTimeSpent();
 
-        if (timeSpentMillis <= 0) {
+        if (
+            timeSpentMillis <= 0
+        ) {
 
             this.questionStartTime =
                 null;

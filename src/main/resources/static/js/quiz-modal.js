@@ -45,9 +45,19 @@ document.addEventListener(
                 "quiz-feedback"
             );
 
+        const hintsContainer =
+            document.getElementById(
+                "quiz-hints"
+            );
+
         const skipButton =
             document.getElementById(
                 "quiz-skip-button"
+            );
+
+        const hintButton =
+            document.getElementById(
+                "quiz-hint-button"
             );
 
         const nextButton =
@@ -68,7 +78,9 @@ document.addEventListener(
             !questionText ||
             !optionsContainer ||
             !feedback ||
+            !hintsContainer ||
             !skipButton ||
+            !hintButton ||
             !nextButton
         ) {
             return;
@@ -81,7 +93,9 @@ document.addEventListener(
             questionText,
             optionsContainer,
             feedback,
+            hintsContainer,
             skipButton,
+            hintButton,
             nextButton
         };
 
@@ -125,11 +139,6 @@ document.addEventListener(
                     error
                 );
 
-                /*
-                 * A 403 means the quiz is locked.
-                 * QuizSession.load() should expose the
-                 * HTTP response status on the error.
-                 */
                 if (
                     error?.status === 403 ||
                     error?.response?.status === 403
@@ -151,13 +160,6 @@ document.addEventListener(
 
         async function closeQuiz() {
 
-            /*
-             * If a quiz is currently active, closing
-             * the modal means the user cancelled it.
-             *
-             * QuizSession.cancel() safely does nothing
-             * if the quiz has already been completed.
-             */
             await session.cancel();
 
             modal.hidden = true;
@@ -167,6 +169,8 @@ document.addEventListener(
             );
 
             delete modal.dataset.quizUrl;
+
+            window.location.reload();
         }
 
 
@@ -187,7 +191,7 @@ document.addEventListener(
         );
 
 
-        closeButton?.addEventListener(
+        closeButton.addEventListener(
             "click",
             () => {
                 closeQuiz();
@@ -206,6 +210,12 @@ document.addEventListener(
         skipButton.addEventListener(
             "click",
             () => session.skip()
+        );
+
+
+        hintButton.addEventListener(
+            "click",
+            () => session.useHint()
         );
 
 

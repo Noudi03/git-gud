@@ -12,7 +12,9 @@ export function renderMultipleChoiceQuestion(
         optionsContainer,
         feedback,
         skipButton,
-        nextButton
+        hintButton,
+        nextButton,
+        hintsContainer
     } = elements;
 
     progress.textContent =
@@ -26,6 +28,11 @@ export function renderMultipleChoiceQuestion(
     feedback.textContent = "";
     feedback.hidden = true;
     feedback.className = "quiz-feedback";
+
+    hintsContainer.innerHTML = "";
+    hintsContainer.hidden = true;
+
+    hintButton.hidden = true;
 
     skipButton.hidden =
         !canSkip;
@@ -81,7 +88,9 @@ export function renderFillInTheBlankQuestion(
         optionsContainer,
         feedback,
         skipButton,
-        nextButton
+        hintButton,
+        nextButton,
+        hintsContainer
     } = elements;
 
     progress.textContent =
@@ -95,6 +104,11 @@ export function renderFillInTheBlankQuestion(
     feedback.textContent = "";
     feedback.hidden = true;
     feedback.className = "quiz-feedback";
+
+    hintsContainer.innerHTML = "";
+    hintsContainer.hidden = true;
+
+    hintButton.hidden = true;
 
     skipButton.hidden =
         !canSkip;
@@ -157,7 +171,9 @@ export function renderTrueFalseQuestion(
         optionsContainer,
         feedback,
         skipButton,
-        nextButton
+        hintButton,
+        nextButton,
+        hintsContainer
     } = elements;
 
     progress.textContent =
@@ -171,6 +187,11 @@ export function renderTrueFalseQuestion(
     feedback.textContent = "";
     feedback.hidden = true;
     feedback.className = "quiz-feedback";
+
+    hintsContainer.innerHTML = "";
+    hintsContainer.hidden = true;
+
+    hintButton.hidden = true;
 
     skipButton.hidden =
         !canSkip;
@@ -219,13 +240,15 @@ export function renderTrueFalseQuestion(
     });
 }
 
+
 export function renderQuestion(
     question,
     currentIndex,
     totalQuestions,
     elements,
     onAnswer,
-    canSkip
+    canSkip,
+    hintsUsed = 0
 ) {
     switch (question.type) {
 
@@ -274,17 +297,103 @@ export function renderQuestion(
                 `Unsupported question type: ${question.type}`
             );
     }
+
+    renderHints(
+        question,
+        hintsUsed,
+        elements
+    );
 }
+
+
+export function renderHints(
+    question,
+    hintsUsed,
+    elements
+) {
+    const {
+        hintsContainer
+    } = elements;
+
+    hintsContainer.innerHTML = "";
+
+    if (
+        !Array.isArray(question.hints) ||
+        hintsUsed <= 0
+    ) {
+        hintsContainer.hidden = true;
+        return;
+    }
+
+    const title =
+        document.createElement("div");
+
+    title.classList.add(
+        "quiz-hints-title"
+    );
+
+    title.textContent =
+        "Hints";
+
+    hintsContainer.appendChild(
+        title
+    );
+
+    question.hints
+        .slice(0, hintsUsed)
+        .forEach(
+            (hint, index) => {
+
+                const hintElement =
+                    document.createElement("div");
+
+                hintElement.classList.add(
+                    "quiz-hint"
+                );
+
+                hintElement.innerHTML =
+                    `Hint ${index + 1}: ${hint}`;
+
+                hintsContainer.appendChild(
+                    hintElement
+                );
+            }
+        );
+
+    hintsContainer.hidden = false;
+}
+
+
+export function renderHintButton(
+    question,
+    hintsUsed,
+    available,
+    elements
+) {
+    const {
+        hintButton
+    } = elements;
+
+    const hasUnusedHints =
+        Array.isArray(question.hints) &&
+        hintsUsed < question.hints.length;
+
+    hintButton.hidden =
+        !hasUnusedHints || !available;
+}
+
 
 export function renderAnswer(
     question,
     selectedAnswer,
-    elements
+    elements,
+    hintsUsed = 0
 ) {
     const {
         optionsContainer,
         feedback,
         skipButton,
+        hintButton,
         nextButton
     } = elements;
 
@@ -308,7 +417,9 @@ export function renderAnswer(
 
             button.setAttribute(
                 "aria-pressed",
-                selected ? "true" : "false"
+                selected
+                    ? "true"
+                    : "false"
             );
 
             if (selected) {
@@ -342,8 +453,16 @@ export function renderAnswer(
     feedback.hidden = false;
 
     skipButton.hidden = true;
+    hintButton.hidden = true;
     nextButton.hidden = false;
+
+    renderHints(
+        question,
+        hintsUsed,
+        elements
+    );
 }
+
 
 export function renderSkipped(
     elements
@@ -352,6 +471,7 @@ export function renderSkipped(
         optionsContainer,
         feedback,
         skipButton,
+        hintButton,
         nextButton
     } = elements;
 
@@ -382,8 +502,10 @@ export function renderSkipped(
     feedback.hidden = false;
 
     skipButton.hidden = true;
+    hintButton.hidden = true;
     nextButton.hidden = false;
 }
+
 
 export function renderEmptyQuiz(
     elements
@@ -393,7 +515,9 @@ export function renderEmptyQuiz(
         questionText,
         optionsContainer,
         feedback,
+        hintsContainer,
         skipButton,
+        hintButton,
         nextButton
     } = elements;
 
@@ -407,9 +531,14 @@ export function renderEmptyQuiz(
     feedback.textContent = "";
     feedback.hidden = true;
 
+    hintsContainer.innerHTML = "";
+    hintsContainer.hidden = true;
+
     skipButton.hidden = true;
+    hintButton.hidden = true;
     nextButton.hidden = true;
 }
+
 
 export function renderCompletion(
     quizData,
@@ -421,7 +550,9 @@ export function renderCompletion(
         questionText,
         optionsContainer,
         feedback,
+        hintsContainer,
         skipButton,
+        hintButton,
         nextButton
     } = elements;
 
@@ -431,6 +562,9 @@ export function renderCompletion(
         "Quiz complete!";
 
     optionsContainer.innerHTML = "";
+
+    hintsContainer.innerHTML = "";
+    hintsContainer.hidden = true;
 
     let correctCount = 0;
     let answeredCount = 0;
@@ -606,19 +740,24 @@ export function renderCompletion(
         summary;
 
     feedback.className =
-        "quiz-feedback quiz-feedback-correct";
+        correctCount <= 2
+            ? "quiz-feedback quiz-feedback-incorrect"
+            : "quiz-feedback quiz-feedback-correct";
 
     feedback.hidden = false;
 
     skipButton.hidden = true;
+    hintButton.hidden = true;
     nextButton.hidden = true;
 }
+
 
 function getQuestionDisplayText(
     question
 ) {
     return question.text;
 }
+
 
 function getQuestionAnswerText(
     question,
@@ -644,6 +783,7 @@ function getQuestionAnswerText(
             return answer;
     }
 }
+
 
 function getQuestionCorrectAnswerText(
     question
