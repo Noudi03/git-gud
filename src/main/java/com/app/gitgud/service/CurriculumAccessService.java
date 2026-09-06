@@ -1,18 +1,23 @@
 package com.app.gitgud.service;
 
 import com.app.gitgud.model.Chapter;
+import com.app.gitgud.model.ChapterQuizContext;
+import com.app.gitgud.model.GlobalQuizContext;
 import com.app.gitgud.model.Quiz;
 import com.app.gitgud.model.QuizAttempt;
 import com.app.gitgud.model.QuizAttemptStatus;
+import com.app.gitgud.model.QuizContext;
 import com.app.gitgud.model.QuizGrade;
 import com.app.gitgud.model.QuizType;
 import com.app.gitgud.model.Section;
+import com.app.gitgud.model.SectionQuizContext;
 import com.app.gitgud.repository.FirestoreChapterRepository;
 import com.app.gitgud.repository.FirestoreSectionRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class CurriculumAccessService {
@@ -87,24 +92,16 @@ public class CurriculumAccessService {
         int sectionIndex =
                 sections.indexOf(section);
 
-        /*
-         * First section of first chapter:
-         * unlocked after passing the introductory quiz.
-         */
         if (
                 chapterIndex == 0
                         && sectionIndex == 0
         ) {
 
-            return hasPassedIntroductoryQuiz(
+            return hasAttemptedIntroductoryQuiz(
                     userId
             );
         }
 
-        /*
-         * Every later section:
-         * unlocked after passing the previous section quiz.
-         */
         if (sectionIndex > 0) {
 
             Section previousSection =
@@ -119,11 +116,6 @@ public class CurriculumAccessService {
             );
         }
 
-        /*
-         * First section of a later chapter:
-         * unlocked after passing the previous chapter's
-         * final quiz.
-         */
         Chapter previousChapter =
                 chapters.get(
                         chapterIndex - 1
@@ -135,13 +127,6 @@ public class CurriculumAccessService {
         );
     }
 
-    /*
-     * This means the chapter is available in the curriculum
-     * progression sense.
-     *
-     * Chapter CONTENT should use isSectionUnlocked() for the
-     * chapter's first section instead.
-     */
     public boolean isChapterUnlocked(
             String userId,
             String chapterId
@@ -165,7 +150,7 @@ public class CurriculumAccessService {
 
         if (chapterIndex == 0) {
 
-            return hasPassedIntroductoryQuiz(
+            return hasAttemptedIntroductoryQuiz(
                     userId
             );
         }
@@ -181,10 +166,6 @@ public class CurriculumAccessService {
         );
     }
 
-    /*
-     * The chapter final quiz becomes available only after
-     * every section in that chapter has been passed.
-     */
     public boolean isChapterQuizUnlocked(
             String userId,
             String chapterId
@@ -256,16 +237,11 @@ public class CurriculumAccessService {
         }
 
         List<QuizAttempt> attempts =
-                quizAttemptService.getAttempts(
-                        userId
-                );
+                quizAttemptService.getAttempts(userId);
 
         for (QuizAttempt attempt : attempts) {
 
-            if (
-                    !attempt.getQuizId()
-                            .equals(quiz.getId())
-            ) {
+            if (!isSameQuiz(attempt, quiz)) {
                 continue;
             }
 
@@ -284,9 +260,7 @@ public class CurriculumAccessService {
                             )
                             .getGrade();
 
-            if (
-                    grade != QuizGrade.FAILURE
-            ) {
+            if (grade != QuizGrade.FAILURE) {
                 return true;
             }
         }
@@ -304,14 +278,15 @@ public class CurriculumAccessService {
         }
 
         List<QuizAttempt> attempts =
-                quizAttemptService.getAttempts(
-                        userId
-                );
+                quizAttemptService.getAttempts(userId);
 
         return attempts.stream()
-                .anyMatch(attempt ->
-                        attempt.getQuizId()
-                                .equals(quiz.getId())
+                .anyMatch(
+                        attempt ->
+                                isSameQuiz(
+                                        attempt,
+                                        quiz
+                                )
                 );
     }
 
@@ -326,17 +301,18 @@ public class CurriculumAccessService {
         }
 
         List<QuizAttempt> attempts =
-                quizAttemptService.getAttempts(
-                        userId
-                );
+                quizAttemptService.getAttempts(userId);
 
         return attempts.stream()
-                .anyMatch(attempt ->
-                        !attempt.getId().equals(
-                                currentAttemptId
-                        )
-                                && attempt.getQuizId()
-                                .equals(quiz.getId())
+                .anyMatch(
+                        attempt ->
+                                !attempt
+                                        .getId()
+                                        .equals(currentAttemptId)
+                                        && isSameQuiz(
+                                        attempt,
+                                        quiz
+                                )
                 );
     }
 
@@ -397,7 +373,7 @@ public class CurriculumAccessService {
         return quiz;
     }
 
-    private boolean hasPassedIntroductoryQuiz(
+    private boolean hasAttemptedIntroductoryQuiz(
             String userId
     ) throws Exception {
 
@@ -406,14 +382,15 @@ public class CurriculumAccessService {
 
         Quiz introductoryQuiz =
                 quizzes.stream()
-                        .filter(quiz ->
-                                quiz.getType()
-                                        == QuizType.INTRODUCTORY
+                        .filter(
+                                quiz ->
+                                        quiz.getType()
+                                                == QuizType.INTRODUCTORY
                         )
                         .findFirst()
                         .orElse(null);
 
-        return hasPassedQuiz(
+        return hasAttemptForQuiz(
                 userId,
                 introductoryQuiz
         );
@@ -499,10 +476,11 @@ public class CurriculumAccessService {
     ) {
 
         return chapters.stream()
-                .filter(chapter ->
-                        chapter.getId().equals(
-                                chapterId
-                        )
+                .filter(
+                        chapter ->
+                                chapter.getId().equals(
+                                        chapterId
+                                )
                 )
                 .findFirst()
                 .orElse(null);
@@ -514,12 +492,78 @@ public class CurriculumAccessService {
     ) {
 
         return sections.stream()
-                .filter(section ->
-                        section.getId().equals(
-                                sectionId
-                        )
+                .filter(
+                        section ->
+                                section.getId().equals(
+                                        sectionId
+                                )
                 )
                 .findFirst()
                 .orElse(null);
+    }
+
+    private boolean isSameQuiz(
+            QuizAttempt attempt,
+            Quiz quiz
+    ) {
+
+        if (attempt == null || quiz == null) {
+            return false;
+        }
+
+        if (
+                !Objects.equals(
+                        quiz.getId(),
+                        attempt.getQuizId()
+                )
+        ) {
+            return false;
+        }
+
+        QuizContext quizContext =
+                quiz.getContext();
+
+        QuizContext attemptContext =
+                attempt.getContext();
+
+        if (
+                quizContext instanceof SectionQuizContext
+                        quizSectionContext
+                        && attemptContext instanceof SectionQuizContext
+                        attemptSectionContext
+        ) {
+
+            return Objects.equals(
+                    quizSectionContext.getChapterId(),
+                    attemptSectionContext.getChapterId()
+            )
+                    && Objects.equals(
+                    quizSectionContext.getSectionId(),
+                    attemptSectionContext.getSectionId()
+            );
+        }
+
+        if (
+                quizContext instanceof ChapterQuizContext
+                        quizChapterContext
+                        && attemptContext instanceof ChapterQuizContext
+                        attemptChapterContext
+        ) {
+
+            return Objects.equals(
+                    quizChapterContext.getChapterId(),
+                    attemptChapterContext.getChapterId()
+            );
+        }
+
+        if (
+                quizContext instanceof GlobalQuizContext
+                        && attemptContext instanceof GlobalQuizContext
+        ) {
+
+            return true;
+        }
+
+        return false;
     }
 }
