@@ -16,7 +16,9 @@ import com.app.gitgud.repository.FirestoreSectionRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 @Service
@@ -33,17 +35,10 @@ public class CurriculumAccessService {
             QuizService quizService,
             QuizAttemptService quizAttemptService
     ) {
-        this.chapterRepository =
-                chapterRepository;
-
-        this.sectionRepository =
-                sectionRepository;
-
-        this.quizService =
-                quizService;
-
-        this.quizAttemptService =
-                quizAttemptService;
+        this.chapterRepository = chapterRepository;
+        this.sectionRepository = sectionRepository;
+        this.quizService = quizService;
+        this.quizAttemptService = quizAttemptService;
     }
 
     public CurriculumProgressService loadProgress(
@@ -51,9 +46,96 @@ public class CurriculumAccessService {
     ) throws Exception {
 
         return new CurriculumProgressService(
-                quizAttemptService.getAttempts(
-                        userId
-                )
+                quizAttemptService.getAttempts(userId)
+        );
+    }
+
+    public CurriculumData loadCurriculumData()
+            throws Exception {
+
+        List<Chapter> chapters =
+                getOrderedChapters();
+
+        Map<String, List<Section>> sectionsByChapter =
+                getOrderedSectionsByChapter(
+                        chapters
+                );
+
+        return loadCurriculumData(
+                chapters,
+                sectionsByChapter
+        );
+    }
+
+    public CurriculumData loadCurriculumData(
+            List<Chapter> chapters,
+            Map<String, List<Section>> sectionsByChapter
+    ) throws Exception {
+
+        Map<SectionKey, List<Quiz>> sectionQuizzes =
+                new LinkedHashMap<>();
+
+        Map<String, List<Quiz>> chapterQuizzes =
+                new LinkedHashMap<>();
+
+        for (Chapter chapter : chapters) {
+
+            String chapterId =
+                    chapter.getId();
+
+            List<Section> sections =
+                    sectionsByChapter.getOrDefault(
+                            chapterId,
+                            List.of()
+                    );
+
+            for (Section section : sections) {
+
+                List<Quiz> quizzes =
+                        quizService.getSectionQuizzes(
+                                chapterId,
+                                section.getId()
+                        );
+
+                sectionQuizzes.put(
+                        new SectionKey(
+                                chapterId,
+                                section.getId()
+                        ),
+                        quizzes
+                );
+            }
+
+            chapterQuizzes.put(
+                    chapterId,
+                    quizService.getChapterQuizzes(
+                            chapterId
+                    )
+            );
+        }
+
+        Quiz introductoryQuiz =
+                quizService.getGlobalQuizzes()
+                        .stream()
+                        .filter(
+                                quiz ->
+                                        quiz.getType()
+                                                == QuizType.INTRODUCTORY
+                        )
+                        .findFirst()
+                        .orElseThrow(
+                                () ->
+                                        new IllegalStateException(
+                                                "Introductory quiz not found"
+                                        )
+                        );
+
+        return new CurriculumData(
+                chapters,
+                sectionsByChapter,
+                sectionQuizzes,
+                chapterQuizzes,
+                introductoryQuiz
         );
     }
 
@@ -66,10 +148,14 @@ public class CurriculumAccessService {
         CurriculumProgressService progress =
                 loadProgress(userId);
 
+        CurriculumData data =
+                loadCurriculumData();
+
         return isSectionUnlocked(
                 userId,
                 chapterId,
                 sectionId,
+                data,
                 progress
         );
     }
@@ -81,8 +167,28 @@ public class CurriculumAccessService {
             CurriculumProgressService progress
     ) throws Exception {
 
+        CurriculumData data =
+                loadCurriculumData();
+
+        return isSectionUnlocked(
+                userId,
+                chapterId,
+                sectionId,
+                data,
+                progress
+        );
+    }
+
+    public boolean isSectionUnlocked(
+            String userId,
+            String chapterId,
+            String sectionId,
+            CurriculumData data,
+            CurriculumProgressService progress
+    ) {
+
         List<Chapter> chapters =
-                getOrderedChapters();
+                data.chapters();
 
         Chapter chapter =
                 findChapter(
@@ -95,9 +201,11 @@ public class CurriculumAccessService {
         }
 
         List<Section> sections =
-                getOrderedSections(
-                        chapterId
-                );
+                data.sectionsByChapter()
+                        .getOrDefault(
+                                chapterId,
+                                List.of()
+                        );
 
         Section section =
                 findSection(
@@ -119,21 +227,23 @@ public class CurriculumAccessService {
                 chapterIndex == 0
                         && sectionIndex == 0
         ) {
-            return hasAttemptedIntroductoryQuiz(
+            return hasAttemptForQuiz(
+                    data.introductoryQuiz(),
                     progress
             );
         }
 
         if (sectionIndex > 0) {
+
             Section previousSection =
                     sections.get(
                             sectionIndex - 1
                     );
 
             return hasPassedSectionQuiz(
-                    userId,
                     chapterId,
                     previousSection.getId(),
+                    data,
                     progress
             );
         }
@@ -144,8 +254,8 @@ public class CurriculumAccessService {
                 );
 
         return hasPassedChapterQuiz(
-                userId,
                 previousChapter.getId(),
+                data,
                 progress
         );
     }
@@ -158,9 +268,13 @@ public class CurriculumAccessService {
         CurriculumProgressService progress =
                 loadProgress(userId);
 
+        CurriculumData data =
+                loadCurriculumData();
+
         return isChapterUnlocked(
                 userId,
                 chapterId,
+                data,
                 progress
         );
     }
@@ -171,8 +285,26 @@ public class CurriculumAccessService {
             CurriculumProgressService progress
     ) throws Exception {
 
+        CurriculumData data =
+                loadCurriculumData();
+
+        return isChapterUnlocked(
+                userId,
+                chapterId,
+                data,
+                progress
+        );
+    }
+
+    public boolean isChapterUnlocked(
+            String userId,
+            String chapterId,
+            CurriculumData data,
+            CurriculumProgressService progress
+    ) {
+
         List<Chapter> chapters =
-                getOrderedChapters();
+                data.chapters();
 
         Chapter chapter =
                 findChapter(
@@ -188,7 +320,8 @@ public class CurriculumAccessService {
                 chapters.indexOf(chapter);
 
         if (chapterIndex == 0) {
-            return hasAttemptedIntroductoryQuiz(
+            return hasAttemptForQuiz(
+                    data.introductoryQuiz(),
                     progress
             );
         }
@@ -199,8 +332,8 @@ public class CurriculumAccessService {
                 );
 
         return hasPassedChapterQuiz(
-                userId,
                 previousChapter.getId(),
+                data,
                 progress
         );
     }
@@ -213,9 +346,13 @@ public class CurriculumAccessService {
         CurriculumProgressService progress =
                 loadProgress(userId);
 
+        CurriculumData data =
+                loadCurriculumData();
+
         return isChapterQuizUnlocked(
                 userId,
                 chapterId,
+                data,
                 progress
         );
     }
@@ -226,10 +363,29 @@ public class CurriculumAccessService {
             CurriculumProgressService progress
     ) throws Exception {
 
+        CurriculumData data =
+                loadCurriculumData();
+
+        return isChapterQuizUnlocked(
+                userId,
+                chapterId,
+                data,
+                progress
+        );
+    }
+
+    public boolean isChapterQuizUnlocked(
+            String userId,
+            String chapterId,
+            CurriculumData data,
+            CurriculumProgressService progress
+    ) {
+
         if (
                 !isChapterUnlocked(
                         userId,
                         chapterId,
+                        data,
                         progress
                 )
         ) {
@@ -237,20 +393,23 @@ public class CurriculumAccessService {
         }
 
         List<Section> sections =
-                getOrderedSections(
-                        chapterId
-                );
+                data.sectionsByChapter()
+                        .getOrDefault(
+                                chapterId,
+                                List.of()
+                        );
 
         if (sections.isEmpty()) {
             return false;
         }
 
         for (Section section : sections) {
+
             if (
                     !hasPassedSectionQuiz(
-                            userId,
                             chapterId,
                             section.getId(),
+                            data,
                             progress
                     )
             ) {
@@ -268,8 +427,11 @@ public class CurriculumAccessService {
         CurriculumProgressService progress =
                 loadProgress(userId);
 
+        CurriculumData data =
+                loadCurriculumData();
+
         List<Chapter> chapters =
-                getOrderedChapters();
+                data.chapters();
 
         if (chapters.isEmpty()) {
             return true;
@@ -281,8 +443,65 @@ public class CurriculumAccessService {
                 );
 
         return hasPassedChapterQuiz(
-                userId,
                 lastChapter.getId(),
+                data,
+                progress
+        );
+    }
+
+    public boolean isChapterContentUnlocked(
+            String userId,
+            String chapterId,
+            CurriculumData data,
+            CurriculumProgressService progress
+    ) {
+
+        List<Chapter> chapters =
+                data.chapters();
+
+        Chapter chapter =
+                findChapter(
+                        chapters,
+                        chapterId
+                );
+
+        if (chapter == null) {
+            return false;
+        }
+
+        List<Section> sections =
+                data.sectionsByChapter()
+                        .getOrDefault(
+                                chapterId,
+                                List.of()
+                        );
+
+        if (sections.isEmpty()) {
+            return false;
+        }
+
+        return isSectionUnlocked(
+                userId,
+                chapterId,
+                sections.get(0).getId(),
+                data,
+                progress
+        );
+    }
+
+    public boolean isSectionContentUnlocked(
+            String userId,
+            String chapterId,
+            String sectionId,
+            CurriculumData data,
+            CurriculumProgressService progress
+    ) {
+
+        return isSectionUnlocked(
+                userId,
+                chapterId,
+                sectionId,
+                data,
                 progress
         );
     }
@@ -420,11 +639,31 @@ public class CurriculumAccessService {
             String sectionId
     ) throws Exception {
 
+        CurriculumData data =
+                loadCurriculumData();
+
+        return getSingleSectionQuiz(
+                data,
+                chapterId,
+                sectionId
+        );
+    }
+
+    public Quiz getSingleSectionQuiz(
+            CurriculumData data,
+            String chapterId,
+            String sectionId
+    ) {
+
         List<Quiz> quizzes =
-                quizService.getSectionQuizzes(
-                        chapterId,
-                        sectionId
-                );
+                data.sectionQuizzes()
+                        .getOrDefault(
+                                new SectionKey(
+                                        chapterId,
+                                        sectionId
+                                ),
+                                List.of()
+                        );
 
         if (quizzes.size() != 1) {
             throw new IllegalStateException(
@@ -450,10 +689,26 @@ public class CurriculumAccessService {
             String chapterId
     ) throws Exception {
 
+        CurriculumData data =
+                loadCurriculumData();
+
+        return getSingleChapterQuiz(
+                data,
+                chapterId
+        );
+    }
+
+    public Quiz getSingleChapterQuiz(
+            CurriculumData data,
+            String chapterId
+    ) {
+
         List<Quiz> quizzes =
-                quizService.getChapterQuizzes(
-                        chapterId
-                );
+                data.chapterQuizzes()
+                        .getOrDefault(
+                                chapterId,
+                                List.of()
+                        );
 
         if (quizzes.size() != 1) {
             throw new IllegalStateException(
@@ -472,62 +727,41 @@ public class CurriculumAccessService {
         return quiz;
     }
 
-    private boolean hasAttemptedIntroductoryQuiz(
-            CurriculumProgressService progress
-    ) throws Exception {
-
-        List<Quiz> quizzes =
-                quizService.getGlobalQuizzes();
-
-        Quiz introductoryQuiz =
-                quizzes.stream()
-                        .filter(
-                                quiz ->
-                                        quiz.getType()
-                                                == QuizType.INTRODUCTORY
-                        )
-                        .findFirst()
-                        .orElse(null);
-
-        return hasAttemptForQuiz(
-                introductoryQuiz,
-                progress
-        );
-    }
-
     private boolean hasPassedSectionQuiz(
-            String userId,
             String chapterId,
             String sectionId,
+            CurriculumData data,
             CurriculumProgressService progress
-    ) throws Exception {
+    ) {
 
         Quiz quiz =
                 getSingleSectionQuiz(
+                        data,
                         chapterId,
                         sectionId
                 );
 
         return hasPassedQuiz(
-                userId,
+                null,
                 quiz,
                 progress
         );
     }
 
     private boolean hasPassedChapterQuiz(
-            String userId,
             String chapterId,
+            CurriculumData data,
             CurriculumProgressService progress
-    ) throws Exception {
+    ) {
 
         Quiz quiz =
                 getSingleChapterQuiz(
+                        data,
                         chapterId
                 );
 
         return hasPassedQuiz(
-                userId,
+                null,
                 quiz,
                 progress
         );
@@ -546,20 +780,33 @@ public class CurriculumAccessService {
                 .toList();
     }
 
-    private List<Section> getOrderedSections(
-            String chapterId
+    private Map<String, List<Section>>
+    getOrderedSectionsByChapter(
+            List<Chapter> chapters
     ) throws Exception {
 
-        return sectionRepository.findSections(
-                        chapterId
-                )
-                .stream()
-                .sorted(
-                        Comparator.comparingInt(
-                                Section::getOrder
-                        )
-                )
-                .toList();
+        Map<String, List<Section>>
+                sectionsByChapter =
+                new LinkedHashMap<>();
+
+        for (Chapter chapter : chapters) {
+
+            sectionsByChapter.put(
+                    chapter.getId(),
+                    sectionRepository.findSections(
+                                    chapter.getId()
+                            )
+                            .stream()
+                            .sorted(
+                                    Comparator.comparingInt(
+                                            Section::getOrder
+                                    )
+                            )
+                            .toList()
+            );
+        }
+
+        return sectionsByChapter;
     }
 
     private void validateCurriculumQuiz(
@@ -665,5 +912,20 @@ public class CurriculumAccessService {
         }
 
         return false;
+    }
+
+    public record SectionKey(
+            String chapterId,
+            String sectionId
+    ) {
+    }
+
+    public record CurriculumData(
+            List<Chapter> chapters,
+            Map<String, List<Section>> sectionsByChapter,
+            Map<SectionKey, List<Quiz>> sectionQuizzes,
+            Map<String, List<Quiz>> chapterQuizzes,
+            Quiz introductoryQuiz
+    ) {
     }
 }

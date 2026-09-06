@@ -1,33 +1,15 @@
 package com.app.gitgud.service;
 
-import com.app.gitgud.model.Chapter;
-import com.app.gitgud.model.Section;
-import com.app.gitgud.repository.FirestoreChapterRepository;
-import com.app.gitgud.repository.FirestoreSectionRepository;
 import org.springframework.stereotype.Service;
-
-import java.util.Comparator;
-import java.util.List;
 
 @Service
 public class CurriculumContentAccessService {
 
-    private final FirestoreChapterRepository chapterRepository;
-    private final FirestoreSectionRepository sectionRepository;
     private final CurriculumAccessService curriculumAccessService;
 
     public CurriculumContentAccessService(
-            FirestoreChapterRepository chapterRepository,
-            FirestoreSectionRepository sectionRepository,
             CurriculumAccessService curriculumAccessService
     ) {
-
-        this.chapterRepository =
-                chapterRepository;
-
-        this.sectionRepository =
-                sectionRepository;
-
         this.curriculumAccessService =
                 curriculumAccessService;
     }
@@ -42,9 +24,13 @@ public class CurriculumContentAccessService {
                         userId
                 );
 
+        CurriculumAccessService.CurriculumData data =
+                curriculumAccessService.loadCurriculumData();
+
         return isChapterContentUnlocked(
                 userId,
                 chapterId,
+                data,
                 progress
         );
     }
@@ -55,49 +41,30 @@ public class CurriculumContentAccessService {
             CurriculumProgressService progress
     ) throws Exception {
 
-        List<Chapter> chapters =
-                chapterRepository.findChapters();
+        CurriculumAccessService.CurriculumData data =
+                curriculumAccessService.loadCurriculumData();
 
-        boolean chapterExists =
-                chapters.stream()
-                        .anyMatch(
-                                chapter ->
-                                        chapter.getId()
-                                                .equals(
-                                                        chapterId
-                                                )
-                        );
+        return isChapterContentUnlocked(
+                userId,
+                chapterId,
+                data,
+                progress
+        );
+    }
 
-        if (!chapterExists) {
-            return false;
-        }
+    public boolean isChapterContentUnlocked(
+            String userId,
+            String chapterId,
+            CurriculumAccessService.CurriculumData data,
+            CurriculumProgressService progress
+    ) {
 
-        List<Section> sections =
-                sectionRepository.findSections(
-                                chapterId
-                        )
-                        .stream()
-                        .sorted(
-                                Comparator.comparingInt(
-                                        Section::getOrder
-                                )
-                        )
-                        .toList();
-
-        if (sections.isEmpty()) {
-            return false;
-        }
-
-        Section firstSection =
-                sections.get(0);
-
-        return curriculumAccessService
-                .isSectionUnlocked(
-                        userId,
-                        chapterId,
-                        firstSection.getId(),
-                        progress
-                );
+        return curriculumAccessService.isChapterContentUnlocked(
+                userId,
+                chapterId,
+                data,
+                progress
+        );
     }
 
     public boolean isSectionContentUnlocked(
@@ -111,10 +78,14 @@ public class CurriculumContentAccessService {
                         userId
                 );
 
+        CurriculumAccessService.CurriculumData data =
+                curriculumAccessService.loadCurriculumData();
+
         return isSectionContentUnlocked(
                 userId,
                 chapterId,
                 sectionId,
+                data,
                 progress
         );
     }
@@ -126,10 +97,31 @@ public class CurriculumContentAccessService {
             CurriculumProgressService progress
     ) throws Exception {
 
-        return curriculumAccessService.isSectionUnlocked(
+        CurriculumAccessService.CurriculumData data =
+                curriculumAccessService.loadCurriculumData();
+
+        return isSectionContentUnlocked(
                 userId,
                 chapterId,
                 sectionId,
+                data,
+                progress
+        );
+    }
+
+    public boolean isSectionContentUnlocked(
+            String userId,
+            String chapterId,
+            String sectionId,
+            CurriculumAccessService.CurriculumData data,
+            CurriculumProgressService progress
+    ) {
+
+        return curriculumAccessService.isSectionContentUnlocked(
+                userId,
+                chapterId,
+                sectionId,
+                data,
                 progress
         );
     }

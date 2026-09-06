@@ -5,7 +5,6 @@ import com.app.gitgud.mapper.QuizMapper;
 import com.app.gitgud.mapper.SectionMapper;
 import com.app.gitgud.model.Chapter;
 import com.app.gitgud.model.Quiz;
-import com.app.gitgud.model.QuizType;
 import com.app.gitgud.model.Section;
 import com.app.gitgud.model.User;
 import com.app.gitgud.model.dto.ChapterDto;
@@ -31,11 +30,7 @@ public class TutorialPageService {
     private final SectionMapper sectionMapper;
     private final QuizMapper quizMapper;
 
-    private final CurriculumContentAccessService
-            curriculumContentAccessService;
-
-    private final CurriculumAccessService
-            curriculumAccessService;
+    private final CurriculumAccessService curriculumAccessService;
 
     public TutorialPageService(
             ChapterService chapterService,
@@ -45,38 +40,16 @@ public class TutorialPageService {
             ChapterMapper chapterMapper,
             SectionMapper sectionMapper,
             QuizMapper quizMapper,
-            CurriculumContentAccessService
-                    curriculumContentAccessService,
-            CurriculumAccessService
-                    curriculumAccessService
+            CurriculumAccessService curriculumAccessService
     ) {
-
-        this.chapterService =
-                chapterService;
-
-        this.sectionService =
-                sectionService;
-
-        this.quizService =
-                quizService;
-
-        this.markdownService =
-                markdownService;
-
-        this.chapterMapper =
-                chapterMapper;
-
-        this.sectionMapper =
-                sectionMapper;
-
-        this.quizMapper =
-                quizMapper;
-
-        this.curriculumContentAccessService =
-                curriculumContentAccessService;
-
-        this.curriculumAccessService =
-                curriculumAccessService;
+        this.chapterService = chapterService;
+        this.sectionService = sectionService;
+        this.quizService = quizService;
+        this.markdownService = markdownService;
+        this.chapterMapper = chapterMapper;
+        this.sectionMapper = sectionMapper;
+        this.quizMapper = quizMapper;
+        this.curriculumAccessService = curriculumAccessService;
     }
 
     public TutorialPageDto getTutorialPage(
@@ -87,19 +60,24 @@ public class TutorialPageService {
                 getOrderedChapters();
 
         Map<String, List<Section>> sectionsByChapter =
-                getSectionsByChapter(
-                        chapters
-                );
+                getSectionsByChapter(chapters);
 
         CurriculumProgressService progress =
                 curriculumAccessService.loadProgress(
                         user.getId()
                 );
 
+        CurriculumAccessService.CurriculumData curriculumData =
+                curriculumAccessService.loadCurriculumData(
+                        chapters,
+                        sectionsByChapter
+                );
+
         return buildPage(
                 user,
                 chapters,
                 sectionsByChapter,
+                curriculumData,
                 null,
                 null,
                 List.of(),
@@ -116,12 +94,11 @@ public class TutorialPageService {
                 getOrderedChapters();
 
         Map<String, List<Section>> sectionsByChapter =
-                getSectionsByChapter(
-                        chapters
-                );
+                getSectionsByChapter(chapters);
 
         Chapter chapter =
-                chapterService.getChapter(
+                findChapter(
+                        chapters,
                         chapterId
                 );
 
@@ -134,13 +111,19 @@ public class TutorialPageService {
                         user.getId()
                 );
 
+        CurriculumAccessService.CurriculumData curriculumData =
+                curriculumAccessService.loadCurriculumData(
+                        chapters,
+                        sectionsByChapter
+                );
+
         if (
-                !curriculumContentAccessService
-                        .isChapterContentUnlocked(
-                                user.getId(),
-                                chapterId,
-                                progress
-                        )
+                !curriculumAccessService.isChapterContentUnlocked(
+                        user.getId(),
+                        chapterId,
+                        curriculumData,
+                        progress
+                )
         ) {
             throw new CurriculumAccessDeniedException(
                     "Chapter content is locked"
@@ -151,6 +134,7 @@ public class TutorialPageService {
                 user,
                 chapters,
                 sectionsByChapter,
+                curriculumData,
                 convertChapter(chapter),
                 null,
                 List.of(),
@@ -168,12 +152,11 @@ public class TutorialPageService {
                 getOrderedChapters();
 
         Map<String, List<Section>> sectionsByChapter =
-                getSectionsByChapter(
-                        chapters
-                );
+                getSectionsByChapter(chapters);
 
         Chapter chapter =
-                chapterService.getChapter(
+                findChapter(
+                        chapters,
                         chapterId
                 );
 
@@ -182,8 +165,11 @@ public class TutorialPageService {
         }
 
         Section section =
-                sectionService.getSection(
-                        chapterId,
+                findSection(
+                        sectionsByChapter.getOrDefault(
+                                chapterId,
+                                List.of()
+                        ),
                         sectionId
                 );
 
@@ -196,14 +182,20 @@ public class TutorialPageService {
                         user.getId()
                 );
 
+        CurriculumAccessService.CurriculumData curriculumData =
+                curriculumAccessService.loadCurriculumData(
+                        chapters,
+                        sectionsByChapter
+                );
+
         if (
-                !curriculumContentAccessService
-                        .isSectionContentUnlocked(
-                                user.getId(),
-                                chapterId,
-                                sectionId,
-                                progress
-                        )
+                !curriculumAccessService.isSectionContentUnlocked(
+                        user.getId(),
+                        chapterId,
+                        sectionId,
+                        curriculumData,
+                        progress
+                )
         ) {
             throw new CurriculumAccessDeniedException(
                     "Section content is locked"
@@ -211,15 +203,20 @@ public class TutorialPageService {
         }
 
         List<Quiz> quizzes =
-                quizService.getSectionQuizzes(
-                        chapterId,
-                        sectionId
-                );
+                curriculumData.sectionQuizzes()
+                        .getOrDefault(
+                                new CurriculumAccessService.SectionKey(
+                                        chapterId,
+                                        sectionId
+                                ),
+                                List.of()
+                        );
 
         return buildPage(
                 user,
                 chapters,
                 sectionsByChapter,
+                curriculumData,
                 convertChapter(chapter),
                 convertSection(section),
                 quizMapper.toDtoList(quizzes),
@@ -230,13 +227,13 @@ public class TutorialPageService {
     private TutorialPageDto buildPage(
             User user,
             List<Chapter> chapters,
-            Map<String, List<Section>>
-                    sectionsByChapter,
+            Map<String, List<Section>> sectionsByChapter,
+            CurriculumAccessService.CurriculumData curriculumData,
             ChapterDto chapter,
             SectionDto section,
             List<QuizDto> quizzes,
             CurriculumProgressService progress
-    ) throws Exception {
+    ) {
 
         Map<String, Boolean>
                 chapterContentUnlocked =
@@ -256,39 +253,41 @@ public class TutorialPageService {
 
         for (Chapter currentChapter : chapters) {
 
+            String currentChapterId =
+                    currentChapter.getId();
+
             boolean chapterUnlocked =
-                    curriculumContentAccessService
-                            .isChapterContentUnlocked(
-                                    user.getId(),
-                                    currentChapter.getId(),
-                                    progress
-                            );
+                    curriculumAccessService.isChapterContentUnlocked(
+                            user.getId(),
+                            currentChapterId,
+                            curriculumData,
+                            progress
+                    );
 
             chapterContentUnlocked.put(
-                    currentChapter.getId(),
+                    currentChapterId,
                     chapterUnlocked
             );
 
             boolean finalQuizUnlocked =
-                    curriculumAccessService
-                            .isChapterQuizUnlocked(
-                                    user.getId(),
-                                    currentChapter.getId(),
-                                    progress
-                            );
+                    curriculumAccessService.isChapterQuizUnlocked(
+                            user.getId(),
+                            currentChapterId,
+                            curriculumData,
+                            progress
+                    );
 
             chapterQuizUnlocked.put(
-                    currentChapter.getId(),
+                    currentChapterId,
                     finalQuizUnlocked
             );
 
-            Map<String, Boolean>
-                    sectionAccess =
+            Map<String, Boolean> sectionAccess =
                     new LinkedHashMap<>();
 
             List<Section> sections =
                     sectionsByChapter.getOrDefault(
-                            currentChapter.getId(),
+                            currentChapterId,
                             List.of()
                     );
 
@@ -296,29 +295,29 @@ public class TutorialPageService {
 
                 sectionAccess.put(
                         currentSection.getId(),
-                        curriculumContentAccessService
-                                .isSectionContentUnlocked(
-                                        user.getId(),
-                                        currentChapter.getId(),
-                                        currentSection.getId(),
-                                        progress
-                                )
+                        curriculumAccessService.isSectionContentUnlocked(
+                                user.getId(),
+                                currentChapterId,
+                                currentSection.getId(),
+                                curriculumData,
+                                progress
+                        )
                 );
             }
 
             sectionContentUnlocked.put(
-                    currentChapter.getId(),
+                    currentChapterId,
                     sectionAccess
             );
 
             Quiz chapterFinalQuiz =
-                    curriculumAccessService
-                            .getSingleChapterQuiz(
-                                    currentChapter.getId()
-                            );
+                    curriculumAccessService.getSingleChapterQuiz(
+                            curriculumData,
+                            currentChapterId
+                    );
 
             chapterFinalQuizzes.put(
-                    currentChapter.getId(),
+                    currentChapterId,
                     quizMapper.toDto(
                             chapterFinalQuiz
                     )
@@ -326,14 +325,13 @@ public class TutorialPageService {
         }
 
         Quiz introductoryQuiz =
-                getIntroductoryQuiz();
+                curriculumData.introductoryQuiz();
 
         boolean introductoryQuizAttempted =
-                curriculumAccessService
-                        .hasAttemptForQuiz(
-                                introductoryQuiz,
-                                progress
-                        );
+                curriculumAccessService.hasAttemptForQuiz(
+                        introductoryQuiz,
+                        progress
+                );
 
         return new TutorialPageDto(
                 chapterMapper.toDtoList(chapters),
@@ -352,27 +350,6 @@ public class TutorialPageService {
                 section,
                 quizzes
         );
-    }
-
-    private Quiz getIntroductoryQuiz()
-            throws Exception {
-
-        List<Quiz> quizzes =
-                quizService.getGlobalQuizzes();
-
-        return quizzes.stream()
-                .filter(
-                        quiz ->
-                                quiz.getType()
-                                        == QuizType.INTRODUCTORY
-                )
-                .findFirst()
-                .orElseThrow(
-                        () ->
-                                new IllegalStateException(
-                                        "Introductory quiz not found"
-                                )
-                );
     }
 
     private List<Chapter> getOrderedChapters()
@@ -418,6 +395,38 @@ public class TutorialPageService {
         }
 
         return sectionsByChapter;
+    }
+
+    private Chapter findChapter(
+            List<Chapter> chapters,
+            String chapterId
+    ) {
+
+        return chapters.stream()
+                .filter(
+                        chapter ->
+                                chapter.getId().equals(
+                                        chapterId
+                                )
+                )
+                .findFirst()
+                .orElse(null);
+    }
+
+    private Section findSection(
+            List<Section> sections,
+            String sectionId
+    ) {
+
+        return sections.stream()
+                .filter(
+                        section ->
+                                section.getId().equals(
+                                        sectionId
+                                )
+                )
+                .findFirst()
+                .orElse(null);
     }
 
     private ChapterDto convertChapter(
