@@ -83,7 +83,7 @@ public class Chapter1MultipleChoice {
                         "If multiple people work on the same project, how do you know who made each change?"
                 ),
                 build("mc2",
-                        "Why how do you set your name in `git`?",
+                        "How do you set your name in `git`?",
                         opts("`git config --name \"Name\"`",
                                 "`git name --config \"Name\"`",
                                 "`git config --global user.name \"Name\"`",

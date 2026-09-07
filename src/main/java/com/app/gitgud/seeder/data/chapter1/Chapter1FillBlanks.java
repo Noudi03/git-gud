@@ -77,7 +77,7 @@ public class Chapter1FillBlanks {
                 ),
 
                 build("fb3",
-                        "Global `Git` configuration is typically stored in a file called `~/.gitconfig`.",
+                        "Global `Git` configuration is typically stored in a file called `___`.",
                         "~/.gitconfig", "hard",
                         "Think about where user-level config files are usually stored on Unix systems.",
                         "It lives in your home directory and starts with a dot."
@@ -93,21 +93,21 @@ public class Chapter1FillBlanks {
         return Arrays.asList(
 
                 build("fb1",
-                        "Running `git init` creates a hidden folder called `.git` inside your project.",
+                        "Running `git init` creates a hidden folder called `___` inside your project.",
                         ".git", "easy",
                         "Hidden folders on Unix start with a dot.",
                         "The folder name is the tool name prefixed with a dot."
                 ),
 
                 build("fb2",
-                        "After `git init`, the folder becomes a `Git` repository.",
+                        "After `git init`, the folder becomes a `Git` ___ .",
                         "repository", "medium",
                         "Think about the term used for a project tracked by `Git`.",
                         "This is the standard word for a `Git`-tracked project folder."
                 ),
 
                 build("fb3",
-                        "The `objects/` folder inside `.git` stores Git's objects, including file contents and commits.",
+                        "The `___` folder inside `.git` stores Git's objects, including file contents and commits.",
                         "objects/", "hard",
                         "Think about what Git calls the raw stored data.",
                         "The folder name reflects what Git stores inside it."
@@ -137,10 +137,10 @@ public class Chapter1FillBlanks {
                 ),
 
                 build("fb3",
-                        "The staging area is also known as the `index`.",
+                        "The staging area is also known as the `___`.",
                         "index", "hard",
                         "Think about the technical name Git uses internally.",
-                        "It is a single noun found inside the `.git` directory."
+                        "It is a single noun used by Git for the staging area."
                 )
         );
     }
@@ -213,14 +213,14 @@ public class Chapter1FillBlanks {
         return Arrays.asList(
 
                 build("fb1",
-                        "The file that tells Git which files and folders to ignore is called `.gitignore`.",
+                        "The file that tells Git which files and folders to ignore is called `___`.",
                         ".gitignore", "easy",
                         "Think about the tool name combined with the word ignore.",
                         "It lives in your project root and starts with a dot."
                 ),
 
                 build("fb2",
-                        "To stop tracking an already-committed file without deleting it, you run `git rm ___ filename`.",
+                        "To stop tracking an already-tracked file without deleting it, you run `git rm ___ filename`.",
                         "--cached", "medium",
                         "Think about a flag that affects only Git's memory, not the actual file.",
                         "This flag targets the `index` (staging area / cache) rather than the working directory."
