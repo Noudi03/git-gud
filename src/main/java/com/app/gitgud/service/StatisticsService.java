@@ -12,8 +12,8 @@ import com.app.gitgud.model.QuizContext;
 import com.app.gitgud.model.QuizGrade;
 import com.app.gitgud.model.QuizResult;
 import com.app.gitgud.model.SectionQuizContext;
-import com.app.gitgud.repository.FirestoreQuestionRepository;
 import com.app.gitgud.model.dto.StatisticsDto;
+import com.app.gitgud.repository.FirestoreQuestionRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -60,53 +60,85 @@ public class StatisticsService {
                         userId
                 );
 
+        int cancelledAttempts =
+                (int) attempts.stream()
+                        .filter(
+                                attempt ->
+                                        attempt.getStatus()
+                                                == QuizAttemptStatus.CANCELLED
+                        )
+                        .count();
+
         List<QuizAttempt> completedAttempts =
-                new ArrayList<>();
+                attempts.stream()
+                        .filter(
+                                attempt ->
+                                        attempt.getStatus()
+                                                == QuizAttemptStatus.COMPLETED
+                        )
+                        .toList();
 
-        for (QuizAttempt attempt : attempts) {
+        Map<String, Quiz> availableQuizzes =
+                new LinkedHashMap<>();
 
-            if (
-                    attempt.getStatus()
-                            != QuizAttemptStatus.COMPLETED
-            ) {
-                continue;
-            }
-
-            if (
-                    selectedQuizKey == null
-                            || selectedQuizKey.isBlank()
-            ) {
-                completedAttempts.add(
-                        attempt
-                );
-                continue;
-            }
+        for (QuizAttempt attempt : completedAttempts) {
 
             Quiz quiz =
                     quizAttemptService.getQuiz(
                             attempt
                     );
 
-            if (
-                    selectedQuizKey.equals(
-                            createQuizKey(quiz)
-                    )
-            ) {
-                completedAttempts.add(
-                        attempt
-                );
+            availableQuizzes.put(
+                    createQuizKey(quiz),
+                    quiz
+            );
+        }
+
+        List<QuizAttempt> selectedAttempts =
+                completedAttempts;
+
+        if (
+                selectedQuizKey != null
+                        && !selectedQuizKey.isBlank()
+        ) {
+
+            selectedAttempts =
+                    new ArrayList<>();
+
+            for (QuizAttempt attempt : completedAttempts) {
+
+                Quiz quiz =
+                        quizAttemptService.getQuiz(
+                                attempt
+                        );
+
+                if (
+                        selectedQuizKey.equals(
+                                createQuizKey(quiz)
+                        )
+                ) {
+                    selectedAttempts.add(
+                            attempt
+                    );
+                }
             }
         }
 
         return buildStatistics(
                 userId,
-                completedAttempts
+                selectedAttempts,
+                availableQuizzes.values().stream().toList(),
+                selectedQuizKey,
+                cancelledAttempts
         );
     }
 
     private StatisticsDto buildStatistics(
             String userId,
-            List<QuizAttempt> attempts
+            List<QuizAttempt> attempts,
+            List<Quiz> availableQuizzes,
+            String selectedQuizKey,
+            int cancelledAttempts
     ) throws Exception {
 
         int totalCorrect = 0;
@@ -131,6 +163,9 @@ public class StatisticsService {
 
         Map<String, Integer> grades =
                 new LinkedHashMap<>();
+
+        StatisticsDto.BestAttempt bestAttempt =
+                null;
 
         int attemptNumber = 0;
 
@@ -196,6 +231,10 @@ public class StatisticsService {
                     Integer::sum
             );
 
+            int attemptHints = 0;
+            int attemptSkipped = 0;
+            long attemptTime = 0;
+
             for (
                     QuestionAttempt questionAttempt
                     : questionAttempts
@@ -203,17 +242,23 @@ public class StatisticsService {
 
                 totalQuestions++;
 
-                totalHintsUsed +=
+                int hints =
                         Math.max(
                                 0,
                                 questionAttempt.getHintsUsed()
                         );
 
-                totalTimeSpentMillis +=
+                long time =
                         Math.max(
                                 0,
                                 questionAttempt.getTimeSpentMillis()
                         );
+
+                totalHintsUsed += hints;
+                totalTimeSpentMillis += time;
+
+                attemptHints += hints;
+                attemptTime += time;
 
                 Question question =
                         questionRepository.findQuestion(
@@ -231,6 +276,7 @@ public class StatisticsService {
                 ) {
 
                     totalSkipped++;
+                    attemptSkipped++;
 
                 } else if (
                         !questionAttempt.isCorrect()
@@ -252,6 +298,28 @@ public class StatisticsService {
                     difficultyAggregate.correct++;
                 }
             }
+
+            if (
+                    selectedQuizKey != null
+                            && !selectedQuizKey.isBlank()
+                            && selectedQuizKey.equals(quizKey)
+            ) {
+
+                if (
+                        bestAttempt == null
+                                || score > bestAttempt.getScore()
+                ) {
+
+                    bestAttempt =
+                            new StatisticsDto.BestAttempt(
+                                    score,
+                                    attemptTime,
+                                    attemptHints,
+                                    attemptSkipped,
+                                    grade.getValue()
+                            );
+                }
+            }
         }
 
         int averageScore =
@@ -271,34 +339,52 @@ public class StatisticsService {
                                 * 100
                 );
 
+        long averageCompletionTimeMillis =
+                attempts.isEmpty()
+                        ? 0
+                        : totalTimeSpentMillis
+                        / attempts.size();
+
         List<StatisticsDto.QuizSummary> quizzes =
-                quizAggregates.values()
+                availableQuizzes
                         .stream()
                         .map(
-                                aggregate ->
-                                        new StatisticsDto.QuizSummary(
-                                                createQuizKey(
-                                                        aggregate.quiz
-                                                ),
-                                                aggregate.quiz.getId(),
-                                                aggregate.quiz.getTitle(),
-                                                aggregate.quiz.getType() == null
-                                                        ? null
-                                                        : aggregate.quiz
-                                                        .getType()
-                                                        .getValue(),
-                                                createQuizContextDto(
-                                                        aggregate.quiz.getContext()
-                                                ),
-                                                aggregate.attempts,
-                                                aggregate.attempts == 0
-                                                        ? 0
-                                                        : Math.round(
-                                                        (float)
-                                                                aggregate.totalScore
-                                                                / aggregate.attempts
-                                                )
-                                        )
+                                quiz -> {
+
+                                    QuizAggregate aggregate =
+                                            quizAggregates.get(
+                                                    createQuizKey(quiz)
+                                            );
+
+                                    int quizAttempts =
+                                            aggregate == null
+                                                    ? 0
+                                                    : aggregate.attempts;
+
+                                    int quizAverageScore =
+                                            aggregate == null
+                                                    || aggregate.attempts == 0
+                                                    ? 0
+                                                    : Math.round(
+                                                    (float)
+                                                            aggregate.totalScore
+                                                            / aggregate.attempts
+                                            );
+
+                                    return new StatisticsDto.QuizSummary(
+                                            createQuizKey(quiz),
+                                            quiz.getId(),
+                                            quiz.getTitle(),
+                                            quiz.getType() == null
+                                                    ? null
+                                                    : quiz.getType().getValue(),
+                                            createQuizContextDto(
+                                                    quiz.getContext()
+                                            ),
+                                            quizAttempts,
+                                            quizAverageScore
+                                    );
+                                }
                         )
                         .sorted(
                                 Comparator.comparing(
@@ -327,13 +413,15 @@ public class StatisticsService {
         StatisticsDto.Summary summary =
                 new StatisticsDto.Summary(
                         attempts.size(),
+                        cancelledAttempts,
                         averageScore,
                         averageAccuracy,
                         totalCorrect,
                         totalIncorrect,
                         totalSkipped,
                         totalHintsUsed,
-                        totalTimeSpentMillis
+                        totalTimeSpentMillis,
+                        averageCompletionTimeMillis
                 );
 
         return new StatisticsDto(
@@ -346,7 +434,8 @@ public class StatisticsService {
                         totalSkipped
                 ),
                 difficulty,
-                grades
+                grades,
+                bestAttempt
         );
     }
 

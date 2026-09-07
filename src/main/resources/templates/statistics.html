@@ -99,16 +99,99 @@
             <article class="statistics-card">
 
                 <span class="statistics-card-label">
-                    Hints Used
+                    Average Completion Time
                 </span>
 
                 <strong
-                        id="total-hints"
+                        id="average-completion-time"
                         class="statistics-card-value">
-                    0
+                    0m
                 </strong>
 
             </article>
+
+        </section>
+
+        <section
+                id="best-attempt-panel"
+                class="statistics-panel statistics-best-attempt"
+                hidden>
+
+            <div class="statistics-panel-header">
+
+                <div>
+                    <h2>Best Attempt</h2>
+
+                    <p>
+                        Your highest recorded score for this quiz.
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="statistics-best-grid">
+
+                <div class="statistics-best-stat">
+
+                    <span>
+                        Score
+                    </span>
+
+                    <strong id="best-score">
+                        0 pts
+                    </strong>
+
+                </div>
+
+                <div class="statistics-best-stat">
+
+                    <span>
+                        Total Time
+                    </span>
+
+                    <strong id="best-time">
+                        0m
+                    </strong>
+
+                </div>
+
+                <div class="statistics-best-stat">
+
+                    <span>
+                        Hints Used
+                    </span>
+
+                    <strong id="best-hints">
+                        0
+                    </strong>
+
+                </div>
+
+                <div class="statistics-best-stat">
+
+                    <span>
+                        Skipped
+                    </span>
+
+                    <strong id="best-skipped">
+                        0
+                    </strong>
+
+                </div>
+
+                <div class="statistics-best-stat">
+
+                    <span>
+                        Grade
+                    </span>
+
+                    <strong id="best-grade">
+                        -
+                    </strong>
+
+                </div>
+
+            </div>
 
         </section>
 
@@ -185,7 +268,7 @@
                 </span>
 
                 <strong id="total-time">
-                    0m
+                    0s
                 </strong>
 
             </article>
@@ -214,7 +297,31 @@
 
             </article>
 
+            <article class="statistics-detail">
+
+                <span>
+                    Hints used
+                </span>
+
+                <strong id="total-hints">
+                    0
+                </strong>
+
+            </article>
+
         </section>
+
+        <div class="statistics-cancelled">
+
+            <span>
+                Cancelled attempts:
+            </span>
+
+            <strong id="cancelled-attempts">
+                0
+            </strong>
+
+        </div>
 
     </section>
 

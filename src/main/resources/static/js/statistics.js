@@ -18,6 +18,11 @@ const completedAttempts =
         "completed-attempts"
     );
 
+const cancelledAttempts =
+    document.getElementById(
+        "cancelled-attempts"
+    );
+
 const averageScore =
     document.getElementById(
         "average-score"
@@ -26,6 +31,11 @@ const averageScore =
 const averageAccuracy =
     document.getElementById(
         "average-accuracy"
+    );
+
+const averageCompletionTime =
+    document.getElementById(
+        "average-completion-time"
     );
 
 const totalHints =
@@ -48,11 +58,39 @@ const totalSkipped =
         "total-skipped"
     );
 
+const bestAttemptPanel =
+    document.getElementById(
+        "best-attempt-panel"
+    );
+
+const bestScore =
+    document.getElementById(
+        "best-score"
+    );
+
+const bestTime =
+    document.getElementById(
+        "best-time"
+    );
+
+const bestHints =
+    document.getElementById(
+        "best-hints"
+    );
+
+const bestSkipped =
+    document.getElementById(
+        "best-skipped"
+    );
+
+const bestGrade =
+    document.getElementById(
+        "best-grade"
+    );
 
 let performanceChart = null;
 let answerChart = null;
 let difficultyChart = null;
-
 
 async function loadStatistics(
     quizKey = ""
@@ -75,7 +113,6 @@ async function loadStatistics(
     return response.json();
 }
 
-
 function updateSummary(
     statistics
 ) {
@@ -86,11 +123,19 @@ function updateSummary(
     completedAttempts.textContent =
         summary.completedAttempts;
 
+    cancelledAttempts.textContent =
+        summary.cancelledAttempts;
+
     averageScore.textContent =
         `${summary.averageScore} pts`;
 
     averageAccuracy.textContent =
         `${summary.averageAccuracy}%`;
+
+    averageCompletionTime.textContent =
+        formatDuration(
+            summary.averageCompletionTimeMillis
+        );
 
     totalHints.textContent =
         summary.totalHintsUsed;
@@ -106,7 +151,6 @@ function updateSummary(
             summary.totalTimeSpentMillis
         );
 }
-
 
 function getContextLabel(
     context
@@ -128,7 +172,6 @@ function getContextLabel(
 
     return "Global";
 }
-
 
 function updateQuizSelector(
     statistics
@@ -155,8 +198,13 @@ function updateQuizSelector(
             option.value =
                 quiz.key;
 
+            const typeLabel =
+                quiz.type
+                    ? ` · ${capitalize(quiz.type)}`
+                    : "";
+
             option.textContent =
-                `${quiz.title} · ${capitalize(quiz.type)} · ${getContextLabel(quiz.context)}`;
+                `${quiz.title}${typeLabel} · ${getContextLabel(quiz.context)}`;
 
             quizSelector.appendChild(
                 option
@@ -174,6 +222,43 @@ function updateQuizSelector(
             : "";
 }
 
+function updateBestAttempt(
+    statistics
+) {
+
+    const bestAttempt =
+        statistics.bestAttempt;
+
+    if (!bestAttempt) {
+
+        bestAttemptPanel.hidden =
+            true;
+
+        return;
+    }
+
+    bestAttemptPanel.hidden =
+        false;
+
+    bestScore.textContent =
+        `${bestAttempt.score} pts`;
+
+    bestTime.textContent =
+        formatDuration(
+            bestAttempt.totalTimeSpentMillis
+        );
+
+    bestHints.textContent =
+        bestAttempt.hintsUsed;
+
+    bestSkipped.textContent =
+        bestAttempt.skipped;
+
+    bestGrade.textContent =
+        capitalize(
+            bestAttempt.grade
+        );
+}
 
 function renderPerformanceChart(
     statistics
@@ -239,7 +324,6 @@ function renderPerformanceChart(
         );
 }
 
-
 function renderAnswerChart(
     statistics
 ) {
@@ -294,7 +378,6 @@ function renderAnswerChart(
             }
         );
 }
-
 
 function renderDifficultyChart(
     statistics
@@ -367,12 +450,15 @@ function renderDifficultyChart(
         );
 }
 
-
 function renderStatistics(
     statistics
 ) {
 
     updateSummary(
+        statistics
+    );
+
+    updateBestAttempt(
         statistics
     );
 
@@ -389,7 +475,6 @@ function renderStatistics(
     );
 }
 
-
 function updateVisibility(
     statistics
 ) {
@@ -404,33 +489,38 @@ function updateVisibility(
         hasData;
 }
 
-
 function formatDuration(
     milliseconds
 ) {
 
-    const totalMinutes =
+    const totalSeconds =
         Math.round(
-            milliseconds / 60000
+            milliseconds / 1000
         );
-
-    if (totalMinutes < 60) {
-        return `${totalMinutes}m`;
-    }
 
     const hours =
         Math.floor(
-            totalMinutes / 60
+            totalSeconds / 3600
         );
 
     const minutes =
-        totalMinutes % 60;
+        Math.floor(
+            (totalSeconds % 3600) / 60
+        );
 
-    return minutes === 0
-        ? `${hours}h`
-        : `${hours}h ${minutes}m`;
+    const seconds =
+        totalSeconds % 60;
+
+    if (hours > 0) {
+        return `${hours}h ${minutes}m ${seconds}s`;
+    }
+
+    if (minutes > 0) {
+        return `${minutes}m ${seconds}s`;
+    }
+
+    return `${seconds}s`;
 }
-
 
 function capitalize(
     value
@@ -445,7 +535,6 @@ function capitalize(
         value.slice(1).toLowerCase()
     );
 }
-
 
 async function refreshStatistics() {
 
@@ -477,11 +566,9 @@ async function refreshStatistics() {
     }
 }
 
-
 quizSelector.addEventListener(
     "change",
     refreshStatistics
 );
-
 
 refreshStatistics();

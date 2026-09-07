@@ -11,6 +11,7 @@ public class StatisticsDto {
     private final AnswerBreakdown answerBreakdown;
     private final List<DifficultyStatistics> difficulty;
     private final Map<String, Integer> grades;
+    private final BestAttempt bestAttempt;
 
     public StatisticsDto(
             Summary summary,
@@ -18,7 +19,8 @@ public class StatisticsDto {
             List<PerformancePoint> performance,
             AnswerBreakdown answerBreakdown,
             List<DifficultyStatistics> difficulty,
-            Map<String, Integer> grades
+            Map<String, Integer> grades,
+            BestAttempt bestAttempt
     ) {
         this.summary = summary;
         this.quizzes = quizzes;
@@ -26,6 +28,7 @@ public class StatisticsDto {
         this.answerBreakdown = answerBreakdown;
         this.difficulty = difficulty;
         this.grades = grades;
+        this.bestAttempt = bestAttempt;
     }
 
     public Summary getSummary() {
@@ -52,9 +55,14 @@ public class StatisticsDto {
         return grades;
     }
 
+    public BestAttempt getBestAttempt() {
+        return bestAttempt;
+    }
+
     public static class Summary {
 
         private final int completedAttempts;
+        private final int cancelledAttempts;
         private final int averageScore;
         private final int averageAccuracy;
         private final int totalCorrect;
@@ -62,18 +70,22 @@ public class StatisticsDto {
         private final int totalSkipped;
         private final int totalHintsUsed;
         private final long totalTimeSpentMillis;
+        private final long averageCompletionTimeMillis;
 
         public Summary(
                 int completedAttempts,
+                int cancelledAttempts,
                 int averageScore,
                 int averageAccuracy,
                 int totalCorrect,
                 int totalIncorrect,
                 int totalSkipped,
                 int totalHintsUsed,
-                long totalTimeSpentMillis
+                long totalTimeSpentMillis,
+                long averageCompletionTimeMillis
         ) {
             this.completedAttempts = completedAttempts;
+            this.cancelledAttempts = cancelledAttempts;
             this.averageScore = averageScore;
             this.averageAccuracy = averageAccuracy;
             this.totalCorrect = totalCorrect;
@@ -81,10 +93,16 @@ public class StatisticsDto {
             this.totalSkipped = totalSkipped;
             this.totalHintsUsed = totalHintsUsed;
             this.totalTimeSpentMillis = totalTimeSpentMillis;
+            this.averageCompletionTimeMillis =
+                    averageCompletionTimeMillis;
         }
 
         public int getCompletedAttempts() {
             return completedAttempts;
+        }
+
+        public int getCancelledAttempts() {
+            return cancelledAttempts;
         }
 
         public int getAverageScore() {
@@ -113,6 +131,10 @@ public class StatisticsDto {
 
         public long getTotalTimeSpentMillis() {
             return totalTimeSpentMillis;
+        }
+
+        public long getAverageCompletionTimeMillis() {
+            return averageCompletionTimeMillis;
         }
     }
 
@@ -199,6 +221,50 @@ public class StatisticsDto {
 
         public String getSectionId() {
             return sectionId;
+        }
+    }
+
+    public static class BestAttempt {
+
+        private final int score;
+        private final long totalTimeSpentMillis;
+        private final int hintsUsed;
+        private final int skipped;
+        private final String grade;
+
+        public BestAttempt(
+                int score,
+                long totalTimeSpentMillis,
+                int hintsUsed,
+                int skipped,
+                String grade
+        ) {
+            this.score = score;
+            this.totalTimeSpentMillis =
+                    totalTimeSpentMillis;
+            this.hintsUsed = hintsUsed;
+            this.skipped = skipped;
+            this.grade = grade;
+        }
+
+        public int getScore() {
+            return score;
+        }
+
+        public long getTotalTimeSpentMillis() {
+            return totalTimeSpentMillis;
+        }
+
+        public int getHintsUsed() {
+            return hintsUsed;
+        }
+
+        public int getSkipped() {
+            return skipped;
+        }
+
+        public String getGrade() {
+            return grade;
         }
     }
 

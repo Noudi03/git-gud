@@ -7,10 +7,104 @@
 
 <div th:replace="~{fragments/navbar :: navbar}"></div>
 
-<main>
-    <h1>Hello, <span th:text="${username}">user</span>!</h1>
+<main class="home-page">
 
-    <p>I'll show you how to git gud.</p>
+    <section class="home-hero">
+
+        <div class="home-hero-content">
+
+            <span class="home-eyebrow">
+                GitGud
+            </span>
+
+            <h1>
+                Hello, <span th:text="${username}">user</span>!
+            </h1>
+
+            <p>
+                Keep learning, keep practicing, and git gud.
+            </p>
+
+        </div>
+
+        <div class="home-profile">
+
+            <div class="home-stat">
+
+                <span class="home-stat-label">
+                    Rating
+                </span>
+
+                <strong
+                        class="home-rating"
+                        th:text="${rating}">
+                    1000
+                </strong>
+
+            </div>
+
+            <div class="home-stat">
+
+                <span class="home-stat-label">
+                    Tier
+                </span>
+
+                <strong
+                        class="home-tier"
+                        th:text="${tier}">
+                    novice
+                </strong>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <section class="home-actions">
+
+        <a
+                class="home-action-card"
+                th:href="@{/tutorials}">
+
+            <div class="home-action-icon">
+                📚
+            </div>
+
+            <div>
+                <h2>
+                    Tutorials
+                </h2>
+
+                <p>
+                    Learn the concepts and build your skills.
+                </p>
+            </div>
+
+        </a>
+
+        <a
+                class="home-action-card"
+                th:href="@{/statistics}">
+
+            <div class="home-action-icon">
+                📊
+            </div>
+
+            <div>
+                <h2>
+                    Statistics
+                </h2>
+
+                <p>
+                    Track your quiz performance and progress.
+                </p>
+            </div>
+
+        </a>
+
+    </section>
+
 </main>
 
 <div th:replace="~{fragments/footer :: footer}"></div>
