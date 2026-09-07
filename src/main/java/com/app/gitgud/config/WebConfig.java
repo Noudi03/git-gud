@@ -10,7 +10,6 @@ public class WebConfig implements WebMvcConfigurer {
     private final AuthInterceptor authInterceptor;
     private final GuestInterceptor guestInterceptor;
 
-
     public WebConfig(
             AuthInterceptor authInterceptor,
             GuestInterceptor guestInterceptor
@@ -23,7 +22,6 @@ public class WebConfig implements WebMvcConfigurer {
                 guestInterceptor;
     }
 
-
     @Override
     public void addInterceptors(
             InterceptorRegistry registry
@@ -34,9 +32,9 @@ public class WebConfig implements WebMvcConfigurer {
         ).addPathPatterns(
                 "/home",
                 "/tutorials/**",
-                "/statistics"
+                "/statistics",
+                "/leaderboards"
         );
-
 
         registry.addInterceptor(
                 guestInterceptor

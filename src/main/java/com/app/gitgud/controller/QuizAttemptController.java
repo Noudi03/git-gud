@@ -370,13 +370,6 @@ public class QuizAttemptController {
             Quiz quiz =
                     quizSupplier.get();
 
-            /*
-             * This is the authoritative quiz-access check.
-             *
-             * It happens before an attempt is created, so a
-             * user cannot bypass the frontend by calling this
-             * endpoint directly.
-             */
             quizAccessService.validateCanStartQuiz(
                     userId,
                     quiz

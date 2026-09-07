@@ -6,6 +6,8 @@ import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public class FirestoreUserRepository
         implements UserRepository {
@@ -17,7 +19,6 @@ public class FirestoreUserRepository
             Firestore db,
             GitGudProperties properties
     ) {
-
         this.db = db;
         this.properties = properties;
     }
@@ -64,6 +65,37 @@ public class FirestoreUserRepository
                 document.getString("username"),
                 resolvedRating
         );
+    }
+
+    @Override
+    public List<User> getUsers()
+            throws Exception {
+
+        return db.collection("users")
+                .get()
+                .get()
+                .getDocuments()
+                .stream()
+                .map(document -> {
+
+                    Long rating =
+                            document.getLong("rating");
+
+                    int resolvedRating =
+                            rating == null
+                                    ? properties.getRating().getDefaultRating()
+                                    : clampRating(
+                                    rating.intValue()
+                            );
+
+                    return new User(
+                            document.getId(),
+                            document.getString("email"),
+                            document.getString("username"),
+                            resolvedRating
+                    );
+                })
+                .toList();
     }
 
     @Override

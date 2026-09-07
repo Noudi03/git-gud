@@ -69,6 +69,12 @@ public class ViewController {
         return "statistics";
     }
 
+    @GetMapping("/leaderboards")
+    public String leaderboards() {
+
+        return "leaderboards";
+    }
+
     @GetMapping("/register")
     public String register() {
 

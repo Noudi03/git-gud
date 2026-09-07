@@ -1,0 +1,166 @@
+.leaderboards-page {
+    width: min(1000px, 100%);
+
+    margin: 0 auto;
+
+    padding: 2rem;
+}
+
+.leaderboards-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+
+    gap: 2rem;
+
+    margin-bottom: 2rem;
+}
+
+.leaderboards-header h1 {
+    margin: 0 0 0.5rem;
+}
+
+.leaderboards-header p {
+    margin: 0;
+
+    color: var(--color-text-muted);
+}
+
+.leaderboards-filter {
+    display: flex;
+    flex-direction: column;
+
+    gap: 0.4rem;
+
+    min-width: 260px;
+}
+
+.leaderboards-filter label {
+    font-size: 0.85rem;
+    font-weight: 600;
+
+    color: var(--color-text-muted);
+}
+
+.leaderboards-filter select {
+    padding: 0.65rem 0.8rem;
+
+    background-color: var(--color-surface);
+    color: var(--color-text);
+
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+
+    font: inherit;
+}
+
+.leaderboard-panel {
+    padding: 1.5rem;
+
+    background-color: var(--color-surface);
+
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+
+    box-shadow: var(--shadow-sm);
+}
+
+.leaderboard-header {
+    margin-bottom: 1rem;
+}
+
+.leaderboard-header h2 {
+    margin: 0 0 0.35rem;
+
+    font-size: 1.2rem;
+}
+
+.leaderboard-header p {
+    margin: 0;
+
+    color: var(--color-text-muted);
+
+    font-size: 0.85rem;
+}
+
+.leaderboard-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.leaderboard-entry {
+    display: grid;
+
+    grid-template-columns:
+            60px minmax(0, 1fr) 120px;
+
+    align-items: center;
+
+    gap: 1rem;
+
+    padding: 1rem;
+
+    border-bottom: 1px solid var(--color-border);
+}
+
+.leaderboard-entry:last-child {
+    border-bottom: none;
+}
+
+.leaderboard-rank {
+    font-weight: 700;
+
+    color: var(--color-text-muted);
+}
+
+.leaderboard-username {
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.leaderboard-score {
+    text-align: right;
+}
+
+.leaderboard-empty {
+    padding: 3rem 1rem;
+
+    text-align: center;
+
+    color: var(--color-text-muted);
+}
+
+.leaderboard-empty p {
+    margin: 0;
+}
+
+@media (max-width: 800px) {
+
+    .leaderboards-page {
+        padding: 1rem;
+    }
+
+    .leaderboards-header {
+        align-items: stretch;
+
+        flex-direction: column;
+    }
+
+    .leaderboards-filter {
+        min-width: 0;
+    }
+}
+
+@media (max-width: 500px) {
+
+    .leaderboard-entry {
+        grid-template-columns:
+                40px minmax(0, 1fr) 90px;
+
+        gap: 0.5rem;
+
+        padding: 0.85rem 0.5rem;
+    }
+}
