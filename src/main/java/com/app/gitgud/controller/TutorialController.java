@@ -5,6 +5,7 @@ import com.app.gitgud.model.dto.TutorialPageDto;
 import com.app.gitgud.service.CurrentUserService;
 import com.app.gitgud.service.CurriculumAccessDeniedException;
 import com.app.gitgud.service.TutorialPageService;
+import com.app.gitgud.service.selection.UserTierResolver;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -18,10 +19,12 @@ public class TutorialController {
 
     private final TutorialPageService tutorialPageService;
     private final CurrentUserService currentUserService;
+    private final UserTierResolver userTierResolver;
 
     public TutorialController(
             TutorialPageService tutorialPageService,
-            CurrentUserService currentUserService
+            CurrentUserService currentUserService,
+            UserTierResolver userTierResolver
     ) {
 
         this.tutorialPageService =
@@ -29,6 +32,9 @@ public class TutorialController {
 
         this.currentUserService =
                 currentUserService;
+
+        this.userTierResolver =
+                userTierResolver;
     }
 
     @GetMapping("/tutorials")
@@ -47,6 +53,13 @@ public class TutorialController {
         model.addAttribute(
                 "page",
                 page
+        );
+
+        model.addAttribute(
+                "tier",
+                userTierResolver
+                        .resolve(user)
+                        .getValue()
         );
 
         return "tutorials";
@@ -74,6 +87,13 @@ public class TutorialController {
         model.addAttribute(
                 "page",
                 page
+        );
+
+        model.addAttribute(
+                "tier",
+                userTierResolver
+                        .resolve(user)
+                        .getValue()
         );
 
         return "tutorials";
@@ -105,6 +125,13 @@ public class TutorialController {
         model.addAttribute(
                 "page",
                 page
+        );
+
+        model.addAttribute(
+                "tier",
+                userTierResolver
+                        .resolve(user)
+                        .getValue()
         );
 
         return "tutorials";

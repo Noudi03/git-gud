@@ -6,7 +6,9 @@
 
     <div class="navbar-links">
 
-        <a th:href="@{/home}">Home</a>
+        <a th:href="@{/home}">
+            Home
+        </a>
 
         <a
                 th:if="${session.uid != null}"
@@ -18,6 +20,12 @@
                 th:if="${session.uid != null}"
                 th:href="@{/statistics}">
             Statistics
+        </a>
+
+        <a
+                th:if="${session.uid != null}"
+                th:href="@{/leaderboards}">
+            Leaderboards
         </a>
 
     </div>

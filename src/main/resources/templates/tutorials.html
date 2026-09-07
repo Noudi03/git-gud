@@ -66,19 +66,16 @@
                 </h1>
 
                 <div
-                        th:if="${page.section.content != null}"
+                        th:if="${tier == 'novice' and page.section.content != null}"
                         th:utext="${page.section.content}">
                     Section content
                 </div>
 
                 <div
-                        th:if="${page.section.advancedContent != null}"
+                        th:if="${tier == 'experienced' and page.section.advancedContent != null}"
                         th:utext="${page.section.advancedContent}">
                     Advanced content
                 </div>
-
-
-                <!-- Section quizzes -->
 
                 <div
                         th:if="${page.quizzes != null and !page.quizzes.isEmpty()}">

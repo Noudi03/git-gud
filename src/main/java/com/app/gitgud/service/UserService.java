@@ -4,6 +4,8 @@ import com.app.gitgud.model.User;
 import com.app.gitgud.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UserService {
 
@@ -32,6 +34,12 @@ public class UserService {
         return userRepository.getUser(
                 userId
         );
+    }
+
+    public List<User> getUsers()
+            throws Exception {
+
+        return userRepository.getUsers();
     }
 
     public void setRating(

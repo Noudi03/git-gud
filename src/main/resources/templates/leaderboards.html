@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<div th:replace="~{fragments/head :: head('Leaderboards')}"></div>
+
+<body>
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<main class="leaderboards-page">
+
+    <section class="leaderboards-header">
+
+        <div>
+            <h1>Leaderboards</h1>
+
+            <p>
+                See who is performing best.
+            </p>
+        </div>
+
+        <div class="leaderboards-filter">
+
+            <label for="leaderboard-selector">
+                Quiz
+            </label>
+
+            <select id="leaderboard-selector">
+
+                <option value="">
+                    Rating
+                </option>
+
+            </select>
+
+        </div>
+
+    </section>
+
+    <section class="leaderboard-panel">
+
+        <div class="leaderboard-header">
+
+            <div>
+                <h2 id="leaderboard-title">
+                    Rating
+                </h2>
+
+                <p id="leaderboard-description">
+                    Top users by rating.
+                </p>
+            </div>
+
+        </div>
+
+        <div
+                id="leaderboard-empty"
+                class="leaderboard-empty"
+                hidden>
+
+            <p>
+                No completed attempts for this quiz yet.
+            </p>
+
+        </div>
+
+        <div
+                id="leaderboard-list"
+                class="leaderboard-list">
+        </div>
+
+    </section>
+
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>

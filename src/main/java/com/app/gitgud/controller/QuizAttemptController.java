@@ -12,6 +12,7 @@ import com.app.gitgud.service.QuizAttemptService;
 import com.app.gitgud.service.QuizOutcomeService;
 import com.app.gitgud.service.QuizResultService;
 import com.app.gitgud.service.QuizService;
+import com.app.gitgud.service.StatisticsService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,6 +29,7 @@ public class QuizAttemptController {
     private final QuizAccessService quizAccessService;
     private final QuizService quizService;
     private final CurrentUserService currentUserService;
+    private final StatisticsService statisticsService;
 
     public QuizAttemptController(
             QuizAttemptService quizAttemptService,
@@ -35,7 +37,8 @@ public class QuizAttemptController {
             QuizOutcomeService quizOutcomeService,
             QuizAccessService quizAccessService,
             QuizService quizService,
-            CurrentUserService currentUserService
+            CurrentUserService currentUserService,
+            StatisticsService statisticsService
     ) {
 
         this.quizAttemptService =
@@ -55,6 +58,9 @@ public class QuizAttemptController {
 
         this.currentUserService =
                 currentUserService;
+
+        this.statisticsService =
+                statisticsService;
     }
 
     @PostMapping(
@@ -313,6 +319,39 @@ public class QuizAttemptController {
         }
     }
 
+    @GetMapping("/statistics")
+    public ResponseEntity<?> getStatistics(
+            @RequestParam(required = false) String quizKey
+    ) {
+
+        String userId =
+                currentUserService.getUserId();
+
+        if (userId == null) {
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body("Not authenticated");
+        }
+
+        try {
+
+            return ResponseEntity.ok(
+                    statisticsService.getStatistics(
+                            userId,
+                            quizKey
+                    )
+            );
+
+        } catch (Exception e) {
+
+            return ResponseEntity
+                    .internalServerError()
+                    .body(
+                            "Could not get statistics"
+                    );
+        }
+    }
+
     private ResponseEntity<?> createAttempt(
             QuizSupplier quizSupplier
     ) {
@@ -331,13 +370,6 @@ public class QuizAttemptController {
             Quiz quiz =
                     quizSupplier.get();
 
-            /*
-             * This is the authoritative quiz-access check.
-             *
-             * It happens before an attempt is created, so a
-             * user cannot bypass the frontend by calling this
-             * endpoint directly.
-             */
             quizAccessService.validateCanStartQuiz(
                     userId,
                     quiz

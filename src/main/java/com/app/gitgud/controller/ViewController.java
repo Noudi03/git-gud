@@ -2,6 +2,7 @@ package com.app.gitgud.controller;
 
 import com.app.gitgud.model.User;
 import com.app.gitgud.service.CurrentUserService;
+import com.app.gitgud.service.selection.UserTierResolver;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,12 +11,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class ViewController {
 
     private final CurrentUserService currentUserService;
+    private final UserTierResolver userTierResolver;
 
     public ViewController(
-            CurrentUserService currentUserService
+            CurrentUserService currentUserService,
+            UserTierResolver userTierResolver
     ) {
         this.currentUserService =
                 currentUserService;
+
+        this.userTierResolver =
+                userTierResolver;
     }
 
     @GetMapping("/")
@@ -42,6 +48,18 @@ public class ViewController {
                 user.getUsername()
         );
 
+        model.addAttribute(
+                "rating",
+                user.getRating()
+        );
+
+        model.addAttribute(
+                "tier",
+                userTierResolver
+                        .resolve(user)
+                        .getValue()
+        );
+
         return "home";
     }
 
@@ -49,6 +67,12 @@ public class ViewController {
     public String statistics() {
 
         return "statistics";
+    }
+
+    @GetMapping("/leaderboards")
+    public String leaderboards() {
+
+        return "leaderboards";
     }
 
     @GetMapping("/register")
