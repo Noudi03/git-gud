@@ -7,8 +7,217 @@
 
 <div th:replace="~{fragments/navbar :: navbar}"></div>
 
-<main>
-    <p>I'll show you how to git gud.</p>
+<main class="statistics-page">
+
+    <section class="statistics-header">
+
+        <div>
+            <h1>Statistics</h1>
+
+            <p>
+                See how you're progressing through your quizzes.
+            </p>
+        </div>
+
+        <div class="statistics-filter">
+
+            <label for="quiz-selector">
+                Quiz
+            </label>
+
+            <select id="quiz-selector">
+                <option value="">
+                    All quizzes
+                </option>
+            </select>
+
+        </div>
+
+    </section>
+
+    <section
+            id="statistics-empty"
+            class="statistics-empty"
+            hidden>
+
+        <h2>No completed quizzes yet</h2>
+
+        <p>
+            Complete a quiz to start building your statistics.
+        </p>
+
+    </section>
+
+    <section
+            id="statistics-content"
+            class="statistics-content">
+
+        <section class="statistics-summary">
+
+            <article class="statistics-card">
+
+                <span class="statistics-card-label">
+                    Completed
+                </span>
+
+                <strong
+                        id="completed-attempts"
+                        class="statistics-card-value">
+                    0
+                </strong>
+
+            </article>
+
+            <article class="statistics-card">
+
+                <span class="statistics-card-label">
+                    Average Score
+                </span>
+
+                <strong
+                        id="average-score"
+                        class="statistics-card-value">
+                    0 pts
+                </strong>
+
+            </article>
+
+            <article class="statistics-card">
+
+                <span class="statistics-card-label">
+                    Average Accuracy
+                </span>
+
+                <strong
+                        id="average-accuracy"
+                        class="statistics-card-value">
+                    0%
+                </strong>
+
+            </article>
+
+            <article class="statistics-card">
+
+                <span class="statistics-card-label">
+                    Hints Used
+                </span>
+
+                <strong
+                        id="total-hints"
+                        class="statistics-card-value">
+                    0
+                </strong>
+
+            </article>
+
+        </section>
+
+        <section class="statistics-charts">
+
+            <article class="statistics-panel statistics-panel-wide">
+
+                <div class="statistics-panel-header">
+
+                    <div>
+                        <h2>Score Progress</h2>
+
+                        <p>
+                            Your score across completed attempts.
+                        </p>
+                    </div>
+
+                </div>
+
+                <div class="statistics-chart-container">
+                    <canvas id="performance-chart"></canvas>
+                </div>
+
+            </article>
+
+            <article class="statistics-panel">
+
+                <div class="statistics-panel-header">
+
+                    <div>
+                        <h2>Answer Breakdown</h2>
+
+                        <p>
+                            How you performed across questions.
+                        </p>
+                    </div>
+
+                </div>
+
+                <div class="statistics-chart-container statistics-chart-container-small">
+                    <canvas id="answer-chart"></canvas>
+                </div>
+
+            </article>
+
+            <article class="statistics-panel">
+
+                <div class="statistics-panel-header">
+
+                    <div>
+                        <h2>Difficulty</h2>
+
+                        <p>
+                            Your accuracy for each difficulty.
+                        </p>
+                    </div>
+
+                </div>
+
+                <div class="statistics-chart-container">
+                    <canvas id="difficulty-chart"></canvas>
+                </div>
+
+            </article>
+
+        </section>
+
+        <section class="statistics-details">
+
+            <article class="statistics-detail">
+
+                <span>
+                    Total time
+                </span>
+
+                <strong id="total-time">
+                    0m
+                </strong>
+
+            </article>
+
+            <article class="statistics-detail">
+
+                <span>
+                    Incorrect answers
+                </span>
+
+                <strong id="total-incorrect">
+                    0
+                </strong>
+
+            </article>
+
+            <article class="statistics-detail">
+
+                <span>
+                    Skipped questions
+                </span>
+
+                <strong id="total-skipped">
+                    0
+                </strong>
+
+            </article>
+
+        </section>
+
+    </section>
+
 </main>
 
 <div th:replace="~{fragments/footer :: footer}"></div>
