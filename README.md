@@ -52,6 +52,11 @@ app:
 mvnw.cmd spring-boot:run
 ```
 
+#### OR in Powershell
+```ps1
+.\mvnw.cmd spring-boot:run
+```
+
 Η εφαρμογή θα ξεκινήσει στο
 `http://localhost:8080`
 
