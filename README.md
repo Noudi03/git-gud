@@ -23,6 +23,8 @@
 Το αρχείο `src/main/resources/static/js/firebase.js` περιέχει το public config του client SDK
 (`apiKey`, `authDomain`, `projectId` etc.) Αντικαταστήστε τις τιμές με τις αντιστοιχες του δικού σας Firebase project.
 
+Βρίσκονται στο `Project Settings -> General -> Your apps -> SDK setup and configuration`
+
 
 
 
