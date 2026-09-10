@@ -169,6 +169,45 @@
 
         </div>
 
+
+        <!-- =========================
+             Review
+             ========================= -->
+
+        <div
+                th:if="${page.reviewQuiz != null}"
+                class="tutorial-introduction">
+
+            <div class="tutorial-introduction-title">
+                Review
+            </div>
+
+            <a
+                    th:if="${page.reviewQuizUnlocked}"
+                    class="tutorial-introduction-link"
+                    th:href="@{/tutorials}"
+                    th:attr="data-quiz-url=@{/api/quizzes/{quizId}(
+                        quizId=${page.reviewQuiz.id}
+                    )}">
+                <span>
+                    <span
+                            th:text="${page.reviewQuiz.title}">
+                        Review Quiz
+                    </span>
+                </span>
+            </a>
+
+            <span
+                    th:if="${!page.reviewQuizUnlocked}"
+                    class="tutorial-introduction-link locked">
+                <span
+                        th:text="${page.reviewQuiz.title}">
+                    Review Quiz
+                </span>
+            </span>
+
+        </div>
+
     </nav>
 
 </aside>

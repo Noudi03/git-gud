@@ -233,7 +233,7 @@ public class TutorialPageService {
             SectionDto section,
             List<QuizDto> quizzes,
             CurriculumProgressService progress
-    ) {
+    ) throws Exception {
 
         Map<String, Boolean>
                 chapterContentUnlocked =
@@ -333,6 +333,14 @@ public class TutorialPageService {
                         progress
                 );
 
+        Quiz reviewQuiz =
+                curriculumData.reviewQuiz();
+
+        boolean reviewQuizUnlocked =
+                curriculumAccessService.isCurriculumComplete(
+                        user.getId()
+                );
+
         return new TutorialPageDto(
                 chapterMapper.toDtoList(chapters),
                 convertSectionsByChapter(
@@ -345,6 +353,10 @@ public class TutorialPageService {
                         introductoryQuiz
                 ),
                 introductoryQuizAttempted,
+                quizMapper.toDto(
+                        reviewQuiz
+                ),
+                reviewQuizUnlocked,
                 chapterFinalQuizzes,
                 chapter,
                 section,

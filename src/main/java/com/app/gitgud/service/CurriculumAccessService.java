@@ -114,9 +114,11 @@ public class CurriculumAccessService {
             );
         }
 
+        List<Quiz> globalQuizzes =
+                quizService.getGlobalQuizzes();
+
         Quiz introductoryQuiz =
-                quizService.getGlobalQuizzes()
-                        .stream()
+                globalQuizzes.stream()
                         .filter(
                                 quiz ->
                                         quiz.getType()
@@ -130,12 +132,23 @@ public class CurriculumAccessService {
                                         )
                         );
 
+        Quiz reviewQuiz =
+                globalQuizzes.stream()
+                        .filter(
+                                quiz ->
+                                        quiz.getType()
+                                                == QuizType.REVIEW
+                        )
+                        .findFirst()
+                        .orElse(null);
+
         return new CurriculumData(
                 chapters,
                 sectionsByChapter,
                 sectionQuizzes,
                 chapterQuizzes,
-                introductoryQuiz
+                introductoryQuiz,
+                reviewQuiz
         );
     }
 
@@ -925,7 +938,8 @@ public class CurriculumAccessService {
             Map<String, List<Section>> sectionsByChapter,
             Map<SectionKey, List<Quiz>> sectionQuizzes,
             Map<String, List<Quiz>> chapterQuizzes,
-            Quiz introductoryQuiz
+            Quiz introductoryQuiz,
+            Quiz reviewQuiz
     ) {
     }
 }
