@@ -8,7 +8,7 @@ import com.app.gitgud.model.TrueFalseQuestion;
 import com.app.gitgud.seeder.ChapterData;
 
 import java.util.List;
-import java.util.Map;
+import java.util.Map
 
 public class Chapter1Data implements ChapterData {
 
