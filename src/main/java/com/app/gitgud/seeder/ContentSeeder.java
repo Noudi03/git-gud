@@ -12,11 +12,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Random;
 
 @Component
 public class ContentSeeder implements CommandLineRunner {
@@ -26,6 +29,12 @@ public class ContentSeeder implements CommandLineRunner {
 
     @Value("${app.seeder.reset:false}")
     private boolean reset;
+
+    private final Random random = new Random();
+
+
+    private static final int REVIEW_QUIZ_QUESTION_COUNT = 5;
+    private static final int INTRODUCTORY_QUIZ_QUESTION_COUNT = 5;
 
     @Override
     public void run(String... args) throws Exception {
@@ -56,7 +65,10 @@ public class ContentSeeder implements CommandLineRunner {
             seedChapter(db, data);
             System.out.println("Seeded chapter: " + data.getChapter().getTitle());
         }
+
         seedReviewQuiz(db, chapters);
+        seedIntroductoryQuiz(db, chapters);
+
         System.out.println("Seeding completed.");
     }
 
@@ -128,13 +140,12 @@ public class ContentSeeder implements CommandLineRunner {
             }
         }
 
-        // todo: make it skill based
-        // Chapter-level final quiz: one MCQ per section
+        // Chapter-level final quiz
         List<MultipleChoiceQuestion> finalMcqQuestions = data.getSections().stream()
                 .map(section -> {
                     List<MultipleChoiceQuestion> qs =
                             allMcq.getOrDefault(section.getId(), List.of());
-                    return qs.isEmpty() ? null : qs.getFirst();
+                    return qs.isEmpty() ? null : qs.get(random.nextInt(qs.size()));
                 })
                 .filter(Objects::nonNull)
                 .toList();
@@ -148,31 +159,37 @@ public class ContentSeeder implements CommandLineRunner {
 
         chapterRef.collection("quizzes").document(finalQuizId).set(finalQuiz).get();
 
-        for (MultipleChoiceQuestion q : finalMcqQuestions) {
+        for (int i = 0; i < finalMcqQuestions.size(); i++) {
+
+            MultipleChoiceQuestion q = finalMcqQuestions.get(i);
+
             chapterRef.collection("quizzes")
                     .document(finalQuizId)
                     .collection("questions")
-                    .document(q.getId())
+                    .document("final-q" + (i + 1))
                     .set(toMcqData(q))
                     .get();
         }
     }
 
-    // todo: make it skill based
-    // global review quiz, one MCQ per chapter
+    // global review quiz
     private void seedReviewQuiz(Firestore db, List<ChapterData> chapters) throws Exception {
 
-        List<MultipleChoiceQuestion> reviewMcqQuestions = chapters.stream()
-                .map(data -> {
-                    List<MultipleChoiceQuestion> qs = data.getQuestions()
-                            .getOrDefault(
-                                    data.getSections().getFirst().getId(),
-                                    List.of()
-                            );
-                    return qs.isEmpty() ? null : qs.getFirst();
-                })
-                .filter(Objects::nonNull)
-                .toList();
+        List<MultipleChoiceQuestion> pool = new ArrayList<>();
+
+        for (ChapterData data : chapters) {
+            data.getQuestions()
+                    .values()
+                    .forEach(pool::addAll);
+        }
+
+        Collections.shuffle(pool, random);
+
+        int questionCount =
+                Math.min(REVIEW_QUIZ_QUESTION_COUNT, pool.size());
+
+        List<MultipleChoiceQuestion> selected =
+                pool.subList(0, questionCount);
 
         String reviewQuizId = "quiz-review";
 
@@ -184,16 +201,67 @@ public class ContentSeeder implements CommandLineRunner {
 
         db.collection("quizzes").document(reviewQuizId).set(reviewQuiz).get();
 
-        for (MultipleChoiceQuestion q : reviewMcqQuestions) {
+        for (int i = 0; i < selected.size(); i++) {
+
             db.collection("quizzes")
                     .document(reviewQuizId)
                     .collection("questions")
-                    .document(q.getId())
-                    .set(toMcqData(q))
+                    .document("review-q" + (i + 1))
+                    .set(toMcqData(selected.get(i)))
                     .get();
         }
 
-        System.out.println("Seeded review quiz.");
+        System.out.println(
+                "Seeded review quiz with "
+                        + selected.size()
+                        + " questions."
+        );
+    }
+
+    // global introductory quiz: 5 random true/false questions pooled from all chapters and sections
+    private void seedIntroductoryQuiz(Firestore db, List<ChapterData> chapters) throws Exception {
+
+        List<TrueFalseQuestion> pool = new ArrayList<>();
+
+        for (ChapterData data : chapters) {
+            data.getTrueFalseQuestions()
+                    .values()
+                    .forEach(pool::addAll);
+        }
+
+        Collections.shuffle(pool, random);
+
+        int questionCount =
+                Math.min(INTRODUCTORY_QUIZ_QUESTION_COUNT, pool.size());
+
+        List<TrueFalseQuestion> selected =
+                pool.subList(0, questionCount);
+
+        String introQuizId = "quiz-introductory";
+
+        Quiz introQuiz = new Quiz();
+        introQuiz.setId(introQuizId);
+        introQuiz.setTitle("Introductory Quiz");
+        introQuiz.setType(QuizType.INTRODUCTORY);
+        introQuiz.setOrder(1);
+
+        db.collection("quizzes").document(introQuizId).set(introQuiz).get();
+
+        for (int i = 0; i < selected.size(); i++) {
+
+            db.collection("quizzes")
+                    .document(introQuizId)
+                    .collection("questions")
+                    .document("intro-q" + (i + 1))
+                    .set(toTrueFalseData(selected.get(i)))
+                    .get();
+        }
+
+        System.out.println(
+                "Seeded introductory quiz with "
+                        + selected.size()
+                        + " questions."
+        );
     }
 
     // Firestore serialisers

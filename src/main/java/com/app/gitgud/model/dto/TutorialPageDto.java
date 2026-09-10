@@ -23,6 +23,10 @@ public class TutorialPageDto {
 
     private final boolean introductoryQuizAttempted;
 
+    private final QuizDto reviewQuiz;
+
+    private final boolean reviewQuizUnlocked;
+
     private final Map<String, QuizDto>
             chapterFinalQuizzes;
 
@@ -38,6 +42,8 @@ public class TutorialPageDto {
             Map<String, Map<String, Boolean>> sectionContentUnlocked,
             QuizDto introductoryQuiz,
             boolean introductoryQuizAttempted,
+            QuizDto reviewQuiz,
+            boolean reviewQuizUnlocked,
             Map<String, QuizDto> chapterFinalQuizzes,
             ChapterDto chapter,
             SectionDto section,
@@ -56,6 +62,10 @@ public class TutorialPageDto {
                 introductoryQuiz;
         this.introductoryQuizAttempted =
                 introductoryQuizAttempted;
+        this.reviewQuiz =
+                reviewQuiz;
+        this.reviewQuizUnlocked =
+                reviewQuizUnlocked;
         this.chapterFinalQuizzes =
                 chapterFinalQuizzes;
         this.chapter = chapter;
@@ -93,6 +103,14 @@ public class TutorialPageDto {
 
     public boolean isIntroductoryQuizAttempted() {
         return introductoryQuizAttempted;
+    }
+
+    public QuizDto getReviewQuiz() {
+        return reviewQuiz;
+    }
+
+    public boolean isReviewQuizUnlocked() {
+        return reviewQuizUnlocked;
     }
 
     public Map<String, QuizDto>
