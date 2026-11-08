@@ -49,6 +49,7 @@ public class QuizAttemptService {
 
         if (
                 quizId == null
+                        || quiz.getId() == null
                         || !quiz.getId().equals(quizId)
         ) {
             throw new IllegalArgumentException(
@@ -64,6 +65,18 @@ public class QuizAttemptService {
                         attemptId,
                         quiz
                 );
+
+        if (attempt == null) {
+            throw new IllegalStateException(
+                    "Could not create quiz attempt"
+            );
+        }
+
+        if (attempt.getQuizId() == null) {
+            throw new IllegalStateException(
+                    "Quiz attempt has no quiz ID"
+            );
+        }
 
         quizAttemptRepository.createAttempt(
                 userId,
@@ -106,44 +119,80 @@ public class QuizAttemptService {
             QuizAttempt attempt
     ) throws Exception {
 
+        if (attempt == null) {
+            throw new IllegalArgumentException(
+                    "Quiz attempt is null"
+            );
+        }
+
+        if (attempt.getQuizId() == null) {
+            throw new IllegalStateException(
+                    "Quiz attempt has no quiz ID: "
+                            + attempt.getId()
+            );
+        }
+
         QuizContext context =
                 attempt.getContext();
+
+        if (context == null) {
+            throw new IllegalStateException(
+                    "Quiz attempt has no context: "
+                            + attempt.getId()
+            );
+        }
+
+        Quiz quiz;
 
         if (
                 context instanceof SectionQuizContext
                         sectionContext
         ) {
 
-            return quizService.getSectionQuiz(
-                    sectionContext.getChapterId(),
-                    sectionContext.getSectionId(),
-                    attempt.getQuizId()
-            );
-        }
+            quiz =
+                    quizService.getSectionQuiz(
+                            sectionContext.getChapterId(),
+                            sectionContext.getSectionId(),
+                            attempt.getQuizId()
+                    );
 
-        if (
+        } else if (
                 context instanceof ChapterQuizContext
                         chapterContext
         ) {
 
-            return quizService.getChapterQuiz(
-                    chapterContext.getChapterId(),
-                    attempt.getQuizId()
-            );
-        }
+            quiz =
+                    quizService.getChapterQuiz(
+                            chapterContext.getChapterId(),
+                            attempt.getQuizId()
+                    );
 
-        if (
+        } else if (
                 context instanceof GlobalQuizContext
         ) {
 
-            return quizService.getGlobalQuiz(
-                    attempt.getQuizId()
+            quiz =
+                    quizService.getGlobalQuiz(
+                            attempt.getQuizId()
+                    );
+
+        } else {
+
+            throw new IllegalArgumentException(
+                    "Unsupported quiz context: "
+                            + context.getClass().getName()
             );
         }
 
-        throw new IllegalArgumentException(
-                "Unsupported quiz context: "
-                        + context.getClass().getName()
-        );
+        if (quiz == null) {
+            throw new IllegalStateException(
+                    "Quiz not found for attempt "
+                            + attempt.getId()
+                            + ", quizId="
+                            + attempt.getQuizId()
+            );
+        }
+
+        return quiz;
     }
 }

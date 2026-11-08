@@ -343,11 +343,12 @@ public class QuizAttemptController {
             );
 
         } catch (Exception e) {
+            e.printStackTrace();
 
             return ResponseEntity
                     .internalServerError()
                     .body(
-                            "Could not get statistics"
+                            "Could not get statistics" + e.getMessage()
                     );
         }
     }

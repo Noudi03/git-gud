@@ -8,6 +8,7 @@ import com.app.gitgud.model.QuizContext;
 import com.app.gitgud.model.SectionQuizContext;
 import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.DocumentReference;
+import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
 import org.springframework.stereotype.Repository;
 
@@ -56,11 +57,31 @@ public class FirestoreQuizRepository {
             String quizId
     ) throws Exception {
 
-        return mapper.toModel(
+        DocumentReference reference =
                 getQuizCollection(context)
-                        .document(quizId)
+                        .document(quizId);
+
+        DocumentSnapshot document =
+                reference
                         .get()
-                        .get(),
+                        .get();
+
+        System.out.println(
+                "Looking for quiz at: "
+                        + reference.getPath()
+        );
+
+        System.out.println(
+                "Quiz exists: "
+                        + document.exists()
+        );
+
+        if (!document.exists()) {
+            return null;
+        }
+
+        return mapper.toModel(
+                document,
                 context
         );
     }

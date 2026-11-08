@@ -39,11 +39,12 @@ public class LeaderboardController {
             );
 
         } catch (Exception e) {
+            e.printStackTrace();
 
             return ResponseEntity
                     .internalServerError()
                     .body(
-                            "Could not get leaderboard"
+                            "Could not get leaderboard" + e.getMessage()
                     );
         }
     }
